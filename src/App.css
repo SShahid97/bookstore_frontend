@@ -1,38 +1,203 @@
+/* Components folder styles are here */
 .App {
-  text-align: center;
+  height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.main-container{
+  /* margin:0% 10%; */
+  width: -webkit-fill-available;
+  margin-top:80px;
+  min-height: 26rem;
+  margin-left: 10px;
+  margin-bottom: 10px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.menu-link{
+  width: 85%;
+  grid-column: 3/4;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.search-box{
+  margin-top: 0.3rem;
+ 
+}
+
+
+.hamburger-menu {
+  display: none;
+}
+
+.mobile-menu-link{
+  z-index: 1200;
+  list-style: none;
+  position: absolute;
+  top:60px;
+  right:0;
+  width:180px;
+  border-radius: 5%;
+  background: linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9);
+  padding:0.7rem;
+  overflow: hidden; 
+}
+
+
+
+.user-icon{
+  /* grid-column: 7/7; */
   display: flex;
-  flex-direction: column;
+  margin: 0 auto;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: 1.8rem;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.user-icon:hover{
+  cursor: pointer;
+  color:antiquewhite;
+  background: linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9);
+  border-radius: 50%;
+  padding:3px;
+  font-size: 1.8rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.cart{
+  /* grid-column: 6/6; */
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  font-size: 1.8rem;
+  color: white;
+}
+
+.cart:hover{
+  cursor: pointer;
+  color:rgb(228, 218, 206);
+}
+
+.dropdown{
+  z-index: 1200;
+  list-style: none;
+  position: absolute;
+  top:54px;
+  right:0;
+  width:180px;
+  border-radius: 5px;
+  background: linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9);
+  padding:0.7rem;
+  overflow: hidden; 
+}
+.dropdown-item{
+  color:white;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0.3rem;
+  border-radius: 5px ;
+}
+
+.mobile-view{
+  display:none;
+}
+.sign_reg_icons{
+  padding-left: 15px;
+}
+.dropdown-item:hover{
+  cursor: pointer;
+  background: linear-gradient(35deg, rgba(0, 0, 0, 0.466), #313131d9);
+}
+
+.activeIcon{
+  /* grid-column: 5/5; */
+  display: flex;
+  margin: 0 auto;
+  cursor: pointer;
+  align-items: center;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.8rem;
+  padding:3px;
+  background: linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9);
+}
+.active-menu{
+    text-align: end;
+    display: block;
+    color:white;
+    font-size: 1.8rem;
+  cursor: pointer;
+  align-items: flex-end;
+  border-radius: 50%;
+  padding:5px;
+  background: linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9);
+}
+.cart-bage{
+  margin-left: 35px;
+  margin-top: -5px;
+  position: absolute;
+  background-color: orangered;
+  color: white;
+  border-radius: 50%;
+  display: block;
+  width: 16px;
+  height: 18px;
+  text-align: center;
+  font-size: small;
+  cursor: pointer;
+}
+.container{
+  display:flex;
+}
+
+/* .pages{
+  width:fit-content;
+} */
+
+
+/* responsive css style  */
+@media (max-width: 1000px) {
+  .hamburger-menu {
+    display: block;
+    color:white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin: 0 auto;
+    margin-top: 7px;
   }
-  to {
-    transform: rotate(360deg);
+  .dropdown{
+    top:47px !important;
+  }
+}
+/* making responsive for form width */
+@media (max-width: 550px){
+  .cart{
+    font-size:1.3rem;
+  }
+  .user-icon{
+    font-size:1.3rem;
+  }
+  .hamburger-menu {
+    font-size:1.3rem;
+    margin-top: 5px;
+  }
+  .cart-bage{
+    margin-left: 11px;
+    margin-top: -10px;
+    width: 14px;
+    height: 19px;
+    font-size: smaller;
+  }
+}
+
+@media screen and (max-width: 600px) and (min-width: 300px) {
+  .main-container{
+    /* margin:0% 2%; */
+    margin-top:70px;
+  }
+}
+
+@media screen and (max-width: 950px) and (min-width: 601px) {
+  .main-container{
+   
+    /* margin:0% 5%; */
+    margin-top:70px;
   }
 }
