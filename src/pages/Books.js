@@ -13,6 +13,8 @@ function Books() {
    const [tempBooks, setTempBooks]= useState([]);
    const [sortByValue, setSortByValue] = useState('');
    const [isSliderOpen, setIsSliderOpen] = useState(false);
+   const [priceRange, setPriceRange] = useState(100);
+   const [discountRange, setDiscountRange] = useState(0.1);
     useEffect(()=>{
         window.scrollTo(0, 0);
         setTimeout(()=>{
@@ -50,7 +52,7 @@ function Books() {
     const handleSliderIcon = ()=>{
         setIsSliderOpen(!isSliderOpen);
     }
-
+    ///// Filtering  Starts//////// 
     const handleSortBy = (e)=>{
         let value = e.target.value;
         setSortByValue(e.target.value);
@@ -69,16 +71,72 @@ function Books() {
         }
         
     }
+    const handlePriceRange = (e)=>{
+        // console.log(e.target.value);
+        setPriceRange(e.target.value);
+    }
+    const handleDiscountRange = (e)=>{
+        setDiscountRange(e.target.value)
+    }
+    const onPriceRange = (e)=>{
+        const tempPriceRange = [];
+        books.map((book)=>{
+            if(book.newPrice < e.target.value){
+                tempPriceRange.push(book);
+            }
+            
+        })
+        setTempBooks(tempPriceRange);
+    }
+    const onDiscountRange = (e)=>{
+        const tempDiscountRange = [];
+        books.map((book)=>{
+            if(book.discount>0){
+                if(book.discount < e.target.value){
+                    tempDiscountRange.push(book)
+                }
+            }
+        })
+        tempDiscountRange.sort((a,b) => b.discount - a.discount);
+        setTempBooks(tempDiscountRange);
+    }
+    ////Filtering Ends//////
+    const handleClearFilter = ()=>{
+        setTempBooks(books);
+    }
+
    return (
     <Wrapper>
 
     <SideNav>
         <h3>Refine your search</h3>
         <div className='refine-search'>
-            <p>Price Range:<span> &#8377;0-&#8377;5000</span> </p>
+            <p>Price Under:&nbsp; <span> &#8377;{priceRange}</span> </p>
+            <input className='price-range' type="range" value={priceRange} min={100} max={2000} onChange={handlePriceRange} onMouseUp={onPriceRange}/>
+            <div style={{display:'flex', justifyContent:'space-between', width:'95%'}}>
+                <div>
+                &#8377;100
+                </div>
+                <div>
+                &#8377;2000
+                </div>
+            </div>    
         </div>
         <div className='refine-search'>
-        <p>Discount Range:<span> 0%-70%</span> </p>
+            <p>Discount Under: &nbsp;<span>{discountRange*100}%</span> </p>
+            <input className='discount-range' type="range" min={0.1} value={discountRange} step={0.05} max={0.9} onChange={handleDiscountRange} onMouseUp={onDiscountRange}/>
+            <div style={{display:'flex', justifyContent:'space-between', width:'95%'}}>
+                <div>
+                &#8377;10%
+                </div>
+                <div>
+                &#8377;90%
+                </div>
+            </div>
+        </div>
+        <div style={{textAlign:'center'}}>
+            <button className='clear-filter-btn' onClick={handleClearFilter}>Clear Filters</button>
+
         </div>
         <hr/>
         <div>
@@ -88,17 +146,18 @@ function Books() {
     <BsSliders className='slider-icon' onClick={handleSliderIcon}/>
     {isSliderOpen && (
         <div className='dropdown-sidenav'>
-        <h3>Refine your search</h3>
-        <div className='refine-search'>
-            <p>Price Range:<span> &#8377;0-&#8377;5000</span> </p>
-        </div>
-        <div className='refine-search'>
-        <p>Discount Range:<span> 0%-70%</span> </p>
-        </div>
-        <hr/>
-        <div>
-            <h4>Language</h4>
-        </div>
+            <h3>Refine your search</h3>
+            <div className='refine-search'>
+                <p>Price Range:<span> &#8377;0-&#8377;5000</span> </p>
+            </div>
+            <div className='refine-search'>
+            <p>Discount Range:<span> 0%-70%</span> </p>
+            </div>
+
+            <hr/>
+            <div>
+                <h4>Language</h4>
+            </div>
         </div>
     )}
     <Main>
@@ -106,7 +165,7 @@ function Books() {
         {(tempBooks.length > 1) && (
             <Top>
             <div>
-                <strong> {books.length} results found </strong>
+                <strong> {tempBooks.length} results found </strong>
             </div>
             <div>
                <strong>Sort by</strong>&nbsp; 
@@ -218,8 +277,30 @@ const SideNav =  styled.div`
     padding: 10px;
     margin-right: 1.5rem;
     border-right: 1px solid #808080a3;
+
     .refine-search{
-        margin-bottom:3rem;
+        margin-top:2rem;
+    }
+    .price-range{
+        cursor: pointer;
+        width:95%;
+    }
+    .discount-range{
+        cursor: pointer;
+        width:95%
+    }
+    .clear-filter-btn{
+        padding: 0.3rem 1.2rem;
+        background: white;
+        margin-bottom: 1rem;
+        font-weight: 500;
+        border:1px solid grey;
+        font-size:1.1rem;
+    }
+    .clear-filter-btn:hover{
+        cursor: pointer;
+        background: black;
+        color: white;
     }
     span{
         color:#e70000f2;

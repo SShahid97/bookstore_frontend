@@ -146,7 +146,7 @@ function Navbar() {
        <Nav>
           <Logo to={"/"} >
             <SiElasticsearch style={{transform:'scale(2)',color: 'rgb(255 116 30)'}} />
-            <span style={{paddingLeft:'5px'}}>BookStore</span> 
+            <span style={{paddingLeft:'5px',color: 'rgb(247 227 81)' }}>BookStore</span> 
           </Logo>
         
           {!isAdmin && (
