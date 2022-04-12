@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import {userService, cartService} from "../services/LocalService";
 // import {Service} from '../services/Service';
 
-import {SiWinmate} from 'react-icons/si';
+import {SiElasticsearch} from 'react-icons/si';
 import { GiHamburgerMenu } from "react-icons/gi";
 import { 
   FaUserCog, 
@@ -19,7 +19,8 @@ import {
   FaSignOutAlt, 
   FaUser,
   FaChalkboardTeacher,
-  FaShoppingCart } from "react-icons/fa";
+  FaShoppingCart,
+  FaUserShield } from "react-icons/fa";
 function Navbar() {
     const [mobileView, setmobileView] = useState(false);
     const [toggleDropdown, setToggleDropDown] = useState(false);
@@ -143,37 +144,33 @@ function Navbar() {
     <div>
        {/* Nav Bar */}
        <Nav>
-       {(scrollPosition > 0) && (
-         <>
-         {!isMenu && (<GiHamburgerMenu className='menu' onClick={handleMenu} />) }
-         {isMenu && (<FaTimes className='menu' onClick={handleMenu}/>)}
-         </>
-       )}
-       {isMenu && (
-         < MenuOnScroll/>
-       )}
-       {mobileView}
-            
           <Logo to={"/"} >
-            <SiWinmate style={{fontSize: 'xx-large',background:'linear-gradient(to right, #f27121, #e94057)'}} />
-            <span>ebPro</span> 
+            <SiElasticsearch style={{transform:'scale(2)',color: 'rgb(255 116 30)'}} />
+            <span style={{paddingLeft:'5px'}}>BookStore</span> 
           </Logo>
-          {/* {!isAdmin && (
-          <div >
-            <Category />
-          </div>)} */}
+        
+          {!isAdmin && (
+            <div className='main-menu-links'>
+              <Category />
+            </div>
+          )}
+
+          {/* <Category /> */}
           {(!isAdmin && mobileView) && (
-            <MobileCategory />
+            <MobileCategory setmobileView={setmobileView}  />
           ) }
-          <div className='search-box'>
-            <Search/> 
-          </div>
+          {(!isAdmin && (
+              <div className='search-box'>
+                <Search/> 
+              </div>
+          ))}
+          
           
 
            {/* Cart */}
            {!isAdmin && (
              <>    
-             <div style={{marginTop:'10px',textAlign: '-webkit-center'}} onClick={handleCart}>
+             <div style={{marginTop:'11px',textAlign: '-webkit-center'}} onClick={handleCart}>
                <span className='cart-bage'>{cartItemsLength}</span>
                <FaShoppingCart className="cart"/>
              </div>
@@ -182,9 +179,12 @@ function Navbar() {
            
 
             {/* User */}
-           <div style={{marginTop:'10px'}} onClick={handleUserAccount}>
-            <FaUserCog className={toggleDropdown?'activeIcon':'user-icon'}/>
-          </div>
+          {(!isAdmin && (
+            <div style={{marginTop:'10px'}} onClick={handleUserAccount}>
+              <FaUserCog className={toggleDropdown?'activeIcon':'user-icon'}/>
+            </div>
+          ))}
+
 
           {/* Hamburger  */}
           {!isAdmin  && (
@@ -193,14 +193,31 @@ function Navbar() {
             {mobileView && (<FaTimes className={mobileView?"active-menu":"hamburger-menu"}/>)}
           </div>
           )}
+           {/*For Admin Screen  */}
+          {isAdmin && (
+            <>
+              
+            <div className='admin-panel-heading'>
+            <div className='admin-panel-heading-divone'></div>
+             <span className='admin-icon'><FaUserShield/> </span> <h3> Admin Panel</h3>
+            </div>
+            </>
+          )}
+          {isAdmin && (
+            <div >
+            </div>
+          )}
+          {isAdmin && (
+            <div>
+            </div>
+          )}
 
-          {/* {hideMenuItems && (
-            
-             <GiHamburgerMenu  />
-          ) } */}
-
-          
-
+          {(isAdmin && (
+            <div style={{marginTop:'10px'}} onClick={handleUserAccount}>
+              <FaUserCog className={toggleDropdown?'activeIcon':'user-icon'}/>
+            </div>
+          ))} 
+        {/* Admin Screen ends here */}
           {toggleDropdown && (
             <ul className='dropdown' onClick={()=>setToggleDropDown(!toggleDropdown)}> 
               {(isUser || isAdmin) && (
@@ -236,9 +253,11 @@ function Navbar() {
 
         
         </Nav>
-          <Nav2>
-            <Category />
-          </Nav2>
+          {/* {!isAdmin && (
+            <Nav2>
+              <Category />
+            </Nav2>
+          )} */}
         
     </div>
   )
@@ -253,11 +272,48 @@ const Nav = styled.div`
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
   display: grid;
-  grid-template-columns: 4rem 1fr 3fr 5rem 5rem;
-  padding:0.5rem 0rem;
+  grid-template-columns: 2rem 9rem 4fr 1fr 4rem 4rem;
+  /* padding:0.5rem 0rem; */
   /* background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); */
   background: grey;
   margin-bottom: 0.5rem;
+
+  .main-menu-links{
+    @media (max-width:1000px) {
+      display: none;
+    }
+  }
+
+  .search-box{
+    margin-top: 0.4rem;
+  }
+
+  .user-icon{
+    display: flex;
+    margin: 0 auto;
+    align-items: center;
+    font-size: 1.8rem;
+    color: white;
+  }
+
+  .user-icon:hover{
+    cursor: pointer;
+    color:antiquewhite;
+  }
+
+  .cart{
+    /* grid-column: 6/6; */
+    display: flex;
+    margin: 0 auto;
+    align-items: center;
+    font-size: 1.8rem;
+    color: white;
+  }
+
+  .cart:hover{
+    cursor: pointer;
+    color:rgb(228, 218, 206);
+  }
   .menu{
     font-size: x-large;
     color: white;
@@ -269,25 +325,46 @@ const Nav = styled.div`
     }
   }
 
+  .admin-panel-heading{
+      margin: 0 auto;
+      color: white;
+      padding: 12px;
+      font-size: larger;
+      display: flex;
+  }
+  .admin-panel-heading-divone{
+      width:200px;
+      display:block;
+      @media (max-width:1000px) {
+        display: none;
+      }
+  }
+  .admin-icon{
+    transform: scale(1.5);
+    margin-top: 3px;
+    margin-right: 10px;
+  }
 /* responsive for mobiles */
 @media (max-width:1000px) {
-  grid-template-columns: 1rem 1fr 3fr 3rem 3rem 3rem;
+  grid-template-columns: 2rem 1fr 3fr 3rem 3rem 3rem;
+  padding:3px;
   
 }
 
 @media (max-width:600px) {
   grid-template-columns: 1rem 1fr 3fr 2rem 2rem 2rem;
+  padding:5px;
 }
 
 `;
 
-const Nav2 = styled.div`
-    top: 59px;
-    padding-left: 3rem;
-    position: relative;
-    display: grid;
-    background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); 
-`;
+// const Nav2 = styled.div`
+//     top: 59px;
+//     padding-left: 3rem;
+//     position: relative;
+//     display: grid;
+//     background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); 
+// `;
 
 const Logo= styled(Link)`
    display: flex;

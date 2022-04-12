@@ -1,4 +1,4 @@
-
+/* For CART PAGE*/
 .qty{
     width: 7rem;
     display: flex;
@@ -28,16 +28,6 @@ input[type=number]::-webkit-inner-spin-button {
     color:white;
 }
 
-.ViewCartDiv{
-    width: 90%;
-    background-color: #f7f7f7;
-    height: auto;
-    margin: auto;
-    box-shadow: 1px 2px 2px 1px #00000036;
-    margin-top: 5px;
-    text-align: center;
-    padding:2rem;
-}
 
 .remove-item-btn{
     border:1px solid red;
@@ -84,14 +74,7 @@ input[type=number]::-webkit-inner-spin-button {
     font-size: 1.2em;
     margin-top: 5px;
 }
-.items-receipt{
-    margin-top:30px;
-    text-align: left;   
-}
-.items-receipt img{
-    height:150px;
-    width:100px;
-}
+
 
 table {
     width: 100%;
@@ -114,6 +97,38 @@ tr td{
     padding: 6px;
 }
 
+  /* for responsiveness */
+@media (max-width:650px) {
+    h2{
+        font-size:unset;
+    }
+    .remove-item-btn{
+        padding: 5px 6px;
+        font-size: 1rem;
+    }
+    table {
+        font-size: 0.8rem;        
+    }
+    table thead{
+        font-size: 0.9rem;
+    }
+    .amount{
+        margin-right: 15px;
+        font-size: 1rem;
+        margin-top: 2px;
+        margin-right: -13%;
+    }
+    .checkout-btns .btns{
+        padding: 5px 6px;
+        border-radius: 3px;
+        font-size: 0.8rem;
+    }
+}
+
+
+
+/* FOR BOOKS PAGE */
+
 .dropdown-sidenav{
     z-index: 800;
     list-style: none;
@@ -133,7 +148,6 @@ tr td{
     
 }
 
-
 .refine-search{
     margin-bottom:3rem;
 }
@@ -152,33 +166,5 @@ tr td{
     display: flex;
     align-items: center;
     padding: 0.3rem;
-    border-radius: 5px ;
-  }
-/* for responsiveness */
-@media (max-width:650px) {
-    .remove-item-btn{
-        padding: 5px 6px;
-        font-size: 1rem;
-    }
-    .ViewCartDiv{
-        width: 100%;
-        padding:1rem;
-    }
-    table {
-        font-size: 0.8rem;        
-    }
-    table thead{
-        font-size: 0.9rem;
-    }
-    .amount{
-        margin-right: 15px;
-        font-size: 1rem;
-        margin-top: 2px;
-        margin-right: 17%;
-    }
-    .checkout-btns .btns{
-        padding: 5px 6px;
-        border-radius: 3px;
-        font-size: 0.8rem;
-    }
+    /* border-radius: 5px ; */
 }

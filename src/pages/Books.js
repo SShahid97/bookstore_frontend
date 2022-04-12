@@ -14,6 +14,7 @@ function Books() {
    const [sortByValue, setSortByValue] = useState('');
    const [isSliderOpen, setIsSliderOpen] = useState(false);
     useEffect(()=>{
+        window.scrollTo(0, 0);
         setTimeout(()=>{
             getBooksByCategory(params.cat);
         },2000)
@@ -21,24 +22,26 @@ function Books() {
 
     const getBooksByCategory = async (category)=>{
        const fetchedBooks = await User_Service.getBooksByCategory(category);
-       let discount = [];
-       discount[0]=0.2; discount[1]=0; discount[2]=0.4; 
-       discount[3]=0; discount[4]=0; discount[5]=0.1; discount[6]=0.6;
-       discount[7]=0; discount[8]=0.30; discount[9]=0.45; 
-   
-       fetchedBooks.forEach((book,index)=>{
-           if(discount[index] > 0){
-                book.discount = discount[index]*100 + "%";
-                book.newPrice = book.price - (book.price*discount[index]);
+        // console.log(fetchedBooks[0])
+       fetchedBooks.forEach((book)=>{
+           if(book.discount>0){
+                book.discountPercent = book.discount*100 + "%";
+                book.newPrice = book.price - (book.price* book.discount);
+           }
+           if(book.discount===0){
+                book.newPrice = book.price; 
            }
        });
        setTempBooks(fetchedBooks); 
        const booksReceived = await User_Service.getBooksByCategory(category);
-       booksReceived.forEach((book,index)=>{
-        if(discount[index] > 0){
-             book.discount = discount[index]*100 + "%";
-             book.newPrice = book.price - (book.price*discount[index]);
-        }
+       booksReceived.forEach((book)=>{
+            if(book.discount>0){
+                book.discountPercent = book.discount*100 + "%";
+                book.newPrice = book.price - (book.price* book.discount);
+            }
+            if(book.discount===0){
+                book.newPrice = book.price; 
+            }
         });
        setBooks(booksReceived);
        
@@ -56,20 +59,14 @@ function Books() {
             return;
         }
         if(value === 'increase'){
-            tempBooks.sort((a,b) => a.price - b.price);
+            tempBooks.sort((a,b) => a.newPrice - b.newPrice);
         }
         if(value === 'decrease'){
-            tempBooks.sort((a,b) => b.price - a.price);
+            tempBooks.sort((a,b) => b.newPrice - a.newPrice);
         }
-        // if(value === 'discount'){
-        //     tempBooks.sort((a,b) => {
-        //         if(a.discount && b.discount){
-        //             console.log(a,b);
-        //           return  a.discount - b.discount;
-        //         }
-        //         console.log(a,b);
-        //     });
-        // }
+        if(value === 'discount'){
+            tempBooks.sort((a,b) => b.discount - a.discount);
+        }
         
     }
    return (
@@ -133,8 +130,8 @@ function Books() {
       {tempBooks.map((book)=>{
           return (
               <Card key = {book._id}>
-                  {book.discount && (
-                    <span className='discount' >{book.discount}</span>
+                  {(book.discount>0) && (
+                    <span className='discount' >{book.discountPercent}</span>
                   )}
 
                   <Link to={"/book/"+book._id}>
@@ -142,12 +139,12 @@ function Books() {
                    <img src={require(`../../public/assets/images/${book.book_image}.jpg`)} alt={book.book_name} />
                     <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
                         <p>{book.book_name}</p>
-                        {!book.discount && (
+                        {(book.discount===0)  && (
                             <>
                             <span>&#8377;</span><span>{book.price}</span>
                             </>
                         )}
-                        {book.discount && (
+                        {(book.discount>0) && (
                             <>
                                 <p style={{textDecoration: 'line-through', opacity:'0.8'}}>&#8377;{book.price}</p>
                                 <p><span>&#8377; {book.newPrice}</span></p>

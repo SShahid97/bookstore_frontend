@@ -69,7 +69,7 @@ function Register() {
     }
     return (
         <div className="RegisterForm">
-            <FaUserPlus style={{fontSize: '8rem', marginTop:'2rem',color:'grey' }}/>
+            <FaUserPlus style={{fontSize: '8rem',color:'grey' }}/>
             <form className="form_" onSubmit={registerUser}>
                 <input
                     placeholder="Name"

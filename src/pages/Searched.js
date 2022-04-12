@@ -7,6 +7,7 @@ import Loader from '../components/Loader';
 
 function Searched() {
     const [searched, setSearched]= useState([]);
+    const [emptyCart, setEmptyCart]=useState(false);
     let params = useParams();
      useEffect(()=>{
         getSearched(params.search);
@@ -14,27 +15,53 @@ function Searched() {
 
      const getSearched = async (name)=>{
         const fetchedData = await User_Service.getSearched(name);
+        if(fetchedData.length === 0){
+            setEmptyCart(true);
+        }else{
+            setEmptyCart(false);
+        }
+        fetchedData.forEach((book)=>{
+            if(book.discount>0){
+                book.discountPercent = book.discount*100 + "%";
+                book.newPrice = book.price - (book.price* book.discount);
+           }
+        });
         setSearched(fetchedData);
      }
 
     return (
     <Grid>
-        {(searched.length < 1) && (<Loader />)}
-        { searched.length===0?<h3 style={{color:'red',textAlign:'center'}}>Sorry!! No results found</h3>: 
-            searched.map((book)=>{
+        {emptyCart && (
+            <h3 style={{color:'red',textAlign:'center'}}>Sorry!! No results found</h3>
+        )}
+        {/* {(searched.length < 1) && (<Loader />)} */}
+        {searched.map((book)=>{
                 return (
                  <Card key = {book._id}>
+                     {(book.discount>0) && (
+                        <span className='discount' >{book.discountPercent}</span>
+                     )}
                  <Link to={"/book/"+book._id}> 
                      <img src={require(`../../public/assets/images/${book.book_image}.jpg`)} alt={book.book_name} /> 
                      <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
                          <p>{book.book_name}</p>
-                         <span>Rs.</span><span>{book.price}</span>
+                         {(book.discount===0)  && (
+                            <>
+                            <span>&#8377;</span><span>{book.price}</span>
+                            </>
+                        )}
+                        {(book.discount>0) && (
+                            <>
+                            <p style={{textDecoration: 'line-through', opacity:'0.8'}}>&#8377;{book.price}</p>
+                            <p><span>&#8377; {book.newPrice}</span></p>
+                            </>
+                        )}
                      </div>
                  </Link> 
                  </Card>
                 );
              })
-        }
+        }    
         
     </Grid>
   )

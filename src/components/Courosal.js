@@ -52,9 +52,14 @@ function Courosal() {
   )
 }
 const Wrapper = styled.div`
-     margin: 0.3rem 0rem 4rem 0rem  !important;
+     /* margin: 0.3rem 0rem 4rem 0rem  !important; */
+     margin-bottom: 20px;
+    margin-top: -23px;
+    margin-left: -8px;
      @media (max-width:610px) {
-        margin: 0rem 0rem 1rem 0rem !important;   
+        /* margin: 0rem 0rem 1rem 0rem !important;    */
+       margin: -24px 0px 15px -3px !important;
+
      }
      .splide__arrow {
         width: 3rem;
@@ -81,7 +86,6 @@ const Card = styled.div`
     /* border:1px solid grey !important; */
     padding: 0.2rem;
     /* min-height:20rem; */
-    border-radius:0.8rem;
     overflow:hidden;
     position:relative;
     height:20rem;
@@ -91,7 +95,6 @@ const Card = styled.div`
     }
     img{
         /* height: 245px;; */
-        border-radius:0.5rem;
         left:0;
         width:100%;
         height: inherit;

@@ -26,6 +26,11 @@ function Book() {
     
     const getBookDetails = async (bookId)=>{
         const bookDetails = await User_Service.getBookDetails(bookId);
+        
+        if(bookDetails.discount>0){
+            bookDetails.discountPercent = bookDetails.discount*100 + "%";
+            bookDetails.newPrice = bookDetails.price - (bookDetails.price* bookDetails.discount);
+        }
         setDetails(bookDetails);
         let itmImageName = [{id:bookDetails._id ,image: bookDetails.book_image, name:bookDetails.book_name}];
         console.log(itmImageName);
@@ -106,6 +111,10 @@ function Book() {
            <Wrapper>
             <DetailWrapper>
                 <BookImg>
+                    {(bookDetails.discount>0) && (
+                        <span className='discount-badge' >{bookDetails.discountPercent}</span>
+                    )}
+
                     {bookImage.map((item)=>{   
                        return ( 
                         <img key={item.id} src={require(`../../public/assets/images/${item.image}.jpg`)} alt={item.name}/>
@@ -117,14 +126,26 @@ function Book() {
                 <Info>
                     <BookDetail>
                         <h2 className='heading-2'>{bookDetails.book_name}</h2>
-                        <h3 className='heading-3'> <span>Rs. </span>{bookDetails.price}</h3>
+                        <h5 style={{color:'#cb4e05'}}>by {bookDetails.book_author}</h5>
+                        {/* <h3 className='heading-3'> <span>Rs. </span>{bookDetails.price}</h3> */}
+                        {(bookDetails.discount===0)  && (
+                            <>
+                            <h3 className='heading-3'>&#8377;{bookDetails.price}</h3>
+                            </>
+                        )}
+                        {(bookDetails.discount>0) && (
+                            <>
+                                <h3 className='heading-3' style={{textDecoration: 'line-through', opacity:'0.8' }}>&#8377;{bookDetails.price}</h3>
+                                <h3 className='heading-3' >&#8377; {bookDetails.newPrice}</h3>
+                            </>
+                        )}
                     </BookDetail>
                     <BuyCartBtns >
                         <div className='buy-btn'>
                             <Button onClick={() => handleBuyNow(bookDetails)}>Buy Now</Button>
                         </div>     
                         <div >
-                            <Button onClick={() => handleAddToCart(bookDetails._id,bookDetails.price,)  }>Add to Cart</Button>
+                            <Button onClick={() => handleAddToCart(bookDetails._id,bookDetails.price)}>Add to Cart</Button>
                         </div>
               
                         <div className='quantity'>
@@ -236,6 +257,15 @@ const BookImg = styled.div`
     padding:10px;
     height: 22rem;
     border-radius: 5px;
+    .discount-badge{
+        position: absolute;
+        background: #e30606;
+        padding: 10px 5px;
+        border-radius: 50%;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
     @media (max-width:950px) {
         height:265px;
     }

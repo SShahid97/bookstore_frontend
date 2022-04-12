@@ -42,15 +42,17 @@ function AdminPanel() {
   
   return (
     <div>
-      {noAdmin && (<div>
-        <h3 className="pageNotFound">Sorry! Page Not Found</h3>
-      </div>)}
+      {noAdmin && (
+        <div>
+          <h3 className="pageNotFound">Sorry! Page Not Found</h3>
+        </div>
+      )}
 
       {!noAdmin && (
         <div className='navigation_btns'>
-        <button className={toggleViewItems ? 'activeBtn':'navBtns'} onClick={handleViewItems}>VIEW ALL ITMES</button>
-        <button className={toggleAddItem ? 'activeBtn':'navBtns'} onClick={handleAddItem}>ADD ITEM</button>
-        {/* <button className={toggleEditItem ? 'activeBtn':'navBtns'} onClick={handleEditItem}>EDIT ITEM</button> */}
+          <button className={toggleViewItems ? 'activeBtn':'navBtns'} onClick={handleViewItems}>VIEW ALL ITMES</button>
+          <button className={toggleAddItem ? 'activeBtn':'navBtns'} onClick={handleAddItem}>ADD ITEM</button>
+          {/* <button className={toggleEditItem ? 'activeBtn':'navBtns'} onClick={handleEditItem}>EDIT ITEM</button> */}
         </div>
       )}      
       {(toggleViewItems && !noAdmin) && (<ViewAllItems/>)}

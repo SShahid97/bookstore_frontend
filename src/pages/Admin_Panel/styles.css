@@ -48,7 +48,19 @@
     border-radius: 3px;
     outline:none;
 }
+.price-discount-fields{
+    display: flex;
+    width:65%;
+    margin:auto;
+}
 
+.price-div{
+    width:100%;
+}
+
+.discount-div{
+    width:100%;
+}
 .addItemBtn, .updateItemBtn{
     width:65% !important;
     background-color: blue;
@@ -77,7 +89,7 @@
 
 .navigation_btns{
     /* background: aqua; */
-    padding: 1rem;
+    /* padding: 1rem; */
     display: flex;
     justify-content: center;
 }

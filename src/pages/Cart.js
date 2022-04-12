@@ -101,152 +101,128 @@ function Cart() {
         }
         
     }
+  
     return (
-      <div className='ViewCartDiv'>
-      {/* <Grid>
+      <CartCard >
         {emptyCart && (
-            <div style={{padding:'30px'}}>
-                <h3 style={{color:'red'}}>Your Cart is Empty</h3>
+                <div style={{padding:'30px'}}>
+                    <h3 style={{color:'red'}} >Your Cart is Empty</h3>
+                </div>
+        )}  
+        {!emptyCart && (
+            <>
+            <h3 className='cart-heading'>Your Cart Items</h3>
+            <div className='cart-div-inner'>
+                <div className='cart-items-div'>  
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Book</th>
+                            <th>Name</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        { 
+                        cartItems.map((item,index) => {     
+                        return (
+                            <tbody key={item._id}>
+                            <tr>
+                            <td>{i++}</td>
+                            <td>
+                            <img src={require(`../../public/assets/images/${item.book.book_image}.jpg`)} alt={item.book.book_name} />
+                            </td>
+                            <td>{item.book.book_name}</td>
+                            <td>
+                                {quantity[index]}  
+                                <div className='qty'>
+                                    <input className='qty-input' type="number" min={1} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
+                                    <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
+                                </div> 
+                            </td>
+                            <td>Rs. {item.price}</td>
+                            <td>Rs. {item.quantity*item.price}</td>
+                            <td>
+                                <div className='remove-item'>
+                                    <button className='remove-item-btn' onClick={() => handleRemoveItem(item._id,index) }>Remove</button> 
+                                </div>
+                            </td>
+                            </tr>
+                            </tbody>
+                        )
+                        })}
+                    <tbody>
+                            <tr style={{background:'#b3a9346b'}}>
+                            <td></td> 
+                            <td></td> 
+                            <td></td> 
+                            <td colSpan="2"><b>Delivery Charges:</b></td> 
+                            <td>Rs. 100</td>
+                            <td></td> 
+                            </tr>
+                        </tbody>
+                    </table>
+                <div className='amount'>
+                    <strong>Total Amount: </strong><b>Rs. {totalAmount+100}</b>
+                </div>
+                </div>    
+        
+                {/* Buttons */}
+                <div className='checkout-btns'>
+                    <button className='btns'>Continue Shopping</button>
+                    <button className='btns'>Checkout</button>
+                </div>
             </div>
-        )}     
-        {!emptyCart && cartItems.map((item)=>{
-        return (
-            <Card key = {item._id}>
-                   <img src={require(`../../public/assets/images/${item.book.book_image}.jpg`)} alt={item.book.book_name} />
-                    <div style={{marginLeft:'0.3rem', marginTop:'0.5rem', textAlign:'left'}}>
-                        <p>{item.book.book_name}</p>
-                        <span>Rs.</span><span>{item.book.price}</span>
-                    </div>
-                    <div className='remove-item'>
-                        <button className='remove-item-btn' onClick={() => handleRemoveItem(item._id) }>Remove</button> 
-                    </div>
-                   
-            </Card>
-        )
-       })
-      }
-      </Grid> */}
-
-      {/* items total price receipt */}
-      {emptyCart && (
-            <div style={{padding:'30px'}}>
-                <h3 style={{color:'red'}}>Your Cart is Empty</h3>
-            </div>
-      )}  
-      {!emptyCart && (
-          <>
-          <h3>Your Cart Items</h3>
-          <div className='items-receipt'>  
-          <table>
-            <thead>
-            <tr>
-              <th>S.No.</th>
-              <th>Book</th>
-              <th>Name</th>
-              <th>Qty</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th>Action</th>
-            </tr>
-            </thead>
-            { 
-              cartItems.map((item,index) => {     
-              return (
-                <tbody key={item._id}>
-                <tr>
-                  <td>{i++}</td>
-                  <td>
-                  <img src={require(`../../public/assets/images/${item.book.book_image}.jpg`)} alt={item.book.book_name} />
-                  </td>
-                  <td>{item.book.book_name}</td>
-                  <td>
-                    {quantity[index]}  
-                    <div className='qty'>
-                        <input className='qty-input' type="number" min={1} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
-                        <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
-                    </div> 
-                  </td>
-                  <td>Rs. {item.price}</td>
-                  <td>Rs. {item.quantity*item.price}</td>
-                  <td>
-                    <div className='remove-item'>
-                        <button className='remove-item-btn' onClick={() => handleRemoveItem(item._id,index) }>Remove</button> 
-                    </div>
-                  </td>
-                </tr>
-                </tbody>
-              )
-            })}
-           <tbody>
-                <tr style={{background:'#b3a9346b'}}>
-                   <td></td> 
-                   <td></td> 
-                   <td></td> 
-                   <td colSpan="2"><b>Delivery Charges:</b></td> 
-                   <td>Rs. 100</td>
-                   <td></td> 
-                </tr>
-            </tbody>
-          </table>
-          <div className='amount'>
-            <strong>Total Amount: </strong><b>Rs. {totalAmount+100}</b>
-          </div>
-          </div>    
-    
-          {/* Buttons */}
-          <div className='checkout-btns'>
-            <button className='btns'>Continue Shopping</button>
-            <button className='btns'>Checkout</button>
-          </div>
-          </>
-      )}
-      </div>
+            </>
+        )}
+      </CartCard>
   )
 }
 
-const Grid = styled.div`
-    margin-top: 1rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(13.5rem,1fr));
-    grid-gap:1rem;
-
-    /* responsive for mobiles */
-    @media (max-width:650px) {
-        grid-template-columns: repeat(auto-fit, minmax(8rem,1fr));
+const CartCard = styled.div`
+    width: 80%;
+    background-color: #f7f7f7;
+    height: auto;
+    margin: auto;
+    box-shadow: 1px 2px 2px 1px #00000036;
+    margin-top: 5px;
+    text-align: center;
+    @media (max-width:850px) {
+            width: 100%;
     }
-`;
-
-const Card = styled.div`
-    border:1px solid grey !important;
-    padding: 0.2rem;
-    min-height:20rem;
-    border-radius:5px;
-    overflow:hidden;
-    position:relative;
-     /* responsive for mobiles */
-     @media (max-width:650px) {
-        height:9rem;
-     }
-    &:hover{
-        border:1px solid black !important;
-        opacity: 0.9;
+    .cart-heading{
+        padding: 10px;
+        background: #8080808f;
+        color: white;
+        font-weight: 600;
     }
-    img{
-        height: 245px;
-        border-radius:0.8rem;
-        left:0;
-        width:100%;
-        @media (max-width:650px) {
-            height:200px;
-            border-radius:5px;
+    .cart-div-inner{
+        padding:30px;
+    }
+    .cart-items-div{
+        text-align: left;
+        @media (max-width:620px){
+            overflow-x: scroll !important;
+            width: 525px !important;
+            display: block !important;
+        } 
+        @media (max-width:590px){
+            overflow-x: scroll !important;
+            width: 400px !important;
+            display: block !important;
         }
+        @media (max-width:440px){
+            overflow-x: scroll !important;
+            width: 300px !important;
+            display: block !important;
+        }  
     }
-    span{
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-        font-size:medium;
-    }
-    p{
-        font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    .cart-items-div img{
+        height:150px;
+        width:100px;
     }
 `;
 export default Cart

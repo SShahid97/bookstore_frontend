@@ -16,6 +16,12 @@ function Popular (){
 
     const getPopular = async()=>{
         const fetchedData = await User_Service.getPopular();
+        fetchedData.forEach((book)=>{
+            if(book.discount>0){
+                book.discountPercent = book.discount*100 + "%";
+                book.newPrice = book.price - (book.price* book.discount);
+           }
+        });
         setPopular(fetchedData);
     }
     return (
@@ -52,12 +58,25 @@ function Popular (){
                 return (
                     <SplideSlide key={book._id}>
                     <Card>
+                        {(book.discount>0) && (
+                            <span className='discount' >{book.discountPercent}</span>
+                        )}
                        <Link to={"/book/"+book._id}> 
                             {/* <p>{book.book_name}</p>  */}
                             <img src={require(`../../public/assets/images/${book.book_image}.jpg`)} alt={book.book_name} /> 
                             <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
                                 <p>{book.book_name}</p>
-                                <span>Rs.</span><span>{book.price}</span>
+                                {(book.discount===0)  && (
+                                    <>
+                                    <span>&#8377;</span><span>{book.price}</span>
+                                    </>
+                                )}
+                                {(book.discount>0) && (
+                                    <>
+                                        <p style={{textDecoration: 'line-through', opacity:'0.8'}}>&#8377;{book.price}</p>
+                                        <p><span>&#8377; {book.newPrice}</span></p>
+                                    </>
+                                )}
                             </div>
                        </Link>
                     </Card>
