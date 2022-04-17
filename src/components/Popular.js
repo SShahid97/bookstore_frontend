@@ -73,8 +73,8 @@ function Popular (){
                                 )}
                                 {(book.discount>0) && (
                                     <>
-                                        <p style={{textDecoration: 'line-through', opacity:'0.8'}}>&#8377;{book.price}</p>
-                                        <p><span>&#8377; {book.newPrice}</span></p>
+                                        <span>&#8377; {book.newPrice}</span>
+                                        <span className='old-price'>&#8377;{book.price}</span>
                                     </>
                                 )}
                             </div>
@@ -109,6 +109,13 @@ const Card = styled.div`
     border-radius:5px;
     overflow:hidden;
     position:relative;
+    .old-price{
+        text-decoration: line-through; 
+        font-size: 0.9rem;
+        margin-left: 8px;
+        color: #cf0000;
+        font-family: sans-serif;
+    }
     &:hover{
         /* border:1px solid black !important; */
         box-shadow: 3px 6px 4px 2px #00000050;

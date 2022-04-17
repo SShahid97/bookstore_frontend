@@ -37,8 +37,8 @@ export const User_Service = {
         return data;
     },
 
-    getSearched: async (name)=>{
-        const response = await fetch(`${books_url}/search?search=${name}`);
+    getSearched: async (searchKey)=>{
+        const response = await fetch(`${books_url}/search?search=${searchKey}`);
         const data = await response.json();
         return data;
         

@@ -8,7 +8,7 @@ function Search() {
     const [showClose, setShowClose]=useState(false);
     const navigate = useNavigate();
     const submitHandler = (e)=>{
-        navigate("/search/"+input);
+        navigate("/books/search_"+input);
         e.preventDefault();
     }
 
@@ -73,7 +73,7 @@ const FormStyle = styled.form`
         border:none;
         outline:none;
         width:98%;
-        border-radius: 5px;
+        border-radius: 2px;
         @media (max-width: 850px){
             font-size:1rem;
             width:80%;

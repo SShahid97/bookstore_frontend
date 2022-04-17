@@ -8,16 +8,10 @@ import Login from './LogIn_Out/Login';
 import AdminPanel from './Admin_Panel/AdminPanel';
 import UserAccount from './UserAccount/UserAccount';
 import Checkout from './Check_Out/Checkout';
-
 import Searched from './Searched';
 import Book from './Book';
-import EditItem from './Admin_Panel/EditItem';
 import Cart from './Cart';
-import AddItem from './Admin_Panel/AddItem';
-import ViewAllItems from './Admin_Panel/ViewAllItems';
 
-// import ItemDetail from "./Kami/ItemDetail"
-// import Shop from "./Kami/Shop"
 function Pages() {
   return (
       <Routes>

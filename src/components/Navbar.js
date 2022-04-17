@@ -301,7 +301,7 @@ const Logo= styled(Link)`
     transform:scale(2);
     color: rgb(255 116 30);
     @media (max-width:600px){
-      transform:scale(1);
+      transform:scale(1.1);
     }
   }
   .logo-text{
@@ -311,6 +311,7 @@ const Logo= styled(Link)`
       font-size: medium;
       font-family: monospace;
       padding-left:0px;
+      transform: scaleY(1.5);
     }
   }
 

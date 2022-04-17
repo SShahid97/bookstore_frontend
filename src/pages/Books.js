@@ -7,22 +7,56 @@ import {User_Service} from '../services/Service';
 import Filters from '../components/Filters';
 import {BsSliders} from "react-icons/bs";
 
-
-
 function Books() {
    let params = useParams();
    const [books, setBooks]=useState([]);
    const [tempBooks, setTempBooks]= useState([]);
    const [sortByValue, setSortByValue] = useState('');
    const [openSideNav,setOpenSideNav] = useState(false);
+   const [searchKeyword, setSearchKeyword] = useState("");
 //    const [isSliderOpen, setIsSliderOpen] = useState(false);
    
     useEffect(()=>{
+        console.log(params.cat)
+
+        // const searchKeyword = params.cat.substring(7);
         window.scrollTo(0, 0);
         setTimeout(()=>{
-            getBooksByCategory(params.cat);
+            if(params.cat.substring(0, 7) === "search_"){  
+                console.log(params.cat.substring(7))
+                setSearchKeyword(params.cat.substring(7))  
+                getSearched(searchKeyword);
+            }else{
+                getBooksByCategory(params.cat);
+            }
         },1000)
-    },[params.cat]);
+    },[params.cat,searchKeyword]);
+
+    const getSearched = async (searchKey)=>{
+        const fetchedData = await User_Service.getSearched(searchKey);
+        fetchedData.forEach((book)=>{
+            if(book.discount>0){
+                book.discountPercent = book.discount*100 + "%";
+                book.newPrice = book.price - (book.price* book.discount);
+           }
+           if(book.discount===0){
+                book.newPrice = book.price; 
+            }
+        });
+        setTempBooks(fetchedData);
+        
+        const fetchedData_2 = await User_Service.getSearched(searchKey);
+        fetchedData_2.forEach((book)=>{
+            if(book.discount>0){
+                book.discountPercent = book.discount*100 + "%";
+                book.newPrice = book.price - (book.price* book.discount);
+           }
+           if(book.discount===0){
+                book.newPrice = book.price; 
+            }
+        });
+        setBooks(fetchedData_2);
+    }
 
     const getBooksByCategory = async (category)=>{
        const fetchedBooks = await User_Service.getBooksByCategory(category);
@@ -105,7 +139,7 @@ function Books() {
             <div>
                 <strong> {tempBooks.length} results found </strong>
             </div>
-            <div>
+            <div className='sortbydiv'>
                <strong>Sort by</strong>&nbsp; 
                 <span>
                 <select className='sort-by'
@@ -124,6 +158,7 @@ function Books() {
         </Top> 
         )}
     <Grid>
+        {/* <Searched/> */}
       {tempBooks.map((book)=>{
           return (
               <Card key = {book._id}>
@@ -143,8 +178,8 @@ function Books() {
                         )}
                         {(book.discount>0) && (
                             <>
-                                <p style={{textDecoration: 'line-through', opacity:'0.8'}}>&#8377;{book.price}</p>
-                                <p><span>&#8377; {book.newPrice}</span></p>
+                                <span>&#8377; {book.newPrice}</span>
+                                <span className='old-price'>&#8377;{book.price}</span>
                             </>
                         )}
                     </div>
@@ -174,17 +209,30 @@ const Top = styled.div`
         cursor: pointer;
         outline:none;
     }
+    @media (max-width:600px){
+        font-size: 0.8rem;
+        .sortbydiv{
+            text-align: -webkit-center;
+        }
+        .sort-by{
+            width: 96px;
+        }
+
+    }
 `;
 const Grid = styled.div`
-    /* margin-top: 1rem; */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(11rem,1fr));
     grid-gap:1rem;
+    @media (max-width:600px){
+        /* margin-top: 1rem; */
+    }
+
 `;
 
 const SliderrIcon = styled.div`
      display:none;
-     height:38px;
+     height:34px;
      .dropdown-sidenav{
         color:white;
         z-index: 800;
@@ -222,6 +270,13 @@ const SliderrIcon = styled.div`
             margin-top: 0px;
             border: 1px solid grey;
             border-radius: 3px;
+     }
+
+     @media (max-width:600px){
+        padding: 2px;
+        font-size: 1.6rem;
+        margin-top: 3px;
+        border-radius: 2px;
      }
 `; 
 const Wrapper = styled.div`
@@ -297,7 +352,13 @@ const Card = styled.div`
         padding: 10px 5px;
         border-radius: 50%;
         color:white;
-
+    }
+    .old-price{
+        text-decoration: line-through; 
+        font-size: 0.9rem;
+        margin-left: 8px;
+        color: #cf0000;
+        font-family: sans-serif;
     }
     &:hover{
         /* border:1px solid black !important; */
