@@ -43,8 +43,7 @@ function Search() {
 }
 
 const FormStyle = styled.form`
-    display: grid;
-    width: max-content;
+    width: 100%;
     .close-icon{
         position: absolute;
         margin-left: -38px;
@@ -73,14 +72,16 @@ const FormStyle = styled.form`
         padding:0.4rem 2.5rem;
         border:none;
         outline:none;
-        width:65%;
+        width:98%;
         border-radius: 5px;
         @media (max-width: 850px){
             font-size:1rem;
+            width:80%;
         }
         @media (max-width: 550px){
             font-size:0.9rem;
             padding:0.4rem 2rem;
+            width:70%;
         }
         
     }

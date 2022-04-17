@@ -45,7 +45,7 @@ function ReviewOrder({setIsPayment, setIsReviewOrder, setIsBilling, itemToBuy}) 
                     <tr>
                     <td>
                     {bookImage.map((itm)=>{
-                        return <img key={itm.id} src={require(`../../../public/assets/images/${itm.image}.jpg`)} alt={itm.name} />
+                        return <img key={itm.id} src={require(`../../../public/assets/images/${itm.image}`)} alt={itm.name} />
                     })}
                     
                     </td>

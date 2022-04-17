@@ -91,7 +91,10 @@ function Category() {
         </MainLinks>   
         <MainLinks>
             <h4>Science </h4><span className='angle-down'><FaAngleDown /></span>
-        </MainLinks>   
+        </MainLinks>
+        <MainLinks>
+            <h4>Others </h4><span className='angle-down'><FaAngleDown /></span>
+        </MainLinks>    
     </List>
   )
 }

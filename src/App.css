@@ -105,7 +105,27 @@
 .container{
   display:flex;
 }
-
+.clear-filter-btn{
+  padding: 0.3rem 1.2rem;
+  background: white;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  border:1px solid grey;
+  font-size:1.1rem;
+}
+.clear-filter-btn:hover{
+  cursor: pointer;
+  background: black;
+  color: white;
+}
+.price-range{
+  cursor: pointer;
+  width:95%;
+}
+.discount-range{
+  cursor: pointer;
+  width:95%
+}
 /* .pages{
   width:fit-content;
 } */

@@ -129,16 +129,14 @@ tr td{
 
 /* FOR BOOKS PAGE */
 
-.dropdown-sidenav{
+/* .dropdown-sidenav{
     z-index: 800;
     list-style: none;
     position: absolute;
     top:70px;
     left:45px;
-    width:90%;
-    /* height:100vh;
-     */
-     height:calc(100% - 36px);
+    width:85%;
+    height:calc(100% - 36px);
     border-radius: 3px;
     background: white;
     padding:0.7rem;
@@ -146,7 +144,7 @@ tr td{
     padding: 10px;
     border: 1px solid #808080a3;
     
-}
+} */
 
 .refine-search{
     margin-bottom:3rem;
@@ -155,11 +153,11 @@ tr td{
     color:#e70000f2;
     font-weight: 500;
 }
-@media (min-width:850px) {
+/* @media (min-width:850px) {
     .dropdown-sidenav{
         display: none;
     }
-}
+} */
 .dropdown-item{
     color:white;
     height: 40px;

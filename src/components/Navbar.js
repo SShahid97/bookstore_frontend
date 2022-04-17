@@ -21,6 +21,7 @@ import {
   FaChalkboardTeacher,
   FaShoppingCart,
   FaUserShield } from "react-icons/fa";
+
 function Navbar() {
     const [mobileView, setmobileView] = useState(false);
     const [toggleDropdown, setToggleDropDown] = useState(false);
@@ -110,6 +111,13 @@ function Navbar() {
       }
     }
 
+  //  const LoginTimedOut = setTimeout(()=>{
+  //     if(!isLoggedOut){
+  //       console.log("sucessfully logged out");
+  //       logout();
+  //     }
+  //  },86400000);    //timer for 24 hours
+
     // isUser,isAdmin
     function logout(){
       setIsUser(false);
@@ -118,6 +126,8 @@ function Navbar() {
       setCartItemsLength(0);
       localStorage.removeItem("user");
       localStorage.removeItem("cart");
+      // clearTimeout(LoginTimedOut);
+      
       // window.location.reload();
       navigate("/");
     }
@@ -144,10 +154,12 @@ function Navbar() {
     <div>
        {/* Nav Bar */}
        <Nav>
-          <Logo to={"/"} >
-            <SiElasticsearch style={{transform:'scale(2)',color: 'rgb(255 116 30)'}} />
-            <span style={{paddingLeft:'5px',color: 'rgb(247 227 81)' }}>BookStore</span> 
-          </Logo>
+          {!isAdmin && (
+            <Logo to={"/"} >
+            <SiElasticsearch className='logo-icon' />
+              <span className='logo-text'>BookStore</span> 
+            </Logo>
+          )}
         
           {!isAdmin && (
             <div className='main-menu-links'>
@@ -193,7 +205,15 @@ function Navbar() {
             {mobileView && (<FaTimes className={mobileView?"active-menu":"hamburger-menu"}/>)}
           </div>
           )}
+
            {/*For Admin Screen  */}
+           {isAdmin && (
+            <Logo to={"/admin-panel/viewallitems"} >
+              <SiElasticsearch className='logo-icon' />
+              <span className='logo-text'>BookStore</span> 
+            </Logo>
+          )}
+
           {isAdmin && (
             <>
               
@@ -264,15 +284,45 @@ function Navbar() {
 }
 
 
+const Logo= styled(Link)`
+   display: flex;
+  /* background-color: #3b5998; */
+  grid-column: 2/3;
+  justify-content: start;
+  align-items: center;
+
+  color:white;
+  text-decoration: none;
+  font-size: 1.3rem;
+  font-weight: 400;
+  font-family: 'Lobester Two', cursive;
+
+  .logo-icon{
+    transform:scale(2);
+    color: rgb(255 116 30);
+    @media (max-width:600px){
+      transform:scale(1.2);
+    }
+  }
+  .logo-text{
+    padding-left:5px;
+    color: rgb(247 227 81);
+    @media (max-width:600px){
+      font-size: medium;
+    }
+  }
+
+`;
 const Nav = styled.div`
   width: -webkit-fill-available;
+  width: -moz-available;
   top:0;
   position: fixed;
   z-index: 1000; 
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
   display: grid;
-  grid-template-columns: 2rem 9rem 4fr 1fr 4rem 4rem;
+  grid-template-columns: 2rem 9rem 4fr 12rem 4rem 4rem;
   /* padding:0.5rem 0rem; */
   /* background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); */
   background: grey;
@@ -354,6 +404,7 @@ const Nav = styled.div`
 @media (max-width:600px) {
   grid-template-columns: 1rem 1fr 3fr 2rem 2rem 2rem;
   padding:5px;
+
 }
 
 `;
@@ -366,19 +417,6 @@ const Nav = styled.div`
 //     background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); 
 // `;
 
-const Logo= styled(Link)`
-   display: flex;
-  /* background-color: #3b5998; */
-  grid-column: 2/3;
-  justify-content: start;
-  align-items: center;
-
-  color:white;
-  text-decoration: none;
-  font-size: 1.3rem;
-  font-weight: 400;
-  font-family: 'Lobester Two', cursive;
-`;
 
 const NavLinks = styled(NavLink)`
  /* background: grey; */

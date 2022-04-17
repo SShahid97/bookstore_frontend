@@ -117,7 +117,7 @@ function Book() {
 
                     {bookImage.map((item)=>{   
                        return ( 
-                        <img key={item.id} src={require(`../../public/assets/images/${item.image}.jpg`)} alt={item.name}/>
+                        <img key={item.id} src={require(`../../public/assets/images/${item.image}`)} alt={item.name}/>
                        )
                     })} 
                     {/* <img src={require("./css_0004_img.jpg")} alt={bookDetails.book_name}/> */}

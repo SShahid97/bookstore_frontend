@@ -12,6 +12,7 @@ function Login() {
     const [inputs, setInputs] = useState({});
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const [invalidCredentails,setInvalidCredentials] = useState(false);
 
 
     const handleChange = (event) => {
@@ -45,7 +46,7 @@ function Login() {
             localStorage.setItem("user", JSON.stringify(user));
             if(user.role === "admin"){
               console.log("admin")
-              navigate("/admin-panel")
+              navigate("/admin-panel/viewallitems")
               return;
             }
             getCartItems();
@@ -53,6 +54,7 @@ function Login() {
             navigate(-1);   //redirect back to previous page (url/link)   
         }
         else if (response.status === 400) {
+            setInvalidCredentials(true);
             console.log("There was some error: ",response.statusText)
         }
     }  
@@ -96,6 +98,7 @@ function Login() {
           required 
           onChange={handleChange}
         />
+        
         {showPassword && (
           <FaEye onClick={showHidePassword} style={eyeStyle}/>
         )}
@@ -103,6 +106,11 @@ function Login() {
            <FaEyeSlash onClick={showHidePassword} style={eyeStyle}/>
         )}
        
+       {invalidCredentails && (
+          <div className='pass-match-error'>
+              <p>Please enter valid Login Credentials!</p>
+          </div>
+        )}
          <input className="loginBtn" type="submit" value="Login" /><br/>
         <span className="forgot"><Link to={"#"}>forgot password?</Link></span><br/><br/>
         <div className="notReg">

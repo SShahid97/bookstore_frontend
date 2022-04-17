@@ -13,6 +13,8 @@ import Searched from './Searched';
 import Book from './Book';
 import EditItem from './Admin_Panel/EditItem';
 import Cart from './Cart';
+import AddItem from './Admin_Panel/AddItem';
+import ViewAllItems from './Admin_Panel/ViewAllItems';
 
 // import ItemDetail from "./Kami/ItemDetail"
 // import Shop from "./Kami/Shop"
@@ -25,9 +27,9 @@ function Pages() {
         <Route path="/book/:id" element={<Book/>} />
         <Route path="/register" element={<Register/>} />
         <Route path="/login" element={<Login/>} />
-        <Route path="/admin-panel" element={<AdminPanel/>} />
+        <Route path="/admin-panel/:name" element={<AdminPanel/>} />
         <Route path="/user/account" element={<UserAccount/>} />
-        <Route path="/edit-item/:id" element={<EditItem/>} />
+        {/* <Route path="/edit-item/:id" element={<EditItem/>} /> */}
         <Route path="/cart/:id" element={<Cart/>} />
         <Route path="/checkout" element={<Checkout/>} />
 

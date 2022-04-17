@@ -121,7 +121,7 @@ function Cart() {
                             <th>Book</th>
                             <th>Name</th>
                             <th>Qty</th>
-                            <th>Price</th>
+                            <th>Price(in &#8377;)</th>
                             <th>Amount</th>
                             <th>Action</th>
                         </tr>
@@ -133,7 +133,7 @@ function Cart() {
                             <tr>
                             <td>{i++}</td>
                             <td>
-                            <img src={require(`../../public/assets/images/${item.book.book_image}.jpg`)} alt={item.book.book_name} />
+                            <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
                             </td>
                             <td>{item.book.book_name}</td>
                             <td>
@@ -143,8 +143,8 @@ function Cart() {
                                     <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
                                 </div> 
                             </td>
-                            <td>Rs. {item.price}</td>
-                            <td>Rs. {item.quantity*item.price}</td>
+                            <td>&#8377;{item.price}</td>
+                            <td>&#8377;{item.quantity*item.price}</td>
                             <td>
                                 <div className='remove-item'>
                                     <button className='remove-item-btn' onClick={() => handleRemoveItem(item._id,index) }>Remove</button> 
@@ -160,13 +160,13 @@ function Cart() {
                             <td></td> 
                             <td></td> 
                             <td colSpan="2"><b>Delivery Charges:</b></td> 
-                            <td>Rs. 100</td>
+                            <td>&#8377;100</td>
                             <td></td> 
                             </tr>
                         </tbody>
                     </table>
                 <div className='amount'>
-                    <strong>Total Amount: </strong><b>Rs. {totalAmount+100}</b>
+                    <strong>Total Amount: </strong><b>&#8377;{totalAmount+100}</b>
                 </div>
                 </div>    
         

@@ -63,7 +63,7 @@ function Popular (){
                         )}
                        <Link to={"/book/"+book._id}> 
                             {/* <p>{book.book_name}</p>  */}
-                            <img src={require(`../../public/assets/images/${book.book_image}.jpg`)} alt={book.book_name} /> 
+                            <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} /> 
                             <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
                                 <p>{book.book_name}</p>
                                 {(book.discount===0)  && (

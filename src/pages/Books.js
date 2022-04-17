@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import {Link, useParams} from 'react-router-dom';
 import Loader from '../components/Loader';
 import {User_Service} from '../services/Service';
-import {BsSliders} from "react-icons/bs"
+import Filters from '../components/Filters';
+import {BsSliders} from "react-icons/bs";
+
 
 
 function Books() {
@@ -12,14 +14,13 @@ function Books() {
    const [books, setBooks]=useState([]);
    const [tempBooks, setTempBooks]= useState([]);
    const [sortByValue, setSortByValue] = useState('');
-   const [isSliderOpen, setIsSliderOpen] = useState(false);
-   const [priceRange, setPriceRange] = useState(100);
-   const [discountRange, setDiscountRange] = useState(0.1);
+//    const [isSliderOpen, setIsSliderOpen] = useState(false);
+   
     useEffect(()=>{
         window.scrollTo(0, 0);
         setTimeout(()=>{
             getBooksByCategory(params.cat);
-        },2000)
+        },1000)
     },[params.cat]);
 
     const getBooksByCategory = async (category)=>{
@@ -49,9 +50,6 @@ function Books() {
        
     }
 
-    const handleSliderIcon = ()=>{
-        setIsSliderOpen(!isSliderOpen);
-    }
     ///// Filtering  Starts//////// 
     const handleSortBy = (e)=>{
         let value = e.target.value;
@@ -71,95 +69,32 @@ function Books() {
         }
         
     }
-    const handlePriceRange = (e)=>{
-        // console.log(e.target.value);
-        setPriceRange(e.target.value);
-    }
-    const handleDiscountRange = (e)=>{
-        setDiscountRange(e.target.value)
-    }
-    const onPriceRange = (e)=>{
-        const tempPriceRange = [];
-        books.map((book)=>{
-            if(book.newPrice < e.target.value){
-                tempPriceRange.push(book);
-            }
-            
-        })
-        setTempBooks(tempPriceRange);
-    }
-    const onDiscountRange = (e)=>{
-        const tempDiscountRange = [];
-        books.map((book)=>{
-            if(book.discount>0){
-                if(book.discount < e.target.value){
-                    tempDiscountRange.push(book)
-                }
-            }
-        })
-        tempDiscountRange.sort((a,b) => b.discount - a.discount);
-        setTempBooks(tempDiscountRange);
-    }
-    ////Filtering Ends//////
-    const handleClearFilter = ()=>{
-        setTempBooks(books);
-    }
 
    return (
     <Wrapper>
 
     <SideNav>
-        <h3>Refine your search</h3>
-        <div className='refine-search'>
-            <p>Price Under:&nbsp; <span> &#8377;{priceRange}</span> </p>
-            <input className='price-range' type="range" value={priceRange} min={100} max={2000} onChange={handlePriceRange} onMouseUp={onPriceRange}/>
-            <div style={{display:'flex', justifyContent:'space-between', width:'95%'}}>
-                <div>
-                &#8377;100
-                </div>
-                <div>
-                &#8377;2000
-                </div>
-            </div>    
-        </div>
-        <div className='refine-search'>
-            <p>Discount Under: &nbsp;<span>{discountRange*100}%</span> </p>
-            <input className='discount-range' type="range" min={0.1} value={discountRange} step={0.05} max={0.9} onChange={handleDiscountRange} onMouseUp={onDiscountRange}/>
-            <div style={{display:'flex', justifyContent:'space-between', width:'95%'}}>
-                <div>
-                &#8377;10%
-                </div>
-                <div>
-                &#8377;90%
-                </div>
-            </div>
-        </div>
-        <div style={{textAlign:'center'}}>
-            <button className='clear-filter-btn' onClick={handleClearFilter}>Clear Filters</button>
-
-        </div>
-        <hr/>
         <div>
-            <h4>Language</h4>
-        </div>
-    </SideNav>
-    <BsSliders className='slider-icon' onClick={handleSliderIcon}/>
-    {isSliderOpen && (
-        <div className='dropdown-sidenav'>
-            <h3>Refine your search</h3>
-            <div className='refine-search'>
-                <p>Price Range:<span> &#8377;0-&#8377;5000</span> </p>
-            </div>
-            <div className='refine-search'>
-            <p>Discount Range:<span> 0%-70%</span> </p>
-            </div>
-
+            <Filters books={books} setTempBooks={setTempBooks} />
             <hr/>
             <div>
                 <h4>Language</h4>
             </div>
         </div>
-    )}
+        
+    </SideNav>
+    <SliderrIcon>
+        <BsSliders />
+    {/* {isSliderOpen && ( */}
+        <div className='dropdown-sidenav'>
+           <Filters books={books} setTempBooks={setTempBooks} />  
+            <hr/>
+            <div>
+                <h4>Language</h4>
+            </div>
+        </div>
+    </SliderrIcon>
+    {/* )} */}
     <Main>
         {(tempBooks.length < 1) && (<Loader/>)} 
         {(tempBooks.length > 1) && (
@@ -195,7 +130,7 @@ function Books() {
 
                   <Link to={"/book/"+book._id}>
                       
-                   <img src={require(`../../public/assets/images/${book.book_image}.jpg`)} alt={book.book_name} />
+                   <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
                     <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
                         <p>{book.book_name}</p>
                         {(book.discount===0)  && (
@@ -243,18 +178,36 @@ const Grid = styled.div`
     grid-template-columns: repeat(auto-fit, minmax(11rem,1fr));
     grid-gap:1rem;
 `;
-const Wrapper = styled.div`
-     display: grid;
-     grid-template-columns: 1fr 4fr;
-     .slider-icon{
-         display:none;
-     }
-     .slider-icon:hover{
-         cursor: pointer;
-         background: #d4dbe1e3;
+
+const SliderrIcon = styled.div`
+     display:none;
+     height:38px;
+     .dropdown-sidenav{
+        color:white;
+        z-index: 800;
+        list-style: none;
+        position: absolute;
+        top:70px;
+        left:42px;
+        width:65%;
+        border-radius: 3px;
+        background: #a9a9a9;
+        padding:0.7rem;
+        overflow: hidden; 
+        padding: 10px;
+        border: 1px solid #808080a3;
+        display:none;
+    }
+
+     &:hover{
+        cursor: pointer;
+        background: #d4dbe1e3;
+        .dropdown-sidenav{
+             display:block;
+             font-size:0.9rem;
+        }
      }
      @media (max-width:850px) {
-        .slider-icon{
             display: inline-block;
             background: #d4dbe1;
             padding: 3px;
@@ -262,8 +215,20 @@ const Wrapper = styled.div`
             margin-top: 0px;
             border: 1px solid grey;
             border-radius: 3px;
-            
-        }
+     }
+`; 
+const Wrapper = styled.div`
+     display: grid;
+     grid-template-columns: 1fr 4fr;
+     /* .slider-icon{
+         display:none;
+     }
+     .slider-icon:hover{
+         cursor: pointer;
+         background: #d4dbe1e3;
+     } */
+       
+     @media (max-width:850px) {
         grid-template-columns: 2rem 4fr;
     }
     /* flex-direction: row; */
