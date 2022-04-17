@@ -1,106 +1,64 @@
 // import {FaPizzaSlice, FaHamburger} from 'react-icons'
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {NavLink } from 'react-router-dom';
-import {FaAngleDown,FaAngleUp,FaAngleRight} from "react-icons/fa";
+import { NavLink } from 'react-router-dom';
+import { FaAngleDown, FaAngleUp, FaAngleRight } from "react-icons/fa";
+import {
+    Compter_Science,
+    Business_Management,
+    Science,
+    Mathematics,
+    Other
+} from "../services/MainMenuCategories";
+
 
 function Category() {
-    // const mainNavLinks = ["Computer Science", "Mathematics","Business Management","English","Science"];
-    const web_Development_Links = [
-            {link:"/books/js_book", name:"JavaScript"}, {link:"/books/html_book", name:"Html"},
-            {link:"/books/css_book", name:"CSS"}, {link:"/books/mysql_book", name:"MySql"},
-            {link:"/books/php_book", name:"PHP"} 
-    ]
-    const programming_Language_Links = [
-        {link:"/books/js_book", name:"C"}, {link:"/books/html_book", name:"C++"},
-        {link:"/books/css_book", name:"Java"}, {link:"/books/mysql_book", name:"C#"},
-        {link:"/books/php_book", name:"Python"} 
-    ]   
-    const [webDevelopmentLinks, setWebDevelopmentLinks] = useState([]);
-    const [programmingLanguageLinks, setProgrammingLanguageLinks] = useState([]);
-    const [isHidden, setIsHidden]= useState(false);
-    useEffect(()=>{
-        setWebDevelopmentLinks(web_Development_Links);
-        setProgrammingLanguageLinks(programming_Language_Links);
-    },[])
+    const General_Categories = [Compter_Science, Business_Management, Science, Mathematics, Other];
+    const [isHidden, setIsHidden] = useState(false);
+    useEffect(() => {
+    }, [])
 
-    const handleSubLink=()=>{
+    const handleSubLink = () => {
         setIsHidden(true);
     }
-    const handleMainLink =()=>{
+    const handleMainLink = () => {
         setIsHidden(false);
     }
+    let i = 0;
     return (
-    <List>
-        {/* {mainNavLinks.map((link)=>{
-            <MainLinks>
-                <h4>{link}</h4>
-            </MainLinks>
-        })}    */}
-        <MainLinks onMouseEnter={handleMainLink}>
-            <h4>Computer Science </h4><span className='angle-down'><FaAngleDown /></span>
-                <Dropdown className={isHidden?'hide':'droplinks_1'}>
-                    <DropLinks >
-                        <h4>Web Devlopment</h4> <span className='angle-right'><FaAngleRight /></span>
-                        <Dropdown className='droplinks_2 sub_1'>
-                            {webDevelopmentLinks.map((drop_link, index)=>{
+        <List>
+            {General_Categories.map((item, ind) => {
+                ++i;
+                return (
+                    <MainLinks key={ind} onMouseEnter={handleMainLink}>
+                        <h4>{item.name}</h4><span className='angle-down'><FaAngleDown /></span>
+                        <Dropdown className={isHidden ? 'hide' : 'droplinks'}>
+                            {General_Categories[ind].categories.map((drop_1, index) => {
                                 return (
-                                    <SLink  key={index} to={drop_link.link} onClick={handleSubLink} >  
-                                        <h4>{drop_link.name}</h4>
-                                    </SLink>
-                                );
-                            })}
-                            
-                        </Dropdown>
-                    </DropLinks> 
-                    <DropLinks>
-                        <h4>Programming Languages</h4> <span className='angle-right'><FaAngleRight /></span>
-                        <Dropdown className='droplinks_2 sub_2'>
-                            {programmingLanguageLinks.map((drop_link, index)=>{
-                                return (
-                                    <SLink  key={index} to={drop_link.link}  onClick={handleSubLink}>  
-                                        <h4>{drop_link.name}</h4>
-                                    </SLink>
+                                    <DropLinks key={index}>
+                                        <h4>{drop_1.name}</h4> <span className='angle-right'><FaAngleRight /></span>
+                                        <Dropdown key={index} className={`droplinks_0 sub_${index} subb_${i}`}>
+                                            {General_Categories[ind].categories[index].sub_categories.map((drop_link, inde) => {
+                                                return (
+                                                    <SLink key={inde} to={drop_link.link} onClick={handleSubLink} >
+                                                        <h4>{drop_link.name}</h4>
+                                                    </SLink>
+                                                );
+                                            })}
+                                        </Dropdown>
+                                    </DropLinks>
                                 );
                             })}
                         </Dropdown>
-                    </DropLinks> 
-                    <DropLinks>
-                        <SLink style={{padding:'0px',borderBottom:'none' }} to={"/books/js_book"} onClick={handleSubLink} >  
-                            <h4>Computer Networks</h4>
-                        </SLink>
-                    </DropLinks> 
-                   
-                    <DropLinks>
-                        <SLink style={{padding:'0px', borderBottom:'none'}} to={"/books/css_book"} onClick={handleSubLink} >  
-                            <h4>Wireless Communication</h4>
-                        </SLink>
-                    </DropLinks> 
-                </Dropdown>
-        </MainLinks>
-
-       
-        <MainLinks>
-            <h4>Mathematics </h4><span className='angle-down'><FaAngleDown /></span>
-        </MainLinks>  
-        <MainLinks>
-            <h4>Business Management </h4><span className='angle-down'><FaAngleDown /></span>
-        </MainLinks>  
-        <MainLinks>
-            <h4>English</h4><span className='angle-down'><FaAngleDown /></span>
-        </MainLinks>   
-        <MainLinks>
-            <h4>Science </h4><span className='angle-down'><FaAngleDown /></span>
-        </MainLinks>
-        <MainLinks>
-            <h4>Others </h4><span className='angle-down'><FaAngleDown /></span>
-        </MainLinks>    
-    </List>
-  )
+                    </MainLinks>
+                )
+            })}
+        </List>
+    )
 }
 
 
-  
+
 const List = styled.div`
     display:flex;
     flex-wrap: wrap;
@@ -125,7 +83,7 @@ const MainLinks = styled.span`
         margin-left:3px;
     }
     &:hover{
-        .droplinks_1{
+        .droplinks{
             display: block;
         }
         background:linear-gradient(to right, #f27121, #e94057);
@@ -157,7 +115,7 @@ const MainLinks = styled.span`
         font-weight: 500;
     }
 `;
-const  DropLinks = styled.div`
+const DropLinks = styled.div`
         border-bottom: 1px solid white;
         color:white !important;
         display: flex;
@@ -167,28 +125,50 @@ const  DropLinks = styled.div`
         h4{
             font-weight: 600;
             color:white;
+            font-size:0.9rem;
         }
         &:hover{
             background:linear-gradient(to right, #f27121, #e94057);
-            .droplinks_2{
+            .droplinks_0{
                 display: block;
-                /* margin-left: 157px; */
-                /* z-index: 5000; */
                 position: fixed;
-                width: 170px;
-                left: 409px;
+                width: 160px;
                 text-align: left;
+            }
+            .sub_0{ 
+                top: 65px;
             }
             .sub_1{
                 
-                top: 65px;
+                top: 95px;
             } 
             .sub_2{
-                top: 108px;
+                top: 153px;
             }
             .sub_3{
                 top: 205px;
+            } 
+            .sub_4{
+                top: 245px;
             }  
+            .sub_5{
+                top: 285px;
+            }
+            .subb_1{
+                left:388px;
+            }
+            .subb_2{ 
+                left: 561px;
+            }
+            .subb_3{
+                left: 767px;
+            }
+            .subb_4{
+                left: 865px;
+            }
+            .subb_5{
+                left: 1000px;
+            }
         } 
         .angle-right{
             margin-top:5px;
@@ -204,7 +184,7 @@ const Dropdown = styled.div`
         position: absolute;
         top:50px;
         margin-left: -12px;
-        width:220px;
+        width:200px;
         /* border-radius: 5px; */
         background: grey;
         /* padding:0.5rem; */

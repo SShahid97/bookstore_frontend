@@ -80,8 +80,8 @@ const FormStyle = styled.form`
         }
         @media (max-width: 550px){
             font-size:0.9rem;
-            padding:0.4rem 2rem;
-            width:70%;
+            padding: 0.3rem 2rem;
+            width: 90%;
         }
         
     }

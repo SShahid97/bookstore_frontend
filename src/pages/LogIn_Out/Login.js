@@ -51,7 +51,7 @@ function Login() {
             }
             getCartItems();
             // if()
-            navigate(-1);   //redirect back to previous page (url/link)   
+            // navigate(-1);   //redirect back to previous page (url/link)   
         }
         else if (response.status === 400) {
             setInvalidCredentials(true);
@@ -78,7 +78,7 @@ function Login() {
     }
   return (
     <div className="loginForm"> 
-    <FaUserCircle style={{fontSize: '8rem', marginTop:'2rem',color:'grey' }}/>
+    <FaUserCircle className='userIconLogin'/>
     <form className="form_" onSubmit={loginForm}>
       <input
         placeholder="Email"

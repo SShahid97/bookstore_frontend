@@ -143,18 +143,20 @@
   }
   .dropdown{
     top:47px !important;
+    width: 160px;
   }
 }
+/* For Main NavBar */
 /* making responsive for form width */
 @media (max-width: 550px){
   .cart{
-    font-size:1.3rem;
+    font-size:1.5rem;
   }
   .user-icon{
-    font-size:1.3rem;
+    font-size:1.5rem;
   }
   .hamburger-menu {
-    margin-top: 7px;
+    margin-top: 5px;
   }
   .cart-bage{
     margin-left: 11px;
@@ -162,6 +164,21 @@
     width: 14px;
     height: 19px;
     font-size: smaller;
+  }
+  .activeIcon{
+    font-size: 1.5rem;
+    padding:2px;
+  }
+  .cart-bage{
+    width: 13px;
+    height: 16px;
+    margin-top: -8px;
+    margin-left: 12px;
+    font-size: smaller;
+  }
+  .dropdown{
+    top:45px !important;
+    width: 140px;
   }
 }
 .discount{

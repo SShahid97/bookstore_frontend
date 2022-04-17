@@ -14,6 +14,7 @@ function Books() {
    const [books, setBooks]=useState([]);
    const [tempBooks, setTempBooks]= useState([]);
    const [sortByValue, setSortByValue] = useState('');
+   const [openSideNav,setOpenSideNav] = useState(false);
 //    const [isSliderOpen, setIsSliderOpen] = useState(false);
    
     useEffect(()=>{
@@ -69,7 +70,9 @@ function Books() {
         }
         
     }
-
+    const handleOpenSideNav = ()=>{
+        setOpenSideNav(!openSideNav);
+    }
    return (
     <Wrapper>
 
@@ -83,10 +86,10 @@ function Books() {
         </div>
         
     </SideNav>
-    <SliderrIcon>
-        <BsSliders />
+    <SliderrIcon onClick={handleOpenSideNav}>
+        <BsSliders  />
     {/* {isSliderOpen && ( */}
-        <div className='dropdown-sidenav'>
+        <div className={openSideNav? 'dropdown-sidenav show_sidenav':'dropdown-sidenav'}>
            <Filters books={books} setTempBooks={setTempBooks} />  
             <hr/>
             <div>
@@ -202,10 +205,14 @@ const SliderrIcon = styled.div`
      &:hover{
         cursor: pointer;
         background: #d4dbe1e3;
-        .dropdown-sidenav{
+        /* .dropdown-sidenav{
              display:block;
              font-size:0.9rem;
-        }
+        } */
+     }
+     .show_sidenav{
+        display:block;
+        font-size:0.9rem;
      }
      @media (max-width:850px) {
             display: inline-block;

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Search from './Search';
 import Category from './Category';
 import MobileCategory from './MobileCategory';
-import MenuOnScroll from './MenuOnScroll';
+// import MenuOnScroll from './MenuOnScroll';
 import { useNavigate } from 'react-router-dom';
 import {Link,NavLink} from 'react-router-dom';
 import styled from 'styled-components';
@@ -31,8 +31,8 @@ function Navbar() {
     const [isLoggedOut, setisLoggedOut] = useState(true);
     const [cartItemsLength, setCartItemsLength]= useState(0);
     const navigate = useNavigate();
-    const [scrollPosition, setScrollPosition] = useState(0);   
-    const [isMenu, setIsMenu] = useState(false);
+    // const [scrollPosition, setScrollPosition] = useState(0);   
+    // const [isMenu, setIsMenu] = useState(false);
 
     useEffect(()=>{
       window.addEventListener('scroll', handleScroll, { passive: true });
@@ -72,8 +72,8 @@ function Navbar() {
 
    
     const handleScroll = () => {
-      const position = window.pageYOffset;
-      setScrollPosition(position);
+      // const position = window.pageYOffset;
+      // setScrollPosition(position);
 
       // if(scrollPosition === 0){
       //   setIsMenu(false);
@@ -147,9 +147,9 @@ function Navbar() {
 
     }
 
-    const handleMenu = ()=>{
-      setIsMenu(!isMenu);
-    }
+    // const handleMenu = ()=>{
+    //   setIsMenu(!isMenu);
+    // }
     return (
     <div>
        {/* Nav Bar */}
@@ -301,7 +301,7 @@ const Logo= styled(Link)`
     transform:scale(2);
     color: rgb(255 116 30);
     @media (max-width:600px){
-      transform:scale(1.2);
+      transform:scale(1);
     }
   }
   .logo-text{
@@ -309,6 +309,8 @@ const Logo= styled(Link)`
     color: rgb(247 227 81);
     @media (max-width:600px){
       font-size: medium;
+      font-family: monospace;
+      padding-left:0px;
     }
   }
 
@@ -395,19 +397,25 @@ const Nav = styled.div`
     margin-right: 10px;
   }
 /* responsive for mobiles */
-@media (max-width:1000px) {
-  grid-template-columns: 2rem 1fr 3fr 3rem 3rem 3rem;
-  padding:3px;
-  
-}
+  @media (max-width:1000px) {
+    grid-template-columns: 2rem 1fr 3fr 3rem 3rem 3rem;
+    padding:3px;
+    
+  }
 
-@media (max-width:600px) {
-  grid-template-columns: 1rem 1fr 3fr 2rem 2rem 2rem;
-  padding:5px;
+  @media (max-width:600px) {
+    grid-template-columns: 0.2rem 1fr 3fr 2rem 2rem 2rem;
+    padding:5px;
+    .user-icon{
+      font-size: 1.3rem;
+    }
+    .cart{
+      font-size: 1.3rem;
+    }
 
-}
-
+  }
 `;
+
 
 // const Nav2 = styled.div`
 //     top: 59px;

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import {User_Service} from "../../services/Service";
-import Loader from '../../components/Loader';
+// import Loader from '../../components/Loader';
 import {
     Compter_Science, 
     Business_Management,
@@ -14,11 +14,11 @@ import {
 } from "../../services/BookCategories";
 
 let Admin = {};
-let name = "";
+// let name = "";
 function ViewAllItems() {
     // const General_Categories = ["Computer Science", "Mathematics","Business Management","English","Science"];
     
-    const categoryNameMapping = {link:'js_book', name:'JavaScript Books'}
+    // const categoryNameMapping = {link:'js_book', name:'JavaScript Books'}
     const General_Categories = [{name:"Select"},{name:"All Books"},Compter_Science, Business_Management,Science, Mathematics,Social_Sciences,Literature,History];
     // const Second_GCategories = [];   
     const [allBooks, setAllBooks] = useState([]);

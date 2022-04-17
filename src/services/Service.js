@@ -1,8 +1,14 @@
 
 // All database calls are made from this service file
+// for ngrok
+// const books_url = 'http://0b9c-117-214-244-109.ngrok.io/api/books';
+// const cart_url = 'http://0b9c-117-214-244-109.ngrok.io/api/cart';
+// const auth_url = 'http://0b9c-117-214-244-109.ngrok.io/api/user';
+
 const books_url = 'http://localhost:5001/api/books';
 const cart_url = 'http://localhost:5001/api/cart';
 const auth_url = 'http://localhost:5001/api/user';
+
 
 // Item/book Service
 export const User_Service = {

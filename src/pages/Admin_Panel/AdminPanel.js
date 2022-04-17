@@ -53,7 +53,7 @@ function AdminPanel() {
   
   
   return (
-    <div>
+    <div style={{minHeight:'80vh'}}>
       {noAdmin && (
         <div>
           <h3 className="pageNotFound">Sorry! Page Not Found</h3>
