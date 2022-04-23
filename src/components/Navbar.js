@@ -26,7 +26,8 @@ function Navbar() {
     const [mobileView, setmobileView] = useState(false);
     const [toggleDropdown, setToggleDropDown] = useState(false);
     const [isUser, setIsUser] = useState(false);
-    //const [user, setUser] = useState({});
+    const [user, setUser] = useState({});
+    const [userName, setUserName]=useState("");
     const [isAdmin, setIsAdmin] = useState(false);
     const [isLoggedOut, setisLoggedOut] = useState(true);
     const [cartItemsLength, setCartItemsLength]= useState(0);
@@ -42,10 +43,19 @@ function Navbar() {
       // runs for first time
       let user = JSON.parse(localStorage.getItem('user'));
       if(user){
+        setUser(user);
+        let name = user.name.split(" ")[0];
+        name = name.substring(0,5);
+        setUserName(name);
         checkUser(user);
       }
       userService.onUser().subscribe(curr_user => {
         if (curr_user) {
+          setUser(curr_user);
+          let name = curr_user.name.split(" ")[0];
+          // console.log(name.substring(0,4));
+          name = name.substring(0,5);
+          setUserName(name);
           checkUser(curr_user)
         } else {
           // setIsUser(false);
@@ -68,7 +78,7 @@ function Navbar() {
       return () => {
         window.removeEventListener('scroll', handleScroll);
     };
-    },[]);
+    },[userName]);
 
    
     const handleScroll = () => {
@@ -124,6 +134,8 @@ function Navbar() {
       setIsAdmin(false);
       setisLoggedOut(true);
       setCartItemsLength(0);
+      setUserName("");
+      setUser("");  
       localStorage.removeItem("user");
       localStorage.removeItem("cart");
       // clearTimeout(LoginTimedOut);
@@ -192,8 +204,9 @@ function Navbar() {
 
             {/* User */}
           {(!isAdmin && (
-            <div style={{marginTop:'10px'}} onClick={handleUserAccount}>
-              <FaUserCog className={toggleDropdown?'activeIcon':'user-icon'}/>
+            <div title={user.name} className={toggleDropdown?'activeIcon':'user-icon user-icon-name'} onClick={handleUserAccount}>
+              <span className='username'>{userName}</span>
+              <FaUserCog />
             </div>
           ))}
 
@@ -233,9 +246,10 @@ function Navbar() {
           )}
 
           {(isAdmin && (
-            <div style={{marginTop:'10px'}} onClick={handleUserAccount}>
-              <FaUserCog className={toggleDropdown?'activeIcon':'user-icon'}/>
-            </div>
+            <div title={user.name} className={toggleDropdown?'activeIcon':'user-icon user-icon-name'} onClick={handleUserAccount}>
+              <span className='username'>{userName}</span>
+              <FaUserCog />
+          </div>
           ))} 
         {/* Admin Screen ends here */}
           {toggleDropdown && (
@@ -325,12 +339,21 @@ const Nav = styled.div`
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
   display: grid;
-  grid-template-columns: 2rem 9rem 4fr 12rem 4rem 4rem;
+  grid-template-columns: 2rem 9rem 4fr 1fr 4rem 5rem;
   /* padding:0.5rem 0rem; */
   /* background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); */
   background: grey;
   margin-bottom: 0.5rem;
-
+  .username{
+    color: white;
+    font-size: 11px;
+    transform: scaleY(1.4);
+  }
+  .user-icon-name{
+    margin-top:10px;
+    display:flex;
+    cursor: pointer;
+  }
   .main-menu-links{
     @media (max-width:1000px) {
       display: none;
@@ -399,13 +422,13 @@ const Nav = styled.div`
   }
 /* responsive for mobiles */
   @media (max-width:1000px) {
-    grid-template-columns: 2rem 1fr 3fr 3rem 3rem 3rem;
+    grid-template-columns: 2rem 1fr 3fr 3rem 4rem 3rem;
     padding:3px;
     
   }
 
   @media (max-width:600px) {
-    grid-template-columns: 0.2rem 1fr 3fr 2rem 2rem 2rem;
+    grid-template-columns: 0.2rem 1fr 3fr 2rem 4rem 2rem;
     padding:5px;
     .user-icon{
       font-size: 1.3rem;

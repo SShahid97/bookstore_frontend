@@ -29,7 +29,7 @@ function Books() {
             }else{
                 getBooksByCategory(params.cat);
             }
-        },1000)
+        },500)
     },[params.cat,searchKeyword]);
 
     const getSearched = async (searchKey)=>{

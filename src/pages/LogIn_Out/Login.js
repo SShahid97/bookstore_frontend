@@ -13,8 +13,12 @@ function Login() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [invalidCredentails,setInvalidCredentials] = useState(false);
+    const [loginSuccessMessage, setLoginSuccessMessage] = useState("");
 
+    // useEffect(()=>{
 
+    //   return setLoginSuccess(false);
+    // },[])
     const handleChange = (event) => {
       const name = event.target.name;
       const value = event.target.value;
@@ -39,8 +43,19 @@ function Login() {
 
     const loginForm = async (event) => {
       event.preventDefault();
-      const response = await Auth_Service.onLogin(inputs);
+        // try{
+
+        // }catch(err){
+
+        // }
+        const response = await Auth_Service.onLogin(inputs);
+
         if(response.status === 200){
+            setInvalidCredentials(false);
+            setLoginSuccessMessage("Login Success");
+            setTimeout(()=>{
+              setLoginSuccessMessage("");
+            },5000)
             const user = await response.json();
             sendUser(user);
             localStorage.setItem("user", JSON.stringify(user));
@@ -79,6 +94,11 @@ function Login() {
   return (
     <div className="loginForm"> 
     <FaUserCircle className='userIconLogin'/>
+    {loginSuccessMessage !== "" && (
+          <div className='login-success'>
+              <p>{loginSuccessMessage}</p>
+          </div>
+        )}
     <form className="form_" onSubmit={loginForm}>
       <input
         placeholder="Email"

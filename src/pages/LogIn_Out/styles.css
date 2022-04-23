@@ -32,6 +32,14 @@
     color:white;
     font-weight: 600;
 }
+.disableRegisterBtn{
+    opacity: 0.7;
+    cursor:not-allowed;
+    width:65% !important;
+    background-color: blue;
+    color:white;
+    font-weight: 600;
+}
 .loginBtn:hover{
     cursor: pointer;
     background-color: rgb(22, 22, 219);
@@ -75,6 +83,38 @@
     font-size: 8rem; 
     margin-top:2rem;
     color:grey; 
+}
+.error{
+    display:none;
+}
+.login-success{
+    margin:auto;
+    color:rgb(8, 112, 8);
+    width: 65%;
+    margin-bottom: 8px;
+    font-size: 17px;
+    padding: 5px 2px;
+    border: 1px solid green;
+    border-radius: 3px;
+    /* background:green; */
+    box-shadow: inset 0 0 20px rgba(4, 117, 4, 0.753);
+}
+.register-success{
+    margin:auto;
+    color:rgb(8, 112, 8);
+    width: 85%;
+    margin-bottom: 8px;
+    font-size: 16px;
+    padding: 5px 2px;
+    border: 1px solid green;
+    border-radius: 3px;
+    box-shadow: inset 0 0 20px rgba(4, 117, 4, 0.322);
+}
+.register-success .login-link{
+   padding-left:10px;
+   color:blue;
+   font-size: small;
+   text-decoration: underline;
 }
 /* making responsive for form width */
 @media screen and (max-width: 300px) and (min-width: 100px) {

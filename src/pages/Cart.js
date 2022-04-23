@@ -139,7 +139,7 @@ function Cart() {
                             <td>
                                 {quantity[index]}  
                                 <div className='qty'>
-                                    <input className='qty-input' type="number" min={1} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
+                                    <input className='qty-input' type="number" step={1} min={1} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
                                     <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
                                 </div> 
                             </td>

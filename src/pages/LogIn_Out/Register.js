@@ -13,6 +13,12 @@ function Register() {
     const [isMatched, setIsMatched] = useState(true);
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const [passwordError, setPasswordError]= useState("");
+    const [emailErrorDot, setEmailErrorDot] = useState("");
+    const [emailErrorRate, setEmailErrorRate] = useState("");
+    const [nameError, setNameError] = useState("");
+    const [isInvalid, setIsInvalid] = useState(false);
+    const [registeredSuccess, setRegisteredSuccess] = useState();
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -33,32 +39,93 @@ function Register() {
 
     const registerUser = async (event) => {
         event.preventDefault();
-        const response = await Auth_Service.onRegister(inputs); 
-        if(response.status === 201){
+        try{
+            const response = await Auth_Service.onRegister(inputs);
             const data = await response.json();
-            console.log(data)
-            if(data){
-                navigate("/login");
-            } 
+            console.log(data);
+            setRegisteredSuccess(true);
+            // if(data){
+            //     navigate("/login");
+            // }  
+        }catch(err){
+            console.log("There was some error: ",err);
+            setRegisteredSuccess(false);
+            // setError("")
         }
-        if (response.status === 400) {
-            console.log("There was some error: ",response.statusText)
-        } 
+        // const response = await Auth_Service.onRegister(inputs); 
+        // if(response.status === 201){
+        //     const data = await response.json();
+        //     console.log(data)
+        //     if(data){
+        //         navigate("/login");
+        //     } 
+        // }
+        // if (response.status === 400) {
+        //     console.log("There was some error: ",response)
+        // } 
     }
 
     const handleConfirmPassword=(e)=>{
         let inputPassword=document.getElementById("password");
         if(inputPassword.value === e.target.value){
-            console.log("Yes");
             setIsMatched(true);
+            setIsInvalid(false);
         }else{
             setIsMatched(false);
-            console.log("No");
+            setIsInvalid(true);
         }
     }
 
     const handleConfirmPass=(e)=>{
         setConfirmPass(e.target.value);
+    }
+    const handleNameError = (e)=>{
+        const value= e.target.value;
+        console.log(value.length);
+        if(value.length <6){
+            setIsInvalid(true);
+            setNameError("Name must be at least 6 characters");
+        }else{
+            setIsInvalid(false);
+            setNameError("");
+        }
+    }
+    const handlePasswordError = (e)=>{
+        const value= e.target.value;
+        console.log(value.length);
+        if(value.length < 6){
+            setIsInvalid(true);
+            setPasswordError("Password must be at least 6 characters");
+        }else{
+            setIsInvalid(false);
+            setPasswordError("");
+        }
+    }
+    const handleEmailError =(e)=>{
+        const value= e.target.value;
+        const at_the_rate = "@";
+        const dot = ".";
+        if( !value.includes(at_the_rate) || !value.includes(dot)){
+            if(!value.includes(at_the_rate)){
+                setIsInvalid(true);
+                setEmailErrorRate("Email must contain '@' symbol");
+            }else{
+                setEmailErrorRate("");
+                setIsInvalid(false);
+            }
+            if(!value.includes(dot)){
+                setIsInvalid(true);
+                setEmailErrorDot("Email must contain '.' symbol");
+            }else{
+                setEmailErrorDot("");
+                setIsInvalid(false);
+            }
+        }
+        else{
+            setEmailErrorDot("");
+            setEmailErrorRate("");
+            setIsInvalid(false);
+        }
     }
     const eyeStyle = {
         position:'absolute', 
@@ -70,16 +137,36 @@ function Register() {
     return (
         <div className="RegisterForm">
             <FaUserPlus style={{fontSize: '8rem',color:'grey' }}/>
+            {registeredSuccess && (
+                <div className='register-success'>
+                    <p>Successfully Registered!! 
+                        <Link className='login-link' to={"/login"}>
+                            Click here to login
+                        </Link>
+                    </p>
+                </div>
+            )}
+            {/* {!registeredSuccess && (
+                 <div className='pass-match-error'>
+                 <p>There was some error! try again.</p>
+             </div>  
+            )} */}
             <form className="form_" onSubmit={registerUser}>
                 <input
                     placeholder="Name"
                     type="text"
                     name="name"
+                    min={6}
                     value={inputs.name || ""}
                     required
                     onChange={handleChange}
+                    onBlur={handleNameError}
                 />
-
+               {nameError !=="" && (
+                    <div className='pass-match-error'>
+                        <p>{nameError}!</p>
+                    </div>  
+               )} 
                 <input
                     placeholder="Email"
                     type="email"
@@ -87,27 +174,46 @@ function Register() {
                     value={inputs.email || ""}
                     required
                     onChange={handleChange}
+                    onBlur={handleEmailError}
                 />
-
+                {emailErrorRate !=="" && (
+                    <div className='pass-match-error'>
+                        <p>{emailErrorRate}!</p>
+                    </div>  
+                )}
+                {emailErrorDot !=="" && (
+                    <div className='pass-match-error'>
+                        <p>{emailErrorDot}!</p>
+                    </div>  
+                )}       
                 <input
                     id="password"
                     placeholder='Password'
                     type="password"
                     name="password"
+                    min={6}
                     value={inputs.password || ""}
                     required
                     onChange={handleChange}
+                    onBlur={handlePasswordError}
                 />
+                {passwordError !== "" && (
+                    <div className='pass-match-error'>
+                        <p>{passwordError}!</p>
+                    </div>  
+                )} 
                 <input
                     className={!isMatched?'password-error':''}
                     id="confirmPassword"
                     placeholder='Confirm Password'
                     type="password"
                     name="confirmPassword"
+                    min={6}
                     value={confirmPass || ""}
                     required
                     onChange={handleConfirmPass}
                     onBlur={handleConfirmPassword}
+                    
                 />
                 {showPassword && (
                     <FaEye onClick={showHidePassword} style={eyeStyle}/>
@@ -119,9 +225,10 @@ function Register() {
                     <div className='pass-match-error'>
                         <p>Password does not match!!!</p>
                     </div>
+                   
                 )}
                 
-                <input className="RegisterBtn" disabled={!isMatched} type="submit" value="Register" /><br/>
+                <input className={isInvalid?"disableRegisterBtn":"RegisterBtn"} disabled={isInvalid} type="submit" value="Register" /><br/>
 
                 <div className="notReg">
                     <p className="notregtext">Already Registered?</p> 

@@ -8,7 +8,27 @@
 const books_url = 'http://localhost:5001/api/books';
 const cart_url = 'http://localhost:5001/api/cart';
 const auth_url = 'http://localhost:5001/api/user';
+const review_url = 'http://localhost:5001/api/reviews'
 
+export const Review_Service = {
+    addReview: async (token,formData)=>{
+        const response = await fetch(review_url,{
+            method: 'POST',
+            headers: {
+                'Content-Type':'application/json',
+                'auth-token': token
+            },
+            body:JSON.stringify(formData)
+        });
+        const data = await response.json();
+        return data;
+    },
+    getReviews: async (bookId)=>{
+        const response = await fetch(`${review_url}/${bookId}`);
+        const data = await response.json();
+        return data;
+    }
+}
 
 // Item/book Service
 export const User_Service = {
