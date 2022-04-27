@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useParams, useNavigate} from 'react-router-dom';
 import Latest from "../components/Latest";
-import {User_Service, Cart_Service, Review_Service} from '../services/Service';
+import {User_Service, Cart_Service, Review_Service, Pincode_Service} from '../services/Service';
 import {cartService} from "../services/LocalService";
 import ReviewAndRating from "../components/ReviewAndRating";
 import Rating from "../components/Rating";
@@ -16,7 +16,6 @@ function Book() {
     {name:"1",value: 1}, {name:"1.5",value:1.5},{name:"2",value:2},{name:"2.5",value:2.5}, 
     {name:"3",value:3},{name:"3.5",value:3.5},{name:"4",value:4},{name:"4.5",value:4.5},
     {name:"5",value:5}];
-    const pincodesArray = ["190001","190002", "190003", "190004", "190006","190007", "190008", "192121"];
     const [urating, setUrating]=useState("");
     const [ureview, setUreview]=useState("");
     const [uuser, setUser]= useState({});
@@ -28,6 +27,7 @@ function Book() {
     const [deliveryAvailable,setDeliveryAvailable] = useState(false);
     const [deliveryNotAvailable,setDeliveryNotAvailable] = useState(false);
     const [invalidPincode, setInvalidPincode] = useState(false);
+    const [shippingCharges, setShippingCharges] = useState(0);
 
     let params = useParams();
     // const navigate = useNavigate();
@@ -51,6 +51,7 @@ function Book() {
         if (isMounted){
             getBookDetails(params.id);
             getReviews(params.id);
+            
         } 
         return () => { isMounted = false };
 
@@ -200,7 +201,7 @@ function Book() {
         else if (val === '') 
             setPincode(val);
     }
-    const handleDelivery = ()=>{
+    const handleDelivery = async ()=>{
         const pin = pincode;
         if (pin.length !== 6 ){
             console.log("yep",pin.length)
@@ -211,13 +212,23 @@ function Book() {
         }else{
             setInvalidPincode(false);
         }
-        if(pincodesArray.includes(pin)){
-            setDeliveryAvailable(true);
-            setDeliveryNotAvailable(false);
-        }else{
-            setDeliveryAvailable(false);
-            setDeliveryNotAvailable(true);
-        }
+        // checks availability
+       try{
+            const pincodeReturned = await Pincode_Service.getPincodes(Number(pin));
+            if(pincodeReturned.length>0){
+                console.log(pincodeReturned);
+                setShippingCharges(pincodeReturned[0].shipping_charges);
+                setDeliveryAvailable(true);
+                setDeliveryNotAvailable(false);
+                    // setPincode(""); 
+            }else{
+                console.log(pincodeReturned);
+                setDeliveryAvailable(false);
+                setDeliveryNotAvailable(true);  
+            }
+       }catch(err){
+           console.log("There was some errror: ",err)
+       }
     }
     return (
            <Wrapper>
@@ -282,7 +293,8 @@ function Book() {
 
                                 {deliveryAvailable && (
                                     <div className='delivery-status'>
-                                        <p>Delivery Available</p>
+                                        <p>Delivery Available to pincode <strong>{pincode}</strong></p>
+                                        <p>Delivery Charges: <strong>&#8377;{shippingCharges}</strong> </p>
                                     </div>
                                 )}
                                 {deliveryNotAvailable && (
@@ -307,7 +319,7 @@ function Book() {
                                 <input type="number" min={1} step={1} value={quantity} name="quantity" onChange={handleQuantity}/>
                         </Quantity> 
                         <div className='cart-btn'>
-                            <Button onClick={() => handleAddToCart(bookDetails._id,bookDetails.price)}>
+                            <Button disabled={!deliveryAvailable} className={!deliveryAvailable?"disableCartbtn":""} onClick={() => handleAddToCart(bookDetails._id,bookDetails.price)}>
                                 <FaCartArrowDown style={{transform: 'scale(1.5)', marginRight: '10px'}}/> Add to Cart
                             </Button>
                         </div>
@@ -573,7 +585,6 @@ const Info = styled.div`
     }
 `;
 const BookDetail = styled.div`
-    margin-bottom: 4rem;
     h3{
         margin-top:2rem;
     }
@@ -586,13 +597,13 @@ const BookDetail = styled.div`
     .delivery-status{
         color: rgb(8,112,8);
         margin-top: 5px;
-        width: 79%;
-        text-align: center;
+        /* width: 79%; */
+        /* text-align: center; */
         font-size: 16px;
-        padding: 3px 2px;
-        border: 1px solid green;
-        border-radius: 3px;
-        box-shadow: inset 0 0 11px rgb(4 117 4 / 75%);
+        /* padding: 3px 2px; */
+        /* border: 1px solid green; */
+        /* border-radius: 3px; */
+        /* box-shadow: inset 0 0 11px rgb(4 117 4 / 75%); */
     }
     .not-delivery-status{
         color:#b91111c4;
@@ -719,6 +730,10 @@ const BuyCartBtns = styled.div`
     @media (max-width:650px) {
         
     }
+    .disableCartbtn{
+        opacity: 0.6;
+        cursor: auto;
+    }
 `;
 
 const Button = styled.button`
@@ -729,10 +744,11 @@ const Button = styled.button`
     font-weight: 600;
     border: none;
     border-radius: 2px;
+    cursor: pointer;
     &:hover{
         color:white;
         background: #0d43d5;
-        cursor: pointer;
+        
     }
     @media (max-width:850px) {
         padding:0.6rem 1.6rem;

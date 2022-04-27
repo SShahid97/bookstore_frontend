@@ -49,24 +49,29 @@ function ViewAllItems() {
   
     // Deleting an Item 
     const deleteBook = async(id)=>{
-        // console.log("ID: ",id)
-        const response = await fetch(`http://localhost:5001/api/books/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'auth-token': Admin.token
-            },
-        }); 
-        console.log(response);
-        if(response.status === 200){
-            const data = await response.json();
-            alert(data.message);
-            // console.log(data.message);
-            getAllBooks();
-        }else if(response.status === 401){  //when token is missing
-            const data = await response.json();
-            alert(data.message);   
-        }else {
-            alert("There was some error while deleting the book");
+        const confirmation = window.confirm("Do you really want to delete this item.");
+        if(confirmation){
+            // console.log("ID: ",id)
+            const response = await fetch(`http://localhost:5001/api/books/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'auth-token': Admin.token
+                },
+            }); 
+            console.log(response);
+            if(response.status === 200){
+                const data = await response.json();
+                alert(data.message);
+                // console.log(data.message);
+                getAllBooks();
+            }else if(response.status === 401){  //when token is missing
+                const data = await response.json();
+                alert(data.message);   
+            }else {
+                alert("There was some error while deleting the book");
+            }
+        }else{
+            console.log("cancelled");
         }
     }
     const handleGeneral = (e)=>{
@@ -213,7 +218,7 @@ function ViewAllItems() {
                     {/* </div> */}
 
                     <div className='editDeleteBtn'>
-                        <Link to={"/admin-panel/"+book._id}>
+                        <Link to={"edit-item/"+book._id}>
                             <div className='btns editBtn'>EDIT</div>
                         </Link>
                         
@@ -228,14 +233,13 @@ function ViewAllItems() {
 }
 
 const ViewItemsDiv = styled.div`
-    width: 90%;
     background-color: #f7f7f7;
     height: auto;
     margin: auto;
     box-shadow: 2px 4px 4px 1px #00000036;
-    margin-top: 5px;
+    /* margin-top: 5px; */
     text-align: center;
-    padding:3rem;
+    padding:1rem;
     
     .header-filter{
         display: flex;

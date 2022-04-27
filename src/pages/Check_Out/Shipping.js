@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./styles.css";
 import {useParams, useNavigate} from "react-router-dom";
 
-function Billing({setIsBilling, setIsReviewOrder}) {
+function Billing() {
     const states=['Jammu & Kashmir','Delhi','Rajasthan','Maharashtra','Gujrat','Assam','Andhra Pradesh','Madhya Pradesh'];
     // input fields
     const [fullName, setFullName]=useState('');
@@ -13,6 +13,12 @@ function Billing({setIsBilling, setIsReviewOrder}) {
     const [city, setCity]=useState('');
     const [postalCode, setPostalCode]=useState('');
     const [address, setAddress]=useState('');
+
+    useEffect(()=>{
+        let user = JSON.parse(localStorage.getItem("user"));
+        setFullName(user.name);
+        setEmail(user.email);
+    },[])
 
     const navigate = useNavigate();
     
@@ -52,20 +58,24 @@ function Billing({setIsBilling, setIsReviewOrder}) {
             postalCode:postalCode,
             address:address
         }
-        setIsBilling(false);
-        setIsReviewOrder(true);
-        console.log(formObject);
         localStorage.setItem("customerInfo", JSON.stringify(formObject));
+        console.log(formObject);
+        navigate("/checkout/revieworder");
+        // setIsBilling(false);
+        // setIsOrderPlaced(true);
+        
+        // localStorage.setItem("customerInfo", JSON.stringify(formObject));
 
     }
 
     const handleCancel = ()=>{
         navigate(-1);
     }
+
     return (
         <div className="outer-div" >
             <div className="inner-div">
-            <h3 className='billing-heading'>Billing Address</h3>
+            <h3 className='billing-heading'>Shipping Address</h3>
              {/* <div style={{margin:'0 auto'}}> */}
                 <form onSubmit={handleBilling} className="billing-form"> 
                     <label htmlFor="name"><strong>Full Name<span >*</span>:</strong></label><br/>
@@ -83,7 +93,7 @@ function Billing({setIsBilling, setIsReviewOrder}) {
                             required/>
                     <br/>
                     <label htmlFor="contact"><strong>Contact<span >*</span>:</strong></label><br/>
-                    <input type="text" className="form-control" name="contact" maxLength={12} 
+                    <input type="tel" className="form-control" name="contact" maxLength={12} 
                             placeholder="Contact Number" 
                             onChange={handleContact}
                             value={contact}
@@ -142,9 +152,9 @@ function Billing({setIsBilling, setIsReviewOrder}) {
                               value={address}
                               required/><br/>
                     <br/>
-                <div style={{width:'100%'}} >
-                    <button type="submit"  name="next" className="btn-billingNextBtn">NEXT</button>
-                    <button className="btn-cancel" onClick={handleCancel}>CANCEL</button>    
+                <div className='btns-div' >
+                    <button className="billing-btns btn-cancel" type="button" onClick={handleCancel}>Cancel</button>    
+                    <input type="submit"  name="next" className="billing-btns btn-billingNextBtn" value="Next"/>
                 </div>
                   
                 </form>

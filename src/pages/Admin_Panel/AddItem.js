@@ -233,19 +233,17 @@ function AddItem() {
 }
 const AddItemFormDiv = styled.div`
     display: flex;
-    width: 65%;
     background-color: #f7f7f7;
     height: auto;
-    margin: auto;
     box-shadow: 2px 4px 4px 1px #00000036;
-    margin-top: 5px;
     text-align: center;
-    padding-top:2rem;
     padding-bottom: 2rem;
+    padding-top: 2rem;
+    padding: auto auto;
     .disable-btn{
         opacity: 0.5;
         background-color: blue;
-        cursor: not-allowed;
+        cursor: auto;
         color:white;
     }
    
@@ -318,7 +316,7 @@ const AddItemFormDiv = styled.div`
     }
     .disable-upload-btn{
         opacity: 0.5;
-        cursor: not-allowed;
+        cursor: auto;
         margin-top:5px;
         margin-left: 5px;
         display:inline-block;

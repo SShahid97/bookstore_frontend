@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import {useParams} from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import {Cart_Service} from '../services/Service';
 import {cartService} from "../services/LocalService";
 
 
+
 function Cart() {
     let i=1;
     let params = useParams();
+    let navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [totalAmount, setTotalAmount]= useState(0);
     const [emptyCart, setEmptyCart] = useState(false);
@@ -27,6 +29,8 @@ function Cart() {
         let user = JSON.parse(localStorage.getItem('user'));
         try{
             const cartResponse = await Cart_Service.getCartItems(params.id, user.token);
+            console.log("CART: ",cartResponse);
+            localStorage.setItem("cart",JSON.stringify(cartResponse));
             if(cartResponse.length === 0){
                 setEmptyCart(true);
             }
@@ -37,6 +41,7 @@ function Cart() {
             setQuantity(qty);
             updateCartItems(cartResponse.length);
             // localStorage.setItem("noOfCartItems",JSON.stringify(cartResponse.length));
+            console.log(cartResponse);
             setCartItems(cartResponse);
             calculateTotalAmount(cartResponse);
         }catch(err){
@@ -51,7 +56,7 @@ function Cart() {
     const calculateTotalAmount = (itemsArr)=>{
         let amount=0;
         itemsArr.forEach(item => {
-            amount+=(item.quantity*item.price);
+            amount+=(item.quantity*(item.price-(item.price*item.book.discount)));
         });
         setTotalAmount(amount);
     }
@@ -94,6 +99,7 @@ function Cart() {
         let user = JSON.parse(localStorage.getItem('user'));
         try{
             const data = await Cart_Service.updataCartItem(item_id, user.token, {quantity:quantity[i]});
+            getCartItems();
             if(data)
                 alert("Quantity updated");
         }catch(err){
@@ -101,7 +107,10 @@ function Cart() {
         }
         
     }
-  
+    const hanldeCheckout = (userId)=>{
+        // console.log(userId);
+        navigate("/checkout/billing");
+    }
     return (
       <CartCard >
         {emptyCart && (
@@ -133,7 +142,10 @@ function Cart() {
                             <tr>
                             <td>{i++}</td>
                             <td>
-                            <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
+                            {(item.book.discount>0) && (
+                                <span className='discount-badge' >{item.book.discount*100}%</span>
+                            )}
+                                <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
                             </td>
                             <td>{item.book.book_name}</td>
                             <td>
@@ -143,8 +155,8 @@ function Cart() {
                                     <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
                                 </div> 
                             </td>
-                            <td>&#8377;{item.price}</td>
-                            <td>&#8377;{item.quantity*item.price}</td>
+                            <td>&#8377;{item.price-item.price*item.book.discount}</td>
+                            <td>&#8377;{item.quantity*(item.price-item.price*item.book.discount)}</td>
                             <td>
                                 <div className='remove-item'>
                                     <button className='remove-item-btn' onClick={() => handleRemoveItem(item._id,index) }>Remove</button> 
@@ -173,7 +185,7 @@ function Cart() {
                 {/* Buttons */}
                 <div className='checkout-btns'>
                     <button className='btns'>Continue Shopping</button>
-                    <button className='btns'>Checkout</button>
+                    <button className='btns' onClick={()=> hanldeCheckout(cartItems[0].user_id)}>Checkout</button>
                 </div>
             </div>
             </>
@@ -183,7 +195,7 @@ function Cart() {
 }
 
 const CartCard = styled.div`
-    width: 80%;
+    width: 60%;
     background-color: #f7f7f7;
     height: auto;
     margin: auto;
@@ -192,6 +204,15 @@ const CartCard = styled.div`
     text-align: center;
     @media (max-width:850px) {
             width: 100%;
+    }
+    .discount-badge{
+        position: absolute;
+        background: #e30606;
+        padding: 5px 3px;
+        border-radius: 50%;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 500;
     }
     .cart-heading{
         padding: 10px;

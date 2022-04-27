@@ -67,12 +67,7 @@ function Navbar() {
       // if(cartLen){
       //   setCartItemsLength(cartLen);
       // }
-      cartService.onUpdateCartItems().subscribe(cartItemsLen => {
-        // debugger;
-        if(cartItemsLen){
-          setCartItemsLength(cartItemsLen);
-        }
-      })
+      
       // // return unsubscribe method to execute when component unmounts
       // return subscription.unsubscribe;   
       return () => {
@@ -80,7 +75,13 @@ function Navbar() {
     };
     },[userName]);
 
-   
+    cartService.onUpdateCartItems().subscribe(cartItemsLen => {
+      // debugger;
+      if(cartItemsLen){
+        setCartItemsLength(cartItemsLen);
+      }
+    });
+    
     const handleScroll = () => {
       // const position = window.pageYOffset;
       // setScrollPosition(position);
@@ -138,6 +139,7 @@ function Navbar() {
       setUser("");  
       localStorage.removeItem("user");
       localStorage.removeItem("cart");
+      localStorage.removeItem("customerInfo");
       // clearTimeout(LoginTimedOut);
       
       // window.location.reload();
@@ -256,21 +258,21 @@ function Navbar() {
             <ul className='dropdown' onClick={()=>setToggleDropDown(!toggleDropdown)}> 
               {(isUser || isAdmin) && (
                 <> 
-                <NavLinks to={"/user/account"} className='dropdown-item'>         
-                    <FaUser /><p className="sign_reg_icons" ><strong>Account</strong></p>
+                <NavLinks to={"admin-panel/dashboard"} className='dropdown-item'>         
+                <FaChalkboardTeacher /><p className="sign_reg_icons" ><strong>Dashboard</strong></p>
                 </NavLinks>
                 <li className='dropdown-item' onClick={logout}> 
                   <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>
                 </li>
                </>
               )}
-              {isAdmin && (
+              {/* {isAdmin && (
                   <>
                   <NavLinks  to={"/admin-panel"} className='dropdown-item'> 
                     <FaChalkboardTeacher /><p className="sign_reg_icons" ><strong>Admin Panel</strong></p>
                   </NavLinks>
                   </>
-              )}
+              )} */}
 
               {(isLoggedOut) && (
                 <>
@@ -423,7 +425,7 @@ const Nav = styled.div`
 /* responsive for mobiles */
   @media (max-width:1000px) {
     grid-template-columns: 2rem 1fr 3fr 3rem 4rem 3rem;
-    padding:3px;
+    padding-right:10px;
     
   }
 

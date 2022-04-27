@@ -2,16 +2,24 @@ import React from 'react';
 import {Route, Routes} from "react-router-dom";
 
 import Home from './Home';
+import PageNotFound from "./PageNotFound";
 import Books from './Books';
 import Register from './LogIn_Out/Register';
 import Login from './LogIn_Out/Login';
-import AdminPanel from './Admin_Panel/AdminPanel';
 import UserAccount from './UserAccount/UserAccount';
 import Checkout from './Check_Out/Checkout';
 import Searched from './Searched';
 import Book from './Book';
 import Cart from './Cart';
 
+import AdminPanel from './Admin_Panel/AdminPanel';
+import Dashboard from './Admin_Panel/Dashboard';
+import AddItem from './Admin_Panel/AddItem';
+import ViewAllItems from './Admin_Panel/ViewAllItems';
+import ViewAllUsers from './Admin_Panel/ViewAllUsers';
+import SearchOrder from './Admin_Panel/SearchOrder';
+import SearchUser from './Admin_Panel/SearchUser';
+import EditItem from './Admin_Panel/EditItem';
 function Pages() {
   return (
       <Routes>
@@ -21,17 +29,25 @@ function Pages() {
         <Route path="/book/:id" element={<Book/>} />
         <Route path="/register" element={<Register/>} />
         <Route path="/login" element={<Login/>} />
-        <Route path="/admin-panel/:name" element={<AdminPanel/>} />
+        {/* <Route path="/admin-panel/:name" element={<AdminPanel/>} /> */}
+        {/* <Route path="/admin-panel" element={<AdminHome/>} /> */}
         <Route path="/user/account" element={<UserAccount/>} />
-        {/* <Route path="/edit-item/:id" element={<EditItem/>} /> */}
         <Route path="/cart/:id" element={<Cart/>} />
-        <Route path="/checkout" element={<Checkout/>} />
+        <Route path="/checkout/:name" element={<Checkout/>} />
+        
+        <Route path="admin-panel" element={<AdminPanel />}>
+            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="manage-books/view-all-items/edit-item/:id" element={<EditItem />} />
+            <Route path="manage-books/view-all-items" element={<ViewAllItems />} />
+            <Route path="manage-books/add-item" element={<AddItem />} />
+            <Route path="manage-users/view-all-users" element={<ViewAllUsers />} />
+            <Route path="manage-users/search-user" element={<SearchUser />} />
+            <Route path="manage-users/search-order" element={<SearchOrder />} />
+            <Route path="*" element={<PageNotFound />} />
+        </Route>
 
-      
-        {/* <Route path="/shop" element={<Shop/>} />
-        <Route path="/shop/:id" element={<ItemDetail/>} /> */}
-
-
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
   )
 }

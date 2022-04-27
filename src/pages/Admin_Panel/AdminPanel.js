@@ -1,78 +1,90 @@
-import React, {useEffect, useState} from 'react';
-import AddItem from "./AddItem";
-import ViewAllItems from "./ViewAllItems";
-import Navigation from "./Navigation";
-// import Dashboard from './Dashboard';
-import {useParams} from "react-router-dom";
-import EditItem from './EditItem';
-
-// import EditItem from "./EditItem";
+import React from 'react';
+import AdminSideNav from "./AdminSideNav";
+import {NavLink,Outlet } from 'react-router-dom';
+import styled from "styled-components";
+import "./styles.css";
 
 function AdminPanel() {
-  let params = useParams();
-  // const [toggleViewItems, setToggleViewItems] = useState(true);
-  // const [toggleEditItem, setToggleEditItem] = useState(false);
-  // const [toggleAddItem, setToggleAddItem] = useState(false);
-  const [noAdmin, setNoAdmin] = useState(false);
-
-  const [showAddItem, setShowAddItem] =  useState(false);
-  const [showViewAllItems, setShowViewAllItems] = useState(false);
-  const [showEditItem, setShowEditItem] = useState(false);
-  const [id, setId] = useState("");
-  // const navigate = useNavigate();
-  // let id="";
-  useEffect(()=>{
-    // console.log(params.name);
-    if(params.name==="add-item"){
-      // console.log("add")
-      setShowAddItem(true);
-      setShowViewAllItems(false);
-      setShowEditItem(false);
-    }
-    else if(params.name === "viewallitems"){
-      console.log("view")
-      setShowViewAllItems(true);
-      setShowAddItem(false);
-      setShowEditItem(false);
-    }else{
-       setId(params.name);
-       setShowEditItem(true);
-       setShowAddItem(false);
-       setShowViewAllItems(false); 
-    }
-    let isMounted = true;
-    let user = JSON.parse(localStorage.getItem('user'));
-    if (isMounted){
-      if((!user) || (user && user.role !== "admin")){   //for user
-        setNoAdmin(true);
-     }
-    }
-    return () => { isMounted = false };
-  },[params])
-
-  
-  
   return (
-    <div style={{minHeight:'80vh'}}>
-      {noAdmin && (
-        <div>
-          <h3 className="pageNotFound">Sorry! Page Not Found</h3>
-        </div>
-      )}
+    <div className="admin-panel-container">
+        <List>
+            <h4 className='headings'>Manage Books</h4>
+            <SLink to={'manage-books/view-all-items'}  >  
+                <h4>View Books</h4>
+            </SLink>
+            <SLink to={'manage-books/add-item'} >  
+                <h4>Add New Book</h4>
+            </SLink>
 
-      {!noAdmin && (
-      <>
-        <div className='navigation_btns'>
-          <Navigation/>
-        </div>
-       {showAddItem && (<AddItem/>)} 
-       {showViewAllItems && (<ViewAllItems/>)}
-       {showEditItem && (<EditItem id={id}/>)} 
-      </>   
-      )}      
+            <h4 className='headings'>Manage Users & Orders</h4>
+            <SLink to={'manage-users/view-all-users'}  >  
+                <h4>View All Users</h4>
+            </SLink>
+            <SLink to={'manage-users/search-user'}  >  
+                <h4>Serach User</h4>
+            </SLink>
+            <SLink to={'manage-users/search-order'} >  
+                <h4>Search Order</h4>
+            </SLink>
+            
+        </List>
       
+      <AdminContainer>
+          <Outlet/>
+      </AdminContainer>
     </div>
+
   )
 }
 
+const List = styled.div`
+    .headings{
+        padding: 0.4rem;
+    }
+    height: inherit;
+    min-height: 80vh;
+  color:white;
+  /* height:100% ; */
+  list-style: none;
+  /* position: absolute; */
+  /* top:57px; */
+  left:0;
+  width:20%;
+  /* border-radius: 5%; */
+  background: grey;
+  padding:0.4rem;
+  overflow: hidden; 
+  @media (max-width:950px){
+    display:none;
+  }
+`;
+const AdminContainer = styled.div`
+    width: 80%;
+    position: relative;
+    padding: 20px;
+    @media (max-width:950px){
+        width: 100%;
+    }
+`;
+
+const SLink = styled(NavLink)`
+    &.active{
+        background:linear-gradient(to right, #f27121, #e94057);
+        h4{
+            color:white;
+        }
+    }
+    color:white;
+    display: flex;
+    align-items: center;
+    padding: 0.4rem;
+    border-radius: 2px ;
+    margin-left:0.6rem;
+    h4{
+        color:white;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+`;
 export default AdminPanel
+

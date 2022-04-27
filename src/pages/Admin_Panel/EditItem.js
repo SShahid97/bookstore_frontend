@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import "./styles.css";
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import { User_Service } from '../../services/Service';
 import styled from "styled-components";
 import {FaUpload} from "react-icons/fa";
 
 let Admin = {};
-function EditItem({id}) {
+function EditItem() {
   // console.log("id: ",id);
   const dicountArray = [{name:"Select discount",value:0},{name:"10%",value: 0.1},{name:"15%",value: 0.15}, {name:"20%",value:0.2}, 
   {name:"25%",value:0.25},{name:"30%",value: 0.3}, {name:"35%",value:0.35}, {name:"40%",value:0.4}, 
@@ -25,11 +25,11 @@ function EditItem({id}) {
 
 
   const navigate = useNavigate()
-  // let params = useParams();
+  let params = useParams();
   
   useEffect(() => {
     // console.log("id: ",id);
-    getBookItem();
+    getBookItem(params.id);
 
     let curr_user = JSON.parse(localStorage.getItem('user'));
     if (curr_user) {
@@ -59,7 +59,7 @@ function EditItem({id}) {
     }
   },[imagePrevFile]);
 
-  const getBookItem = async ()=>{
+  const getBookItem = async (id)=>{
     const itemDetails = await User_Service.getBookDetails(id);
     // console.log(itemDetails);
     setDiscount(itemDetails.discount);
@@ -257,7 +257,6 @@ const sumbitImageUpload = async (e)=>{
 
 const EditItemFormDiv = styled.div`
     display: flex;
-    width: 65%;
     background-color: #f7f7f7;
     height: auto;
     margin: auto;

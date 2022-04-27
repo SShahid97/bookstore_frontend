@@ -8,7 +8,47 @@
 const books_url = 'http://localhost:5001/api/books';
 const cart_url = 'http://localhost:5001/api/cart';
 const auth_url = 'http://localhost:5001/api/user';
-const review_url = 'http://localhost:5001/api/reviews'
+const review_url = 'http://localhost:5001/api/reviews';
+const order_url = 'http://localhost:5001/api/order';
+const address_url = 'http://localhost:5001/api/address';
+const pincode_url = 'http://localhost:5001/api/pincode';
+
+export const Pincode_Service = {
+    getPincodes: async (pincode)=>{
+        const response = await fetch(`${pincode_url}/${pincode}`);
+        const data = await response.json();
+        return data;
+    }
+}
+
+export const Address_Service = {
+    addAddress: async (token, formData)=>{
+        const response = await fetch(address_url, {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'auth-token': token
+            },
+            body:JSON.stringify(formData) 
+        });
+        const data = await response.json();
+        return data;
+    }
+}
+export const Order_Service = {
+    addOrder: async (token, formData)=>{
+        const response = await fetch(order_url, {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'auth-token': token
+            },
+            body:JSON.stringify(formData) 
+        });
+        const data = await response.json();
+        return data;
+    }
+}
 
 export const Review_Service = {
     addReview: async (token,formData)=>{
@@ -99,6 +139,16 @@ export const User_Service = {
 
 // Cart Service
 export const Cart_Service ={
+    deleteCart: async (token,userID)=>{
+        const response = await fetch(`${cart_url}/whole/${userID}`,{
+            method:'DELETE',
+            headers: {
+                'auth-token':token
+            }
+        });
+        const data = await response.json();
+        return data;
+    },
     getCartItems: async(id, token)=>{
         const response = await fetch(`${cart_url}/${id}`,{
                 headers: {

@@ -24,7 +24,7 @@ function MenuOnScroll() {
     <SLink to={'/books/php_book' } >  
         <h4>PHP</h4>
     </SLink>
-</List>
+    </List>
   )
 }
 
@@ -65,7 +65,5 @@ const SLink = styled(NavLink)`
         font-size: 0.9rem;
         font-weight: 500;
     }
-
-    
 `;
 export default MenuOnScroll

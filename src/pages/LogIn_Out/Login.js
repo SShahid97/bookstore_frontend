@@ -61,7 +61,7 @@ function Login() {
             localStorage.setItem("user", JSON.stringify(user));
             if(user.role === "admin"){
               console.log("admin")
-              navigate("/admin-panel/viewallitems")
+              navigate("/admin-panel")
               return;
             }
             getCartItems();
