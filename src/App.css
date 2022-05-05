@@ -70,7 +70,7 @@
   margin: 0 auto;
   cursor: pointer;
   align-items: center;
-  border-radius: 50%;
+  border-radius: 3px;
   color: white;
   font-size: 1.4rem;
   padding: 0px 9px;
@@ -78,14 +78,15 @@
 }
 
 .active-menu{
-    text-align: end;
-    display: block;
-    color:white;
-    font-size: 1.8rem;
+  margin-top: 2px;  
+  text-align: end;
+  display: block;
+  color:white;
+  font-size: 1.6rem;
   cursor: pointer;
   align-items: flex-end;
-  border-radius: 50%;
-  padding:5px;
+  border-radius: 3px;
+  padding:3px;
   background: linear-gradient(to right, #f27121, #e94057);
 }
 .cart-bage{
@@ -126,13 +127,43 @@
   cursor: pointer;
   width:95%
 }
-/* .pages{
-  width:fit-content;
+
+/* .admin-mobile-sidenav::-webkit-scrollbar {
+  width:0.8rem;
+}
+.admin-mobile-sidenav::-webkit-scrollbar-track {
+  background: rgb(226, 154, 154);
+  border-radius: 80vw;
+  margin-block:0.5em;
+}
+.admin-mobile-sidenav::-webkit-scrollbar-thumb {
+  background:linear-gradient(to bottom, #f27121a9, #e94057d2);
+  border-radius: 80vw;
+}
+.admin-mobile-sidenav::-webkit-scrollbar-thumb:hover {
+  background:linear-gradient(to bottom, #f27121, #e94057);
 } */
+
+::-webkit-scrollbar {
+  width:0.8rem;
+}
+::-webkit-scrollbar-track {
+  background: rgb(226, 154, 154);
+  border-radius: 80vw;
+  /* margin-block:0.5em; */
+}
+::-webkit-scrollbar-thumb {
+  background:linear-gradient(to bottom, #f27121a9, #e94057d2);
+  border-radius: 80vw;
+}
+::-webkit-scrollbar-thumb:hover {
+  background:linear-gradient(to bottom, #f27121, #e94057);
+}
+
 
 
 /* responsive css style  */
-@media (max-width: 1000px) {
+@media (max-width: 950px) {
   .hamburger-menu {
     display: block;
     color:white;
@@ -156,7 +187,7 @@
     font-size:1.5rem;
   }
   .hamburger-menu {
-    margin-top: 5px;
+    margin-top: 4px;
   }
   .cart-bage{
     margin-left: 11px;

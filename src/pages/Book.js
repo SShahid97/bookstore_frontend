@@ -2,7 +2,11 @@ import {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useParams, useNavigate} from 'react-router-dom';
 import Latest from "../components/Latest";
-import {User_Service, Cart_Service, Review_Service, Pincode_Service} from '../services/Service';
+import {User_Service, 
+    Cart_Service, 
+    Review_Service, 
+    Pincode_Service,
+    Stock_Service} from '../services/Service';
 import {cartService} from "../services/LocalService";
 import ReviewAndRating from "../components/ReviewAndRating";
 import Rating from "../components/Rating";
@@ -12,7 +16,7 @@ import {FaCartArrowDown } from "react-icons/fa";
 
 
 function Book() {
-    const ratingArray = [{name:"Choose Rating"},{name:"0",value: 0},{name:"0.5",value: 0.5},
+    const ratingArray = [{name:"0",value: 0},{name:"0.5",value: 0.5},
     {name:"1",value: 1}, {name:"1.5",value:1.5},{name:"2",value:2},{name:"2.5",value:2.5}, 
     {name:"3",value:3},{name:"3.5",value:3.5},{name:"4",value:4},{name:"4.5",value:4.5},
     {name:"5",value:5}];
@@ -28,6 +32,7 @@ function Book() {
     const [deliveryNotAvailable,setDeliveryNotAvailable] = useState(false);
     const [invalidPincode, setInvalidPincode] = useState(false);
     const [shippingCharges, setShippingCharges] = useState(0);
+    const [stockDetails, setStockDetails] = useState({});
 
     let params = useParams();
     // const navigate = useNavigate();
@@ -36,6 +41,8 @@ function Book() {
     // const [imageName, setImageName] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [bookImage, setBookImage] = useState([]);
+    const [reviewAlreadySubmitted, setReviewAlreadySubmitted] = useState(false);
+
 
     // const [showCart, setShowCart] = useState([]);
     useEffect(()=>{
@@ -51,12 +58,35 @@ function Book() {
         if (isMounted){
             getBookDetails(params.id);
             getReviews(params.id);
+            getStockDetails(params.id);
+            checkIfSubmitted(curr_user.token,curr_user._id, params.id);
             
         } 
         return () => { isMounted = false };
 
-    },[params.id]);
+    },[params.id,reviewSubmitted]);
     
+    const checkIfSubmitted = async(token, userId,bookId)=>{
+        let Ids = {
+            book_id: bookId,
+            user_id: userId
+        };
+        // console.log(Ids);
+        const reviewSubmitted = await Review_Service.checkIfSubmitted(token,Ids);
+        console.log(reviewSubmitted);
+        if(reviewSubmitted.length>0){
+            setReviewAlreadySubmitted(true);
+        }else{
+            setReviewAlreadySubmitted(false);
+        } 
+    }
+
+    const getStockDetails = async(bookId)=>{
+        const stock = await Stock_Service.getStockDetails(bookId);
+        console.log(stock);
+        setStockDetails(stock);
+    }
+
     const getBookDetails = async (bookId)=>{
         const bookDetails = await User_Service.getBookDetails(bookId);
         
@@ -66,7 +96,7 @@ function Book() {
         }
         setDetails(bookDetails);
         let itmImageName = [{id:bookDetails._id ,image: bookDetails.book_image, name:bookDetails.book_name}];
-        console.log(itmImageName);
+        // console.log(itmImageName);
         setBookImage(itmImageName);
         // setImageName(bookDetails.book_image)
     }
@@ -186,7 +216,9 @@ function Book() {
                 const data = await Review_Service.addReview(uuser.token, reviewObj);
                 // after form submission reset all values
                 console.log(data);
+                // setReviewAlreadySubmitted(true);
                 setReviewSubmitted(true);
+
             }catch(err){
                 console.log("There was some error: ",err)
             }
@@ -274,9 +306,9 @@ function Book() {
                         <div className='availability'>
                             <span> <strong>Availability:</strong> </span>
                             <span className='stock-count'>{
-                                bookDetails.count_in_stock===0?<span style={{color:'#b10505'}}>Currently Out of Stock</span>:(
-                                    bookDetails.count_in_stock<5?<span style={{color:'#c98e0'}}>In Stock (only {bookDetails.count_in_stock} left, hurry up! )</span>:(
-                                        <span style={{color:'green'}}>In Stock </span>
+                               stockDetails.count_in_stock===0?<span style={{color:'#b10505'}}>Currently Out of Stock</span>:(
+                                stockDetails.count_in_stock<5?<span style={{color:'#c98e0',fontSize: '15px'}}>In Stock (only {stockDetails.count_in_stock} left, hurry up! )</span>:(
+                                        <span style={{color:'green', fontSize: '15px'}}>In Stock </span>
                                     ) 
                                 )
                             }</span>
@@ -316,7 +348,7 @@ function Book() {
                                 {/* <span> */}
                                 <strong><p style={{fontSize: '0.9rem'}}>Qty:</p></strong>
                                 {/* </span> */}
-                                <input type="number" min={1} step={1} value={quantity} name="quantity" onChange={handleQuantity}/>
+                                <input type="number" min={1} step={1} max={stockDetails.count_in_stock} value={quantity} name="quantity" onChange={handleQuantity}/>
                         </Quantity> 
                         <div className='cart-btn'>
                             <Button disabled={!deliveryAvailable} className={!deliveryAvailable?"disableCartbtn":""} onClick={() => handleAddToCart(bookDetails._id,bookDetails.price)}>
@@ -349,38 +381,43 @@ function Book() {
 
                 {/*Display reviews and ratings*/}
                 {reviews.length>0 && (
+                    <>
+                    <h3 className='reviews-heading'>Reviews and Ratings</h3>
                     <ReviewAndRating  reviews={reviews}/>
+                    </>
                 )}  
 
                 {/* Review Component */}
-                {loggedIn && (
+                {!reviewAlreadySubmitted && (
                     <div className='review-component'>
-                    <h3>Review</h3>
+                    <h4>Review & Rate the Book</h4>
                     <hr/>
                     <form className="review-form" onSubmit={handleAddReview}>
-                        <label><strong>Rating:</strong></label><br/>
-                        {/* <div className='discount-div'> */}
+                        <div>
+                            <label><strong>Rating:</strong></label><br/>
                             <select  
-                                    value={urating} 
-                                    onChange={handleURating}
-                                    required
-                                    >
-                                {/* <option value="select" >Select discount</option> */}
-                                {ratingArray.map((rating,index)=>{
-                                    return <option key={index} value={rating.value}>{rating.name}</option>
-                                })}
-                            </select><br/>
-                        {/* </div> */}
-                        <label><strong>Review:</strong></label><br/>
-                        <textarea
-                            name="review"
-                            placeholder='Your Reveiw...'
-                            value={ureview}
-                            required
-                            onChange={handleUReview}
-                            rows={5}
-                        /><br/>
-                        <button className="" type="submit">Submit Review </button>
+                                        value={urating} 
+                                        onChange={handleURating}
+                                        required
+                                        >
+                                    <option value="" disabled={true} >Select discount</option>
+                                    {ratingArray.map((rating,index)=>{
+                                        return <option key={index} value={rating.value}>{rating.name}</option>
+                                    })}
+                            </select>
+                        </div>
+                        <div style={{marginTop:'10px'}}>
+                            <label ><strong>Review:</strong></label><br/>
+                            <textarea
+                                name="review"
+                                placeholder='Your Reveiw...'
+                                value={ureview}
+                                required
+                                onChange={handleUReview}
+                                rows={5}
+                            />
+                        </div>
+                        <button className="review-submit-btn" type="submit">Submit Review </button>
                     </form>
                     {reviewSubmitted && (
                         <div>
@@ -405,13 +442,27 @@ function Book() {
 const Wrapper = styled.div`
     width:80%;
     margin:0 auto;
+    .review-submit-btn{
+        padding: 8px 12px;
+        border: none;
+        color: blue;
+        cursor: pointer;
+        border-radius:3px;
+        background: #e3e2e2fa;
+    }
+    .review-submit-btn:hover{
+        background-color: blue;
+        color:white;
+    }
     .review-component{
         margin-top: 1rem;
         width:40%;
     }
     .review-form{
-        padding:20px;
-        width:95%;
+        /* padding:20px; */
+        padding-left:0px;
+        padding-top:10px;
+        width:100%;
     }
     .review-form select{
         padding:5px;

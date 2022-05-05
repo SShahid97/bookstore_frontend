@@ -10,7 +10,6 @@ function ReviewAndRating({reviews}) {
     // },[])
     return (
         <div className='display-reviews-outer'>
-            <h3 className='reviews-heading'>Reviews and Ratings</h3>
             {
                 reviews.map((review) => {
                     return (
@@ -23,7 +22,7 @@ function ReviewAndRating({reviews}) {
                             <div className='review-date'>{review.date.split("T")[0]}</div>
                             <div className='review-text'>
                                 <p>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates, in rem facilis amet obcaecati molestiae tempore, distinctio quod impedit totam at illum beatae neque iste odit, praesentium omnis? Quis, sint.
+                                   {review.review}
                                 </p>
                             </div>
                         </div>

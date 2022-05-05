@@ -236,10 +236,9 @@ const AddItemFormDiv = styled.div`
     background-color: #f7f7f7;
     height: auto;
     box-shadow: 2px 4px 4px 1px #00000036;
-    text-align: center;
+    text-align: left;
     padding-bottom: 2rem;
     padding-top: 2rem;
-    padding: auto auto;
     .disable-btn{
         opacity: 0.5;
         background-color: blue;
@@ -336,7 +335,6 @@ const AddItemFormDiv = styled.div`
     .price-discount-fields{
         display: flex;
         width:85%;
-        margin:auto;
     }
     .price-div{
         width:100%;
@@ -356,18 +354,23 @@ const AddItemFormDiv = styled.div`
         color: white;
     }
 
-    @media (max-width:800px){
-    flex-direction: column;
-    width: 85%;
-    .image-upload-form{
-        width: 95%;
-        margin-bottom: 5px;
-    }
-    .details-form{
-        width:95%;
+    @media (max-width:850px){
+        flex-direction: column;
+        /* width: 90%; */
+        text-align: center;
+        margin:0 auto;
+        .image-upload-form{
+            width: 95%;
+            margin-bottom: 5px;
+        }
+        .details-form{
+            width:95%;
+        }
+        .price-discount-fields{
+            margin: auto;
+        }
     }
 
-  }
 `;
 
 export default AddItem

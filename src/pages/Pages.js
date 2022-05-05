@@ -20,6 +20,8 @@ import ViewAllUsers from './Admin_Panel/ViewAllUsers';
 import SearchOrder from './Admin_Panel/SearchOrder';
 import SearchUser from './Admin_Panel/SearchUser';
 import EditItem from './Admin_Panel/EditItem';
+import UserAddress from './Admin_Panel/UserAddress';
+import UserOrderHistory from './Admin_Panel/UserOrderHistory';
 function Pages() {
   return (
       <Routes>
@@ -38,10 +40,13 @@ function Pages() {
         <Route path="admin-panel" element={<AdminPanel />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="manage-books/view-all-items/edit-item/:id" element={<EditItem />} />
             <Route path="manage-books/view-all-items" element={<ViewAllItems />} />
+            {/* <Route path="manage-books/view-all-items/:cat" element={<ViewAllItems />} /> */}
+            <Route path="manage-books/view-all-items/edit-item/:id" element={<EditItem />} />
             <Route path="manage-books/add-item" element={<AddItem />} />
-            <Route path="manage-users/view-all-users" element={<ViewAllUsers />} />
+            <Route path="manage-users/view-all-users" element={<ViewAllUsers />} /><></>
+            <Route path="manage-users/view-all-users/user-address/:id" element={<UserAddress />} />
+            <Route path="manage-users/view-all-users/user-orderhistory/:id" element={<UserOrderHistory />} />
             <Route path="manage-users/search-user" element={<SearchUser />} />
             <Route path="manage-users/search-order" element={<SearchOrder />} />
             <Route path="*" element={<PageNotFound />} />

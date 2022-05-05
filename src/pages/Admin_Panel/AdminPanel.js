@@ -1,90 +1,108 @@
-import React from 'react';
-import AdminSideNav from "./AdminSideNav";
+import React, { useState } from 'react';
+import AdminSideNav from "../../components/AdminSideNav";
 import {NavLink,Outlet } from 'react-router-dom';
 import styled from "styled-components";
 import "./styles.css";
+import {FaAngleLeft,FaAngleRight} from "react-icons/fa";
 
 function AdminPanel() {
+  const [toggleArrowMenu, setToggleArrowMenu]= useState(false);
+  const handleMenuArrow = ()=>{
+    setToggleArrowMenu(!toggleArrowMenu);
+  }
   return (
-    <div className="admin-panel-container">
-        <List>
-            <h4 className='headings'>Manage Books</h4>
-            <SLink to={'manage-books/view-all-items'}  >  
-                <h4>View Books</h4>
-            </SLink>
-            <SLink to={'manage-books/add-item'} >  
-                <h4>Add New Book</h4>
-            </SLink>
-
-            <h4 className='headings'>Manage Users & Orders</h4>
-            <SLink to={'manage-users/view-all-users'}  >  
-                <h4>View All Users</h4>
-            </SLink>
-            <SLink to={'manage-users/search-user'}  >  
-                <h4>Serach User</h4>
-            </SLink>
-            <SLink to={'manage-users/search-order'} >  
-                <h4>Search Order</h4>
-            </SLink>
-            
-        </List>
-      
+    <AdminPanelConatiner >
+      <AdminSideNav toggleArrowMenu={toggleArrowMenu} setToggleArrowMenu={setToggleArrowMenu}/>
+      <span className={toggleArrowMenu?"arrow-active arrow-menu":"arrow-menu"} onClick={handleMenuArrow}>
+        {!toggleArrowMenu && <FaAngleRight className='arrow'/>}
+        {toggleArrowMenu && <FaAngleLeft className='arrow'/>}
+      </span>
       <AdminContainer>
           <Outlet/>
       </AdminContainer>
-    </div>
+    </AdminPanelConatiner>
 
   )
 }
 
-const List = styled.div`
-    .headings{
-        padding: 0.4rem;
+const AdminPanelConatiner = styled.div`
+    display: flex;
+    margin-top: -25px;
+    margin-left: -10px;
+    min-height: 82vh;
+    .arrow-menu{
+      display: none;
+      position: fixed;
     }
-    height: inherit;
-    min-height: 80vh;
-  color:white;
-  /* height:100% ; */
-  list-style: none;
-  /* position: absolute; */
-  /* top:57px; */
-  left:0;
-  width:20%;
-  /* border-radius: 5%; */
-  background: grey;
-  padding:0.4rem;
-  overflow: hidden; 
-  @media (max-width:950px){
-    display:none;
-  }
+    .side-nav{
+      display: none !important;
+    }
+    @media (max-width:850px){
+        width: 100%;
+        .arrow-menu{
+          display: block;
+          height: 30px;
+          width: 25px;
+          background: grey;
+          color: white;
+          padding: 0px;
+          margin-top: 9px;
+          border-top-right-radius: 15px;
+          border-bottom-right-radius: 15px;
+          z-index:1300;
+          opacity: 0.5;
+      }
+      .arrow{
+        margin-left: 3px;
+        margin-top: 8px;
+        transform: scale(1.5);
+        
+      }
+      .arrow-menu:hover{
+        background: linear-gradient(to right, #f27121, #e94057);
+        cursor: pointer;
+      }
+      .arrow-active{
+        background: linear-gradient(to right, #f27121, #e94057);
+        cursor: pointer;
+        position: absolute;
+        margin-left: 275px;
+        opacity: 1;
+        position: fixed;
+        border-top-left-radius: 15px;
+        border-bottom-left-radius: 15px;
+        border-top-right-radius: unset;
+        border-bottom-right-radius: unset;
+        animation: 310ms slide-right;
+
+      }
+      @keyframes slide-right {
+        from {
+          margin-left: -100%;
+        }
+        to {
+          margin-left: 0%;
+        }
+      }
+    }
+   
+     @media (max-width:650px){
+      .arrow-menu{
+        margin-top: 5px;
+      }
+     }
+    
 `;
 const AdminContainer = styled.div`
     width: 80%;
     position: relative;
-    padding: 20px;
+    padding: 15px;
+    margin: 0 auto;
     @media (max-width:950px){
         width: 100%;
     }
 `;
 
-const SLink = styled(NavLink)`
-    &.active{
-        background:linear-gradient(to right, #f27121, #e94057);
-        h4{
-            color:white;
-        }
-    }
-    color:white;
-    display: flex;
-    align-items: center;
-    padding: 0.4rem;
-    border-radius: 2px ;
-    margin-left:0.6rem;
-    h4{
-        color:white;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-`;
+
 export default AdminPanel
 

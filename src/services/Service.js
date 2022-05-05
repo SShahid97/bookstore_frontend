@@ -12,6 +12,15 @@ const review_url = 'http://localhost:5001/api/reviews';
 const order_url = 'http://localhost:5001/api/order';
 const address_url = 'http://localhost:5001/api/address';
 const pincode_url = 'http://localhost:5001/api/pincode';
+const stock_url = 'http://localhost:5001/api/stock';
+
+export const Stock_Service = {
+    getStockDetails: async (bookId)=>{
+        const response = await fetch(`${stock_url}/${bookId}`);
+        const data = await response.json();
+        return data;
+    },
+}
 
 export const Pincode_Service = {
     getPincodes: async (pincode)=>{
@@ -33,6 +42,19 @@ export const Address_Service = {
         });
         const data = await response.json();
         return data;
+    },
+    getUserAddress: async (token,userId)=>{
+        try{
+            const response = await fetch(`${address_url}/${userId}`,{
+                headers:{
+                    'auth-token': token
+                }
+            }); 
+            const data = await response.json();
+            return data;
+        }catch(err){
+            return err;
+        }
     }
 }
 export const Order_Service = {
@@ -47,7 +69,33 @@ export const Order_Service = {
         });
         const data = await response.json();
         return data;
-    }
+    },
+    getOrderHistory: async (token,userId)=>{
+        try{
+            const response = await fetch(`${order_url}/search?user_id=${userId}`,{
+                headers:{
+                    'auth-token': token
+                }
+            }); 
+            const data = await response.json();
+            return data;
+        }catch(err){
+            return err;
+        }
+    },
+    searchOrderById: async (token,orderId)=>{
+        try{
+            const response = await fetch(`${order_url}/${orderId}`,{
+                headers:{
+                    'auth-token': token
+                }
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+
 }
 
 export const Review_Service = {
@@ -59,6 +107,16 @@ export const Review_Service = {
                 'auth-token': token
             },
             body:JSON.stringify(formData)
+        });
+        const data = await response.json();
+        return data;
+    },
+    checkIfSubmitted: async (token,formData)=>{
+        const response = await fetch(`${review_url}/submitted?book_id=${formData.book_id}&user_id=${formData.user_id}`,{
+            headers:{
+                'Content-Type':'application/json',
+                'auth-token': token
+            },
         });
         const data = await response.json();
         return data;
@@ -105,9 +163,12 @@ export const User_Service = {
     },
 
     getBooksByCategory: async (category)=>{
-        const response = await fetch(`${books_url}?category=${category}`);
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(`${books_url}?category=${category}`);
+            return response;
+        }catch(err){
+            return err;
+        }
     },
 
     getBookDetails: async (bookId)=>{
@@ -117,9 +178,12 @@ export const User_Service = {
     },
 
     getAllBooks: async()=>{
-        const response = await fetch(books_url)
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(books_url);
+            return response;
+        }catch(err){
+            return err;
+        }
     },
 
     updateBookItem: async(bookId, token, formData)=>{
@@ -200,6 +264,19 @@ export const Cart_Service ={
 
 // User Service
 export const Auth_Service = {
+    getUsers: async (token)=>{
+        try{
+            const response = await fetch(`${auth_url}`,{
+                headers:{
+                    'auth-token': token
+                }
+            }); 
+            const data = await response.json();
+            return data;
+        }catch(err){
+            return err;
+        }
+    },
     onLogin: async(formData)=>{
         const response = await fetch(`${auth_url}/login`,{
         method: 'POST',

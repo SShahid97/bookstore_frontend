@@ -9,6 +9,7 @@
     font-size: 1rem;
     padding: 3px;
     margin-right: 5px;
+    outline: none;
 }
 .qty-btn{
     border: 1px solid blue;
@@ -75,7 +76,7 @@ input[type=number]::-webkit-inner-spin-button {
     margin-top: 5px;
 }
 
-
+/* 
 table {
     width: 100%;
     height: auto;
@@ -96,7 +97,7 @@ tr{
 tr td{
     padding: 5px;
     max-width: 120px;
-}
+} */
 
   /* for responsiveness */
 @media (max-width:650px) {
@@ -107,12 +108,12 @@ tr td{
         padding: 5px 6px;
         font-size: 1rem;
     }
-    table {
+    /* table {
         font-size: 0.8rem !important;        
     }
     table thead{
         font-size: 0.9rem !important;
-    }
+    } */
     .amount{
         margin-right: 15px;
         font-size: 1rem;
@@ -125,7 +126,6 @@ tr td{
         font-size: 0.8rem;
     }
 }
-
 
 
 /* FOR BOOKS PAGE */

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import {Cart_Service} from '../services/Service';
+import {Cart_Service,Stock_Service} from '../services/Service';
 import {cartService} from "../services/LocalService";
 
 
@@ -14,6 +14,7 @@ function Cart() {
     const [totalAmount, setTotalAmount]= useState(0);
     const [emptyCart, setEmptyCart] = useState(false);
     const [quantity, setQuantity] = useState([]);
+    const [stockArray, setStockArray] = useState([]);
      
     useEffect(()=>{
         getCartItems();
@@ -24,12 +25,25 @@ function Cart() {
         newQtyArr[index] = e.target.value;
         setQuantity(newQtyArr)    
     }
+    // const getStockDetails = async(bookId)=>{
+    //     const stock = await Stock_Service.getStockDetails(bookId);
+    //     console.log(stock);
+    //     setStockDetails(stock);
+    // }
 
     const getCartItems = async()=>{
         let user = JSON.parse(localStorage.getItem('user'));
         try{
             const cartResponse = await Cart_Service.getCartItems(params.id, user.token);
             console.log("CART: ",cartResponse);
+            let stockArr=[];
+            cartResponse.forEach(async(item)=>{
+                let stock = await Stock_Service.getStockDetails(item.book._id);
+                stockArr.push(stock.count_in_stock);
+            });
+            console.log(stockArr);
+            setStockArray(stockArr);
+            
             localStorage.setItem("cart",JSON.stringify(cartResponse));
             if(cartResponse.length === 0){
                 setEmptyCart(true);
@@ -41,7 +55,7 @@ function Cart() {
             setQuantity(qty);
             updateCartItems(cartResponse.length);
             // localStorage.setItem("noOfCartItems",JSON.stringify(cartResponse.length));
-            console.log(cartResponse);
+            // console.log(cartResponse);
             setCartItems(cartResponse);
             calculateTotalAmount(cartResponse);
         }catch(err){
@@ -151,7 +165,7 @@ function Cart() {
                             <td>
                                 {quantity[index]}  
                                 <div className='qty'>
-                                    <input className='qty-input' type="number" step={1} min={1} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
+                                    <input className='qty-input' type="number" step={1} min={1} max={stockArray[index]} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
                                     <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
                                 </div> 
                             </td>
@@ -202,9 +216,40 @@ const CartCard = styled.div`
     box-shadow: 1px 2px 2px 1px #00000036;
     margin-top: 5px;
     text-align: center;
+    
+    table {
+        width: 100%;
+        height: auto;
+        border-collapse: collapse;
+        font-weight: 700;
+        @media (max-width:650px) {
+            font-size: 0.8rem !important;
+        }
+    }
+    table thead{
+        font-size: 1rem !important;
+        @media (max-width:650px) {
+            font-size: 0.9rem !important;
+        }
+    }
+        
+    th {
+        border-bottom: 2px solid rgb(48, 48, 48);
+    }
+    tr{
+        border-bottom: 1px solid grey;
+    }
+    tr td{
+        padding: 5px;
+        max-width: 120px;
+    }
+
     @media (max-width:850px) {
             width: 100%;
     }
+
+ 
+
     .discount-badge{
         position: absolute;
         background: #e30606;
@@ -241,6 +286,18 @@ const CartCard = styled.div`
             display: block !important;
         }  
     }
+    .discount-badge{
+        @media (max-width:620px){
+            position: relative;
+            background: #e30606;
+            padding: 5px 3px;
+            border-radius: 50%;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+    }
+
     .cart-items-div img{
         height:150px;
         width:100px;

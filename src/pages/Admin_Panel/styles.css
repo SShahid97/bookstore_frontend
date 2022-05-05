@@ -1,24 +1,3 @@
-/* .EditItemFormDiv{
-    width: 65%;
-    background-color: #f7f7f7;
-    height: auto;
-    margin: auto;
-    box-shadow: 2px 4px 4px 1px #00000036;
-    margin-top: 5px;
-    text-align: center;
-    padding-top:2rem;
-    padding-bottom: 2rem;
-} */
-/* .ViewItemsDiv{
-    width: 90%;
-    background-color: #f7f7f7;
-    height: auto;
-    margin: auto;
-    box-shadow: 2px 4px 4px 1px #00000036;
-    margin-top: 5px;
-    text-align: center;
-    padding:3rem;
-} */
 
 .heading{
     background: #0000ffa3;
@@ -29,15 +8,6 @@
     padding: 5px;
 }
 
-/* .addItemform input, textarea{
-    width: 65%;
-    margin-bottom: 8px;
-    font-size: 15px;
-    padding: 8px 5px;
-    border: 1px solid #9e9e9e73;price-discount-fields
-    border-radius: 3px;
-    outline:none;
-} */
 
 .editItemform input, textarea{
     width: 65%;
@@ -49,11 +19,6 @@
     outline:none;
 }
 
-/* .updateItemBtn{
-    width:65% !important;
-    background-color: blue;
-    color:white;
-} */
 .navBtns:hover{
     cursor: pointer;
     background-color: rgba(12, 12, 194, 0.671);
@@ -79,26 +44,7 @@
     background-color: grey;
 }
 
-/* .cancelBtn{
-    width:65% !important;
-    background-color:rgb(218, 21, 21);
-    color:white;
-    text-align: center;
-    margin: 0 auto;
-    padding: 8px 5px;
-    border-radius: 3px;
-    border:none;
-    font-size:15px;
-}
-
-.cancelBtn:hover{
-    cursor: pointer;
-    background-color:rgba(218, 21, 21, 0.781);
-} */
-
 .navigation_btns{
-    /* background: aqua; */
-    /* padding: 1rem; */
     display: flex;
     justify-content: center;
 }
@@ -152,23 +98,29 @@
     color: red;
     font-family: cursive;
     font-size: xxx-large;
+}
+
+  tr:nth-child(even) td {
+    background-color: cyan;
   }
 
 
-  /* making responsive for form width */
-/* @media screen and (max-width: 600px) and (min-width: 300px) {
-    .ViewItemsDiv{
-        width: 100%; 
-    }
+  .back-arrow-span{
+    border-radius: 50%;
+    background: gainsboro;
+    color: #5a5a5a;
+    padding: 5px 8px;
+    cursor: pointer;
+    margin-left: 6px;
 }
-@media screen and (max-width: 950px) and (min-width: 601px) {
-    .ViewItemsDiv{
-        width: 98%; 
-    }
-} */
-/*
-@media screen and (max-width: 850px) and (min-width: 600px) {
-    .loginForm, .RegisterForm{
-        width: 45%;
-    }
-} */
+.back-arrow-span:hover{
+    background: #8f8f8f;
+    color: white;
+}
+.back-arrow-span:active{
+    background: #b1b1b1;;
+}
+.back-arrow{
+    padding-top: 2px;
+    transform: scale(1.1);
+}

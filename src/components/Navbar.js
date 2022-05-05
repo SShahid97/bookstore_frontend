@@ -22,9 +22,12 @@ import {
   FaShoppingCart,
   FaUserShield } from "react-icons/fa";
 
+
 function Navbar() {
     const [mobileView, setmobileView] = useState(false);
+    const [adminMobileView, setAdminMobileView] = useState(false);
     const [toggleDropdown, setToggleDropDown] = useState(false);
+    const [toggleAdminNav, setToggleAdminNav] = useState(false);
     const [isUser, setIsUser] = useState(false);
     const [user, setUser] = useState({});
     const [userName, setUserName]=useState("");
@@ -152,6 +155,13 @@ function Navbar() {
         setToggleDropDown(false);  
       } 
     }
+    const handleAdminHamburger = ()=>{
+      setAdminMobileView(!adminMobileView);
+      // if(toggleAdminNav){
+        setToggleAdminNav(!toggleAdminNav)
+      // }
+
+    }
   
     const handleUserAccount=()=>{
       setToggleDropDown(!toggleDropdown);
@@ -182,9 +192,11 @@ function Navbar() {
           )}
 
           {/* <Category /> */}
-          {(!isAdmin && mobileView) && (
-            <MobileCategory setmobileView={setmobileView}  />
-          ) }
+          {/* {(!isAdmin && mobileView) && ( */}
+            <span className={mobileView?"showNav":"hideNav"}>
+              <MobileCategory  setmobileView={setmobileView}  />
+            </span>
+          {/* ) } */}
           {(!isAdmin && (
               <div className='search-box'>
                 <Search/> 
@@ -216,26 +228,27 @@ function Navbar() {
           {/* Hamburger  */}
           {!isAdmin  && (
             <div className="hamburger-menu" onClick={handleHamburger}>
-            {!mobileView && (<GiHamburgerMenu className={mobileView?"active-menu":"hamburger-menu"} />)}
-            {mobileView && (<FaTimes className={mobileView?"active-menu":"hamburger-menu"}/>)}
-          </div>
+              {!mobileView && (<GiHamburgerMenu className={mobileView?"active-menu":"hamburger-menu"} />)}
+              {mobileView && (<FaTimes className={mobileView?"active-menu":"hamburger-menu"}/>)}
+            </div>
           )}
 
            {/*For Admin Screen  */}
            {isAdmin && (
-            <Logo to={"/admin-panel/viewallitems"} >
-              <SiElasticsearch className='logo-icon' />
-              <span className='logo-text'>BookStore</span> 
-            </Logo>
+             <>
+              <Logo to={"/admin-panel/dashboard"} >
+                <SiElasticsearch className='logo-icon' />
+                <span className='logo-text'>BookStore</span> 
+              </Logo>
+             </>
           )}
-
           {isAdmin && (
             <>
               
             <div className='admin-panel-heading'>
-            <div className='admin-panel-heading-divone'></div>
-             <span className='admin-icon'><FaUserShield/> </span> <h3> Admin Panel</h3>
-            </div>
+              <div className='admin-panel-heading-divone'></div>
+              <span className='admin-icon'><FaUserShield/> </span> <h3> Admin Panel</h3>
+              </div>
             </>
           )}
           {isAdmin && (
@@ -257,13 +270,28 @@ function Navbar() {
           {toggleDropdown && (
             <ul className='dropdown' onClick={()=>setToggleDropDown(!toggleDropdown)}> 
               {(isUser || isAdmin) && (
-                <> 
-                <NavLinks to={"admin-panel/dashboard"} className='dropdown-item'>         
-                <FaChalkboardTeacher /><p className="sign_reg_icons" ><strong>Dashboard</strong></p>
-                </NavLinks>
-                <li className='dropdown-item' onClick={logout}> 
-                  <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>
-                </li>
+                <>
+                {isUser && (
+                  <>
+                    <NavLinks to={"/user/account"} className='dropdown-item'>         
+                    <FaUser/><p className="sign_reg_icons" ><strong>Account</strong></p>
+                    </NavLinks>
+                    <li className='dropdown-item' onClick={logout}> 
+                    <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>
+                  </li>
+                </>
+                )}
+                {isAdmin && (
+                  <>
+                    <NavLinks to={"admin-panel/dashboard"} className='dropdown-item'>         
+                    <FaChalkboardTeacher /><p className="sign_reg_icons" ><strong>Dashboard</strong></p>
+                    </NavLinks>
+                    <li className='dropdown-item' onClick={logout}> 
+                      <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>
+                    </li>
+                  </>
+                )} 
+                
                </>
               )}
               {/* {isAdmin && (
@@ -316,7 +344,7 @@ const Logo= styled(Link)`
   .logo-icon{
     transform:scale(2);
     color: rgb(255 116 30);
-    @media (max-width:600px){
+    @media (max-width:650px){
       transform:scale(1.1);
     }
   }
@@ -337,7 +365,7 @@ const Nav = styled.div`
   width: -moz-available;
   top:0;
   position: fixed;
-  z-index: 1000; 
+  z-index: 1400; 
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
   display: grid;
@@ -346,9 +374,15 @@ const Nav = styled.div`
   /* background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); */
   background: grey;
   margin-bottom: 0.5rem;
+  .showNav{
+    display: contents;
+  }
+  .hideNav{
+    display: none;
+  }
   .username{
     color: white;
-    font-size: 11px;
+    font-size: 9px;
     transform: scaleY(1.4);
   }
   .user-icon-name{
@@ -409,6 +443,13 @@ const Nav = styled.div`
       padding: 12px;
       font-size: larger;
       display: flex;
+      @media (max-width:650px){
+        padding:5px;
+        h3{
+          font-size: 15px;
+          margin-top: 5px;
+        }
+      }
   }
   .admin-panel-heading-divone{
       width:200px;
@@ -425,20 +466,25 @@ const Nav = styled.div`
 /* responsive for mobiles */
   @media (max-width:1000px) {
     grid-template-columns: 2rem 1fr 3fr 3rem 4rem 3rem;
+    padding: 5px;
     padding-right:10px;
     
   }
-
-  @media (max-width:600px) {
-    grid-template-columns: 0.2rem 1fr 3fr 2rem 4rem 2rem;
+  
+  @media (max-width:650px) {
+    grid-template-columns: 1.7rem 1fr 3fr 2rem 2rem 2.5rem;
     padding:5px;
     .user-icon{
-      font-size: 1.3rem;
+      font-size: 1.5rem;
+      margin-top: 5px;
     }
     .cart{
       font-size: 1.3rem;
     }
-
+    .admin-icon{
+      transform: scale(1);
+      margin-right: 5px;
+    }
   }
 `;
 

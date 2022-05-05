@@ -59,29 +59,41 @@ function Books() {
     }
 
     const getBooksByCategory = async (category)=>{
-       const fetchedBooks = await User_Service.getBooksByCategory(category);
-        // console.log(fetchedBooks[0])
-       fetchedBooks.forEach((book)=>{
-           if(book.discount>0){
-                book.discountPercent = book.discount*100 + "%";
-                book.newPrice = book.price - (book.price* book.discount);
-           }
-           if(book.discount===0){
-                book.newPrice = book.price; 
-           }
-       });
-       setTempBooks(fetchedBooks); 
-       const booksReceived = await User_Service.getBooksByCategory(category);
-       booksReceived.forEach((book)=>{
+       const response = await User_Service.getBooksByCategory(category);
+       if(response.status === 200){
+        const fetchedBooks = await response.json();
+        fetchedBooks.forEach((book)=>{
             if(book.discount>0){
-                book.discountPercent = book.discount*100 + "%";
-                book.newPrice = book.price - (book.price* book.discount);
+                 book.discountPercent = book.discount*100 + "%";
+                 book.newPrice = book.price - (book.price* book.discount);
             }
             if(book.discount===0){
-                book.newPrice = book.price; 
+                 book.newPrice = book.price; 
             }
         });
-       setBooks(booksReceived);
+        setTempBooks(fetchedBooks); 
+        const books = fetchedBooks;
+        setBooks(books);
+       }else if(response.status === 404){
+            const data = await response.json();
+            console.log(data);
+            // setErrorMsg(data.message);
+       }else if(response.status === 400){
+            console.log("Bad Request");
+       }
+        // console.log(fetchedBooks[0])
+       
+    //    const booksReceived = await User_Service.getBooksByCategory(category);
+    //    booksReceived.forEach((book)=>{
+    //         if(book.discount>0){
+    //             book.discountPercent = book.discount*100 + "%";
+    //             book.newPrice = book.price - (book.price* book.discount);
+    //         }
+    //         if(book.discount===0){
+    //             book.newPrice = book.price; 
+    //         }
+    //     });
+    //    setBooks(booksReceived);
        
     }
 

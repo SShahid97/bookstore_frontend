@@ -3,7 +3,7 @@ import "./styles.css";
 import {useNavigate, useParams} from 'react-router-dom';
 import { User_Service } from '../../services/Service';
 import styled from "styled-components";
-import {FaUpload} from "react-icons/fa";
+import {FaUpload,FaArrowLeft} from "react-icons/fa";
 
 let Admin = {};
 function EditItem() {
@@ -138,8 +138,16 @@ const sumbitImageUpload = async (e)=>{
         alert("Image not uploaded");
     }
   }
+  const handleBack = ()=>{
+    navigate(-1);
+  } 
   return (
+    <EditOuter>
+    <span className='back-arrow-span' title="back" onClick={handleBack}>
+            <FaArrowLeft className='back-arrow'/>
+    </span>
     <EditItemFormDiv>
+      
       {/* <h3 className="heading">EDIT ITEM</h3> */}
       <div className='image-upload-form'>
             <form onSubmit={sumbitImageUpload}>
@@ -252,8 +260,13 @@ const sumbitImageUpload = async (e)=>{
         </div>  
             
       </EditItemFormDiv>
+      </EditOuter>
   )
 }
+
+const EditOuter = styled.div`
+  height:100%;
+`;
 
 const EditItemFormDiv = styled.div`
     display: flex;
@@ -262,9 +275,10 @@ const EditItemFormDiv = styled.div`
     margin: auto;
     box-shadow: 2px 4px 4px 1px #00000036;
     margin-top: 5px;
-    text-align: center;
-    padding-top:2rem;
-    padding-bottom: 2rem;
+    text-align: left;
+    padding-top:1rem;
+    padding-bottom: 1rem;
+    
     .disable-btn{
         opacity: 0.5;
         background-color: blue;
@@ -361,7 +375,6 @@ const EditItemFormDiv = styled.div`
     .price-discount-fields{
         display: flex;
         width:85%;
-        margin:auto;
     }
     .price-div{
         width:100%;
@@ -375,7 +388,7 @@ const EditItemFormDiv = styled.div`
       background-color: blue;
       color:white;
       width:100% !important;
-      margin-left: -356px;
+      margin-left: -220px;
     }
     .updateItemBtn:hover{
       cursor: pointer;
@@ -392,7 +405,7 @@ const EditItemFormDiv = styled.div`
       border-radius: 3px;
       border:none;
       font-size:15px;
-      margin-left: -356px;
+      margin-left: -220px;
       width:100% !important;
   }
 
@@ -402,15 +415,16 @@ const EditItemFormDiv = styled.div`
   }
   @media (max-width:1105px) { 
     .updateItemBtn{
-      margin-left:-245px;
+      margin-left:-170px;
     }
     .cancelBtn{
-      margin-left: -245px;
+      margin-left: -170px;
     }
   }
   @media (max-width:800px){
     flex-direction: column;
-    width: 85%;
+    text-align: center;
+    margin:0 auto;
     .image-upload-form{
         width: 95%;
         margin-bottom: 5px;
@@ -427,6 +441,9 @@ const EditItemFormDiv = styled.div`
       width:85% !important;
     }
 
+    .price-discount-fields{
+            margin: auto;
+        }
   }
 
   

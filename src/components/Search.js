@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {FaSearch,FaTimes} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
  
@@ -105,6 +105,5 @@ const FormStyle = styled.form`
         font-size:smaller;
         width:inherit;
     }
-    
 `;
 export default Search;

@@ -138,6 +138,14 @@
 .order-info table{
     text-align: left;
 }
+.order-info thead {
+    border-bottom: 2px solid rgb(48, 48, 48);
+    font-size: 1.1rem !important;
+}
+
+.order-info tr td{
+    padding-left: 0px;
+}
 .payment-heading{
     text-align: center;
     background: grey;
@@ -172,17 +180,6 @@
 .cod-input{
     transform: scale(1.5);
 }
-
-thead {
-    border-bottom: 2px solid rgb(48, 48, 48);
-    font-size: 1.1rem !important;
-}
-
-tr td{
-    padding-left: 0px;
-}
-
-
 
 .country-state-fields{
     display: flex;
