@@ -224,6 +224,7 @@ const CartCard = styled.div`
     box-shadow: 1px 2px 2px 1px #00000036;
     margin-top: 5px;
     text-align: center;
+    margin-bottom: 1rem;
     
     table {
         width: 100%;

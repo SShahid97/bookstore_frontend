@@ -43,7 +43,7 @@ function Faqs(){
                     <div className='faq' key={index}>
                         <h4 className={questionNumber === index?'activate faqinnerHeadings':'faqinnerHeadings'} onClick={(e)=>handleToggle(e,index)}>{question.question}</h4>
                          <div className={questionNumber === index?'show':'hide'}>
-                            <p>
+                            <p className='answer'>
                                 {question.answer}
                             </p>     
                         </div>
@@ -96,6 +96,9 @@ const FaqsOuter = styled.div`
         border: 1px solid #adaaaa;
         border-radius: 2px;
         margin-top:10px;
+        @media (max-width:650px){
+            width:95%
+        }
     }
     h4{
         font-weight: 600;
@@ -107,14 +110,14 @@ const FaqsOuter = styled.div`
     .activate{
         background: linear-gradient(to right, #f27121,#e94057);
     }
+    .answer{
+        text-align:justify;
+    }
     @media (max-width:650px){
+        margin-top: -20px;
         width:98%;
         h3{
-            font-size: 0.9rem;
-        }
-        h4{
-            font-size: small;
-            font-weight: 600;
+            font-size: 1.2rem;
         }
     }
 `;

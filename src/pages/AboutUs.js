@@ -11,8 +11,9 @@ function AboutUs(){
             <div className='about-inner'>
                 <div className='eboostore about'>
                     <h4 className='aboutinnerHeadings'>E-Bookstore</h4>
-                    <p>
-                        Our e-bookstore can be used by the startups who want to sell books online. They will get a very easy-to-use
+                    <p style={{textAlign:'justify'}}>
+                        E-bookstore is an online shopping web application for Books.
+                        Our E-bookstore can be used by the startups who want to sell books online. They will get a very easy-to-use
                         user interface for maintaining their books inventory, like adding new books, editing existing books, or 
                         removing books. They also get some advanced features of customization. Also, they can keep track of customers
                         order history for future use.
@@ -54,6 +55,7 @@ const AboutOuter = styled.div`
     border-radius: 3px;
     padding-bottom:0.7rem;
     margin-bottom: 1rem !important;
+
     .aboutHeading{ 
         text-align: center; 
         background: gray; 
@@ -80,17 +82,18 @@ const AboutOuter = styled.div`
         border: 1px solid #adaaaa;
         border-radius: 2px;
         margin-top:10px;
+        @media (max-width:650px){
+            width:95%
+        }
     }
 
     @media (max-width:650px){
         width:98%;
+        margin-top: -20px;
         h3{
-            font-size: 0.9rem;
+            font-size: 1.2rem;
         }
-        h4{
-            font-size: small;
-            font-weight: 600;
-        }
+ 
     }
 `;
 export default AboutUs;

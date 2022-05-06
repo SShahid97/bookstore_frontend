@@ -20,7 +20,8 @@ import {
   FaUser,
   FaChalkboardTeacher,
   FaShoppingCart,
-  FaUserShield } from "react-icons/fa";
+  FaUserShield,
+  FaSearch } from "react-icons/fa";
 
 
 function Navbar() {
@@ -34,6 +35,8 @@ function Navbar() {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isLoggedOut, setisLoggedOut] = useState(true);
     const [cartItemsLength, setCartItemsLength]= useState(0);
+    const [showMobSearch, setShowMobSearch] = useState(false);
+    const [showHideSearch, setShowHideSearch] = useState(false);
     const navigate = useNavigate();
     // const [scrollPosition, setScrollPosition] = useState(0);   
     // const [isMenu, setIsMenu] = useState(false);
@@ -170,6 +173,10 @@ function Navbar() {
       }
 
     }
+    const showMobSearchBar = ()=>{
+      console.log("clicked")
+      setShowMobSearch(true);
+    }
 
     // const handleMenu = ()=>{
     //   setIsMenu(!isMenu);
@@ -198,9 +205,12 @@ function Navbar() {
             </span>
           {/* ) } */}
           {(!isAdmin && (
-              <div className='search-box'>
-                <Search/> 
-              </div>
+              <>
+                <div className={showMobSearch?'search-box-mobile':'search-box' }>
+                 <Search setShowMobSearch={setShowMobSearch}/> 
+                </div>
+                <FaSearch className="search-icon-mobile" onClick={showMobSearchBar} ></FaSearch>
+              </>    
           ))}
           
           
@@ -208,7 +218,7 @@ function Navbar() {
            {/* Cart */}
            {!isAdmin && (
              <>    
-             <div style={{marginTop:'11px',textAlign: '-webkit-center'}} onClick={handleCart}>
+             <div className="cart-icon" onClick={handleCart}>
                <span className='cart-bage'>{cartItemsLength}</span>
                <FaShoppingCart className="cart"/>
              </div>
@@ -237,8 +247,8 @@ function Navbar() {
            {isAdmin && (
              <>
               <Logo to={"/admin-panel/dashboard"} >
-                <SiElasticsearch className='logo-icon' />
-                <span className='logo-text'>BookStore</span> 
+                <SiElasticsearch className='logo-icon-admin' />
+                <span className='logo-text-admin'>BookStore</span> 
               </Logo>
              </>
           )}
@@ -255,10 +265,7 @@ function Navbar() {
             <div >
             </div>
           )}
-          {isAdmin && (
-            <div>
-            </div>
-          )}
+         
 
           {(isAdmin && (
             <div title={user.name} className={toggleDropdown?'activeIcon':'user-icon user-icon-name'} onClick={handleUserAccount}>
@@ -345,17 +352,35 @@ const Logo= styled(Link)`
     transform:scale(2);
     color: rgb(255 116 30);
     @media (max-width:650px){
-      transform:scale(1.1);
+      transform:scale(1.3);
     }
   }
   .logo-text{
     padding-left:5px;
     color: rgb(247 227 81);
-    @media (max-width:600px){
+    @media (max-width:650px){
       font-size: medium;
-      font-family: monospace;
-      padding-left:0px;
+      font-family: sans-serif;
+      padding-left: 3px;
       transform: scaleY(1.5);
+    }
+  }
+
+  .logo-icon-admin{
+    transform:scale(2);
+    color: rgb(255 116 30);
+    @media (max-width:650px){
+      transform:scale(1.3);
+    }
+  }
+  .logo-text-admin{
+    padding-left:5px;
+    color: rgb(247 227 81);
+    @media (max-width:650px){
+      font-size: medium;
+      font-family: sans-serif;
+      padding-left: 3px;
+      transform: scaleY(1.3);
     }
   }
 
@@ -397,7 +422,63 @@ const Nav = styled.div`
   }
 
   .search-box{
-    margin-top: 0.4rem;
+    margin-top: 0.6rem;
+    @media (max-width:1000px){
+      margin-top: 0.2rem;
+    }
+    @media (max-width:650px){
+      display:none;
+    }
+  }
+  .search-box-mobile{
+    display:block;
+    position: absolute;
+    width: 100%;
+    z-index: 4;
+  }
+  .search-icon-mobile{
+    display: none;
+    cursor: pointer;
+    @media (max-width:650px){
+      display:block;
+      color: white;
+      margin-top: 12px;
+      margin-left: 85%;
+      transform: scale(1.2);
+    }
+  }
+
+  .cart-icon{
+    margin-top:11px;
+    margin-left: 45px;
+    @media (max-width:1000px){
+      margin-top:6px;
+    } 
+    @media (max-width:650px){
+      margin-top:8px;
+      margin-left: 0px;
+    }   
+  }
+  .cart-bage{
+    margin-left: 10px;
+    margin-top: -5px;
+    position: absolute;
+    background-color: orangered;
+    color: white;
+    border-radius: 50%;
+    display: block;
+    width: 16px;
+    height: 18px;
+    text-align: center;
+    font-size: small;
+    cursor: pointer;
+    @media (max-width:650px){
+      width: 13px;
+      height: 16px;
+      margin-top: -8px;
+      margin-left: 12px;
+      font-size: smaller;
+    }
   }
 
   .user-icon{
@@ -406,6 +487,12 @@ const Nav = styled.div`
     align-items: center;
     font-size: 1.8rem;
     color: white;
+    margin-left: 38px;
+    @media (max-width:650px){
+      font-size: 1.5rem;
+      margin-left: 8px;
+      margin-top: 5px;
+    }
   }
 
   .user-icon:hover{
@@ -420,6 +507,9 @@ const Nav = styled.div`
     align-items: center;
     font-size: 1.8rem;
     color: white;
+    @media (max-width:650px){
+      font-size: 1.5rem;
+    }
   }
 
   .cart:hover{
@@ -444,6 +534,7 @@ const Nav = styled.div`
       font-size: larger;
       display: flex;
       @media (max-width:650px){
+        grid-column: 3/5;
         padding:5px;
         h3{
           font-size: 15px;
@@ -472,15 +563,7 @@ const Nav = styled.div`
   }
   
   @media (max-width:650px) {
-    grid-template-columns: 1.7rem 1fr 3fr 2rem 2rem 2.5rem;
-    padding:5px;
-    .user-icon{
-      font-size: 1.5rem;
-      margin-top: 5px;
-    }
-    .cart{
-      font-size: 1.3rem;
-    }
+    grid-template-columns: 1rem 1fr 1fr 2rem 2rem 3rem;
     .admin-icon{
       transform: scale(1);
       margin-right: 5px;
@@ -488,14 +571,6 @@ const Nav = styled.div`
   }
 `;
 
-
-// const Nav2 = styled.div`
-//     top: 59px;
-//     padding-left: 3rem;
-//     position: relative;
-//     display: grid;
-//     background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); 
-// `;
 
 
 const NavLinks = styled(NavLink)`

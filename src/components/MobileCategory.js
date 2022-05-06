@@ -105,6 +105,7 @@ function MobileCategory({setmobileView}) {
 const List = styled.div`
       /* height: inherit; */
       height: -webkit-fill-available;
+      height:100%;
       color:white;
       list-style: none;
       right:0;
@@ -117,7 +118,7 @@ const List = styled.div`
       width: 75%;
       z-index: 1200;
       overflow-y: scroll;
-      
+      font-size: 0.9rem;
 `;
 const MainLinks = styled.span`
         .activate{
@@ -147,7 +148,7 @@ const MainLinks = styled.span`
         width:100%;
         padding:3px;
         padding-left:8px;
-        font-weight: 600;
+        font-weight: 500;
     }
     h4{
         color:white;

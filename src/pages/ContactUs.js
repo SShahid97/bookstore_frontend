@@ -118,8 +118,12 @@ const ContactFormOuter = styled.div`
     }
     @media (max-width:650px){
         width:98%;
+        margin-top: -20px;
         h3{
             font-size: 1rem;
+        }
+        .contactFormInner{
+            width:95%;
         }
     }
 `;

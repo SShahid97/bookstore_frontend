@@ -1,14 +1,24 @@
 import React, { useState,useEffect } from 'react';
 import AdminSideNav from "../../components/AdminSideNav";
-import {Outlet } from 'react-router-dom';
+import {Outlet, useNavigate } from 'react-router-dom';
 import styled from "styled-components";
 import "./styles.css";
 import {FaAngleLeft,FaAngleRight} from "react-icons/fa";
 
 function AdminPanel() {
   const [toggleArrowMenu, setToggleArrowMenu]= useState(false);
+  let navigate = useNavigate();
   useEffect(()=>{
     window.scrollTo(0, 0);
+    let user = JSON.parse(localStorage.getItem('user'));
+    if(!user ){
+      navigate("/login");
+    }else{
+      if(user.role !== "admin"){
+        navigate("/login");
+      }
+    }
+
   },[])
   const handleMenuArrow = ()=>{
     setToggleArrowMenu(!toggleArrowMenu);
