@@ -8,21 +8,37 @@ import {User_Service} from '../services/Service'
 function Latest(props) {
     const [latest, setLatest] = useState([]);
     const ref = useRef();
-    let cat;
-    cat = props.category;  
+    
     useEffect(() => {
-        getLatest();
-    },[cat]);
+        // let cat;
+        // cat = props.category; 
+        if(props.category  !== undefined){
+            getLatest(props.category);
+        } 
+    },[props.category]);
 
-    const getLatest = async()=>{
-        const fetchedData = await User_Service.getLatest(cat);
-        fetchedData.forEach((book)=>{
-            if(book.discount>0){
-                book.discountPercent = book.discount*100 + "%";
-                book.newPrice = book.price - (book.price* book.discount);
-           }
-        });
-        setLatest(fetchedData);
+    const getLatest = async(cat)=>{
+        const response = await User_Service.getLatest(cat);
+        if(response.status === 200){
+            const fetchedBooks = await response.json();
+            fetchedBooks.forEach((book)=>{
+                if(book.discount>0){
+                    book.discountPercent = book.discount*100 + "%";
+                    book.newPrice = book.price - (book.price* book.discount);
+                }
+                if(book.discount===0){
+                    book.newPrice = book.price; 
+                }
+            });
+            setLatest(fetchedBooks);
+        }else if (response.status === 404){
+            const data = await response.json();
+            // setNotFound(data.message);
+            console.log(data);
+        }else if (response.status === 400){
+            console.log("Bad Request");
+        }
+        
     }
 
     return (

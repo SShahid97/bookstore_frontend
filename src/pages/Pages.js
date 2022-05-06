@@ -22,6 +22,10 @@ import SearchUser from './Admin_Panel/SearchUser';
 import EditItem from './Admin_Panel/EditItem';
 import UserAddress from './Admin_Panel/UserAddress';
 import UserOrderHistory from './Admin_Panel/UserOrderHistory';
+import ContactUs from './ContactUs';
+import AboutUs from './AboutUs';
+import Faqs from './Faqs';
+
 function Pages() {
   return (
       <Routes>
@@ -36,6 +40,9 @@ function Pages() {
         <Route path="/user/account" element={<UserAccount/>} />
         <Route path="/cart/:id" element={<Cart/>} />
         <Route path="/checkout/:name" element={<Checkout/>} />
+        <Route path="/contact-us" element={<ContactUs/>}/>
+        <Route path="/about-us" element={<AboutUs/>}/>
+        <Route path="/faqs" element={<Faqs/>}/>
         
         <Route path="admin-panel" element={<AdminPanel />}>
             <Route index element={<Dashboard />} />

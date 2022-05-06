@@ -18,9 +18,11 @@ function Register() {
     const [emailErrorRate, setEmailErrorRate] = useState("");
     const [nameError, setNameError] = useState("");
     const [isInvalid, setIsInvalid] = useState(false);
+    const [emailAlreadyExists, setEmailAlreadyExists] = useState(false);
     const [registeredSuccess, setRegisteredSuccess] = useState();
 
     const handleChange = (event) => {
+        setEmailAlreadyExists(false);
         const name = event.target.name;
         const value = event.target.value;
         setInputs(values => ({ ...values, [name]: value }))
@@ -39,30 +41,18 @@ function Register() {
 
     const registerUser = async (event) => {
         event.preventDefault();
-        try{
-            const response = await Auth_Service.onRegister(inputs);
+        const response = await Auth_Service.onRegister(inputs);
+         if(response.status === 201){
             const data = await response.json();
             console.log(data);
             setRegisteredSuccess(true);
-            // if(data){
-            //     navigate("/login");
-            // }  
-        }catch(err){
-            console.log("There was some error: ",err);
+        }else if (response.status === 400) {
             setRegisteredSuccess(false);
-            // setError("")
+            console.log("There was some error: ",response)
+        }else if(response.status === 409){
+            setEmailAlreadyExists(true);
         }
-        // const response = await Auth_Service.onRegister(inputs); 
-        // if(response.status === 201){
-        //     const data = await response.json();
-        //     console.log(data)
-        //     if(data){
-        //         navigate("/login");
-        //     } 
-        // }
-        // if (response.status === 400) {
-        //     console.log("There was some error: ",response)
-        // } 
+
     }
 
     const handleConfirmPassword=(e)=>{
@@ -227,7 +217,11 @@ function Register() {
                     </div>
                    
                 )}
-                
+                {emailAlreadyExists && (
+                    <div className='pass-match-error'>
+                        <p>Email Already Registered! Try a different email.</p>
+                    </div>
+                )}
                 <input className={isInvalid?"disableRegisterBtn":"RegisterBtn"} disabled={isInvalid} type="submit" value="Register" /><br/>
 
                 <div className="notReg">

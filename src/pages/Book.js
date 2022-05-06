@@ -11,6 +11,7 @@ import {cartService} from "../services/LocalService";
 import ReviewAndRating from "../components/ReviewAndRating";
 import Rating from "../components/Rating";
 import "./styles.css";
+import Loader from '../components/Loader';
 import {FaCartArrowDown } from "react-icons/fa";
 // import {FaUserCircle, FaStar,FaStarHalfAlt,FaRegStar} from "react-icons/fa";
 
@@ -35,18 +36,21 @@ function Book() {
     const [stockDetails, setStockDetails] = useState({});
 
     let params = useParams();
-    // const navigate = useNavigate();
+    let navigate = useNavigate();
     let cartArray = [];
     const [bookDetails, setDetails]=useState({});
     // const [imageName, setImageName] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [bookImage, setBookImage] = useState([]);
     const [reviewAlreadySubmitted, setReviewAlreadySubmitted] = useState(false);
+    const [showLoader, setShowLoader] = useState(false);
+    const [notFound, setNotFound] = useState("");
 
 
     // const [showCart, setShowCart] = useState([]);
     useEffect(()=>{
         window.scrollTo(0, 0);
+        setShowLoader(true);
         let curr_user = JSON.parse(localStorage.getItem('user'));
         if(!curr_user){
             setLoggedIn(false);
@@ -58,9 +62,9 @@ function Book() {
         if (isMounted){
             getBookDetails(params.id);
             getReviews(params.id);
-            getStockDetails(params.id);
-            checkIfSubmitted(curr_user.token,curr_user._id, params.id);
-            
+            if(curr_user){
+                checkIfSubmitted(curr_user.token,curr_user._id, params.id);
+            }
         } 
         return () => { isMounted = false };
 
@@ -72,56 +76,71 @@ function Book() {
             user_id: userId
         };
         // console.log(Ids);
-        const reviewSubmitted = await Review_Service.checkIfSubmitted(token,Ids);
-        console.log(reviewSubmitted);
-        if(reviewSubmitted.length>0){
+        const response = await Review_Service.checkIfSubmitted(token,Ids);
+        if(response.status === 200){
+            const reviewSubmitted = await response.json();
+            console.log(reviewSubmitted);
             setReviewAlreadySubmitted(true);
-        }else{
+        }else if(response.status === 204){
             setReviewAlreadySubmitted(false);
-        } 
+        }
+        // // console.log(reviewSubmitted);
+        // if(reviewSubmitted.length>0){
+        //     setReviewAlreadySubmitted(true);
+        // }else{
+        //     setReviewAlreadySubmitted(false);
+        // } 
     }
 
     const getStockDetails = async(bookId)=>{
         const stock = await Stock_Service.getStockDetails(bookId);
-        console.log(stock);
         setStockDetails(stock);
     }
 
     const getBookDetails = async (bookId)=>{
-        const bookDetails = await User_Service.getBookDetails(bookId);
-        
-        if(bookDetails.discount>0){
-            bookDetails.discountPercent = bookDetails.discount*100 + "%";
-            bookDetails.newPrice = bookDetails.price - (bookDetails.price* bookDetails.discount);
+        const response = await User_Service.getBookDetails(bookId);
+        if(response.status === 200){
+            const bookDetails = await response.json();
+            if(bookDetails.discount>0){
+                bookDetails.discountPercent = bookDetails.discount*100 + "%";
+                bookDetails.newPrice = bookDetails.price - (bookDetails.price* bookDetails.discount);
+            }
+            setDetails(bookDetails);
+            let itmImageName = [{id:bookDetails._id ,image: bookDetails.book_image, name:bookDetails.book_name}];
+            setBookImage(itmImageName);
+            setNotFound("");
+            getStockDetails(bookDetails._id);
+            setShowLoader(false);
+        }else if(response.status === 204){
+            setShowLoader(false);
+            setNotFound("No Content");
+            // console.log(response);
+            navigate("*");
+        }else if(response.status === 400){
+            setShowLoader(false);
+            setNotFound("Invalid Book ID");
+            // console.log("Bad Request");
+            navigate("*");
         }
-        setDetails(bookDetails);
-        let itmImageName = [{id:bookDetails._id ,image: bookDetails.book_image, name:bookDetails.book_name}];
-        // console.log(itmImageName);
-        setBookImage(itmImageName);
-        // setImageName(bookDetails.book_image)
     }
 
     const getReviews = async(bookId)=>{
-        // let userIds = [];
-        try{
-            const reviewsReturned = await Review_Service.getReviews(bookId);
-            // console.log(reviewsReturned);
-            let ratingSum=0;
-            let ratingAvg=0;
-            if(reviewsReturned.length > 0){
+            const response = await Review_Service.getReviews(bookId);
+            if(response.status === 200){
+                let ratingSum=0;
+                let ratingAvg=0;
+                const reviewsReturned = await response.json();
                 reviewsReturned.forEach((item)=>{
                     ratingSum = ratingSum+item.rating;
                 })
                 ratingAvg = ratingSum/reviewsReturned.length;
-                console.log(Math.ceil(ratingAvg));
                 setTotalRating( Math.ceil(ratingAvg));
+                setReviews(reviewsReturned);
+            }else if(response.status === 204){
+                console.log("No Reviews")
+            }else if(response.status === 400){
+                console.log("Bad Request");
             }
-            
-            setReviews(reviewsReturned);
-
-        }catch(err){
-            console.log("There was some error!",err);
-        }
     }
 
     const handleQuantity = (e)=>{
@@ -235,8 +254,12 @@ function Book() {
     }
     const handleDelivery = async ()=>{
         const pin = pincode;
+        if(pin.length === 0){
+            alert("Please Enter Pincode First");
+            return;
+        }
         if (pin.length !== 6 ){
-            console.log("yep",pin.length)
+            // console.log("yep",pin.length)
             setInvalidPincode(true);
             setDeliveryAvailable(false);
             setDeliveryNotAvailable(false);
@@ -248,13 +271,13 @@ function Book() {
        try{
             const pincodeReturned = await Pincode_Service.getPincodes(Number(pin));
             if(pincodeReturned.length>0){
-                console.log(pincodeReturned);
+                // console.log(pincodeReturned);
                 setShippingCharges(pincodeReturned[0].shipping_charges);
                 setDeliveryAvailable(true);
                 setDeliveryNotAvailable(false);
                     // setPincode(""); 
             }else{
-                console.log(pincodeReturned);
+                // console.log(pincodeReturned);
                 setDeliveryAvailable(false);
                 setDeliveryNotAvailable(true);  
             }
@@ -263,6 +286,9 @@ function Book() {
        }
     }
     return (
+        <> 
+        {showLoader && (<Loader/>)} 
+        {!showLoader && (  
            <Wrapper>
             <DetailWrapper>
                 <DetailWrapperInner>
@@ -388,7 +414,7 @@ function Book() {
                 )}  
 
                 {/* Review Component */}
-                {!reviewAlreadySubmitted && (
+                {(loggedIn && !reviewAlreadySubmitted) && (
                     <div className='review-component'>
                     <h4>Review & Rate the Book</h4>
                     <hr/>
@@ -400,7 +426,7 @@ function Book() {
                                         onChange={handleURating}
                                         required
                                         >
-                                    <option value="" disabled={true} >Select discount</option>
+                                    <option value="" disabled={true} >Choose Rating</option>
                                     {ratingArray.map((rating,index)=>{
                                         return <option key={index} value={rating.value}>{rating.name}</option>
                                     })}
@@ -433,7 +459,8 @@ function Book() {
                     <Latest category={bookDetails.category}/>
                 </div>
             </Wrapper>
-            
+            )}
+            </>
           )
     // }
     
@@ -814,6 +841,7 @@ const BookAuthorDetails = styled.div`
     display: flex;
     
     .author-lang-div{
+        width: 100%;
         display: flex;
         flex-direction: row;
         justify-content: stretch;

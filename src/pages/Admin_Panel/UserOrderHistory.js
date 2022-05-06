@@ -16,9 +16,17 @@ function UserOrderHistory() {
   },[]);
 
   const getOrderHistory = async (token, userId)=>{
-    const returnedHistory = await Order_Service.getOrderHistory(token,userId);
-    console.log(returnedHistory);
-    setUsersOrderHistoy(returnedHistory);
+    const response = await Order_Service.getOrderHistory(token,userId);
+      if(response.status === 200){
+        const returnedHistory = await response.json();
+        console.log(returnedHistory);
+        setUsersOrderHistoy(returnedHistory);
+      }else if (response.status === 204){
+        setUsersOrderHistoy([]);
+      }else if (response.status === 400){
+        console.log("Bad Request");
+      }
+ 
   }
   const handleBack = ()=>{
       navigate(-1);

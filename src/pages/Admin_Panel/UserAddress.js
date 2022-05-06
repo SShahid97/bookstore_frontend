@@ -14,9 +14,15 @@ function UserAddress() {
     },[]);
 
     const getUserAddress = async(token, userId)=>{
-        const returnedAddress = await Address_Service.getUserAddress(token,userId);
-        console.log(returnedAddress);
-        setUserAddress(returnedAddress[0]);
+        const response = await Address_Service.getUserAddress(token,userId);
+        if(response.status === 200){
+            const returnedAddress = await response.json();
+            setUserAddress(returnedAddress[0]);
+        }else if (response.status === 204){
+            setUserAddress({});
+        }else if (response.status === 400){
+            console.log("Bad Request");
+        }
     }
     const handleBack = ()=>{
         navigate(-1);
@@ -26,8 +32,9 @@ function UserAddress() {
         <span className='back-arrow-span' title="back" onClick={handleBack}>
             <FaArrowLeft className='back-arrow'/>
         </span>
-       {userAddress && (
-           <Card>
+        <Card>
+        {userAddress && (
+            <>  
            <h4 className='card-headings'>User Address</h4>
            <div className='details'>
              <p><strong>Country: </strong> {userAddress.country}</p>
@@ -37,11 +44,16 @@ function UserAddress() {
              <p><strong>Pincode: </strong> {userAddress.pincode}</p>
              <p><strong>Address: </strong> {userAddress.address}</p>
            </div>
+           </>
+       )}
+        {!userAddress && (
+           <>
+            <h4 className='card-headings'>User Address</h4>
+            <h4 className='no-address'>No Address Saved</h4>
+           </>
+       )}
        </Card>
-       )}
-       {!userAddress && (
-           <h3 className='no-address'>No Address Saved.</h3>
-       )}
+      
     </UserAdd>
   )
 }
@@ -51,8 +63,8 @@ const UserAdd = styled.div`
     margin: auto auto;
     
     .no-address{
-        margin:auto auto;
         margin: auto auto;
+        margin-top:1rem;
         width: 60%;
         text-align: center;
     }
@@ -78,30 +90,38 @@ const UserAdd = styled.div`
 `;
 
 const Card = styled.div`
-    margin-top: 2rem;
-    font-size: 1.2rem;
     color: black;
     background: white;
-    padding: 0.8rem;
-    min-width: 20rem;
-    border-radius: 5px;
-    width: 50%;
-    height: auto;
-    margin: 0 auto;
-    border-radius: 3px;
-    background: gainsboro;
+    min-height:13rem;
+    min-width:17rem;
+    border-radius:3px;
+    overflow:hidden;
+    position:relative;
+    width: 60%;
+    margin: auto auto;
+    box-shadow: 5px 4px 5px grey;
+    border: 1px solid grey;
     
     .details{
       text-align: left;
       margin-top: 0.8rem;
+      padding-left: 10px;
     }
     .card-headings{
-      border-bottom: 2px solid black;
-      font-size: 1.2rem;
+      /* border-bottom: 2px solid black; */
+      text-align: center;
+      color: white;
+      background: grey;
+      padding: 7px;
     }
     @media (max-width:850px){
         margin-bottom:10px;
+        width: 80%;
     }
-    
+    @media (max-width:650px){
+        margin-bottom:10px;
+        margin-top:10px;
+        width: 95%;
+    }
 `;
 export default UserAddress

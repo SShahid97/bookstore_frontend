@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import AdminSideNav from "../../components/AdminSideNav";
-import {NavLink,Outlet } from 'react-router-dom';
+import {Outlet } from 'react-router-dom';
 import styled from "styled-components";
 import "./styles.css";
 import {FaAngleLeft,FaAngleRight} from "react-icons/fa";
 
 function AdminPanel() {
   const [toggleArrowMenu, setToggleArrowMenu]= useState(false);
+  useEffect(()=>{
+    window.scrollTo(0, 0);
+  },[])
   const handleMenuArrow = ()=>{
     setToggleArrowMenu(!toggleArrowMenu);
   }
@@ -27,7 +30,7 @@ function AdminPanel() {
 
 const AdminPanelConatiner = styled.div`
     display: flex;
-    margin-top: -25px;
+    margin-top: -5px;
     margin-left: -10px;
     min-height: 82vh;
     .arrow-menu{
@@ -61,6 +64,7 @@ const AdminPanelConatiner = styled.div`
       .arrow-menu:hover{
         background: linear-gradient(to right, #f27121, #e94057);
         cursor: pointer;
+        opacity: 1;
       }
       .arrow-active{
         background: linear-gradient(to right, #f27121, #e94057);
@@ -88,7 +92,7 @@ const AdminPanelConatiner = styled.div`
    
      @media (max-width:650px){
       .arrow-menu{
-        margin-top: 5px;
+        margin-top: -10px;
       }
      }
     

@@ -49,9 +49,8 @@ export const Address_Service = {
                 headers:{
                     'auth-token': token
                 }
-            }); 
-            const data = await response.json();
-            return data;
+            });
+            return response;
         }catch(err){
             return err;
         }
@@ -77,8 +76,7 @@ export const Order_Service = {
                     'auth-token': token
                 }
             }); 
-            const data = await response.json();
-            return data;
+            return response;
         }catch(err){
             return err;
         }
@@ -112,19 +110,26 @@ export const Review_Service = {
         return data;
     },
     checkIfSubmitted: async (token,formData)=>{
-        const response = await fetch(`${review_url}/submitted?book_id=${formData.book_id}&user_id=${formData.user_id}`,{
-            headers:{
-                'Content-Type':'application/json',
-                'auth-token': token
-            },
-        });
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(`${review_url}/submitted?book_id=${formData.book_id}&user_id=${formData.user_id}`,{
+                headers:{
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                },
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+        
     },
     getReviews: async (bookId)=>{
-        const response = await fetch(`${review_url}/${bookId}`);
-        const data = await response.json();
-        return data;
+        try{
+            const response  = await fetch(`${review_url}/${bookId}`);
+            return response;
+        }catch(err){
+            return err;
+        }
     }
 }
 
@@ -144,21 +149,30 @@ export const User_Service = {
     },
 
     getLatest: async(cat)=>{
-       const response = await fetch(`${books_url}?category=${cat}`);
-       const data = await response.json();
-       return data;
+        try{
+            const response = await fetch(`${books_url}?category=${cat}`);
+            return response;
+        }catch(err){
+            return err;
+        }
     },
 
     getPopular: async()=>{
-        const response = await fetch(`${books_url}?category=css_book`)
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(`${books_url}?category=css_book`)
+            return response;
+        }catch(err){
+            return err;
+        }
     },
 
     getSearched: async (searchKey)=>{
-        const response = await fetch(`${books_url}/search?search=${searchKey}`);
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(`${books_url}/search?search=${searchKey}`);
+            return response;
+        }catch(err){
+            return err;
+        }
         
     },
 
@@ -172,9 +186,12 @@ export const User_Service = {
     },
 
     getBookDetails: async (bookId)=>{
-        const response = await fetch(`${books_url}/${bookId}`);
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(`${books_url}/${bookId}`);
+            return response;
+        }catch(err){
+            return err;
+        }
     },
 
     getAllBooks: async()=>{
@@ -214,13 +231,17 @@ export const Cart_Service ={
         return data;
     },
     getCartItems: async(id, token)=>{
-        const response = await fetch(`${cart_url}/${id}`,{
+        try{
+            const response = await fetch(`${cart_url}/${id}`,{
                 headers: {
                     'auth-token': token
                 }
             });
-        const data = await response.json();
-        return data;
+            return response;
+        }catch(err){
+            return err;
+        }
+        
     },
 
     addToCart: async(token, userItem)=>{
@@ -278,26 +299,34 @@ export const Auth_Service = {
         }
     },
     onLogin: async(formData)=>{
-        const response = await fetch(`${auth_url}/login`,{
-        method: 'POST',
-        headers: {
-            'Content-Type':'application/json',
-            'Accept': 'application/json',
-        },
-        body:JSON.stringify(formData)
-        });
-        return response;
-    },
-    onRegister: async(formData)=>{
-        const response = await fetch(`${auth_url}/register`,{
+        try{
+            const response = await fetch(`${auth_url}/login`,{
             method: 'POST',
             headers: {
                 'Content-Type':'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
             },
             body:JSON.stringify(formData)
-        });
-        return response;
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    onRegister: async(formData)=>{
+       try{
+            const response = await fetch(`${auth_url}/register`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json',
+                    'Accept': 'application/json'
+                },
+                body:JSON.stringify(formData)
+            });
+            return response; 
+       }catch(err){
+        return err;
+       }
     }
 
 }

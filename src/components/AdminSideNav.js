@@ -49,7 +49,7 @@ const NavOuter = styled.div`
       overflow: hidden; 
       display: block;
       position: fixed;
-      top: 49px;
+      top: 50px;
       width: 300px;
       padding-top: 15px;
       z-index: 1200;
@@ -59,14 +59,14 @@ const NavOuter = styled.div`
   }
   
 
-@keyframes slide-right {
-  from {
-    margin-left: -100%;
+  @keyframes slide-right {
+    from {
+      margin-left: -100%;
+    }
+    to {
+      margin-left: 0%;
+    }
   }
-  to {
-    margin-left: 0%;
-  }
-}
   /* @keyframes showUp {
     from {width: 0;}
     to {width: 50%;}

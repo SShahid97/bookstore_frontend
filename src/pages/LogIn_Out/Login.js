@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState} from "react";
+import { useState,useEffect} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import "./styles.css";
 import {userService, cartService} from "../../services/LocalService";
@@ -13,16 +13,22 @@ function Login() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [invalidCredentails,setInvalidCredentials] = useState(false);
+    const [emailExists,setEmailExists] = useState(false);
+    const [invalidPassword,setInvalidPassword] = useState(false);
     const [loginSuccessMessage, setLoginSuccessMessage] = useState("");
 
-    // useEffect(()=>{
+    useEffect(()=>{
 
-    //   return setLoginSuccess(false);
-    // },[])
+      return; 
+    },[])
     const handleChange = (event) => {
+      setInvalidPassword(false);
+      setEmailExists(false);
+      setInvalidCredentials(false);
       const name = event.target.name;
       const value = event.target.value;
       setInputs(values => ({...values, [name]: value}))
+
     }
 
     const showHidePassword = ()=>{
@@ -36,41 +42,46 @@ function Login() {
            }
     }
     
-   function sendUser(user) {
-    // send message to subscribers via observable subject
-    userService.sendUser(user);
-  }
+  //  function sendUser(user) {
+  //   // send message to subscribers via observable subject
+  //   userService.sendUser(user);
+  // }
 
     const loginForm = async (event) => {
       event.preventDefault();
-        // try{
-
-        // }catch(err){
-
-        // }
         const response = await Auth_Service.onLogin(inputs);
-
         if(response.status === 200){
+           console.log(response);
             setInvalidCredentials(false);
+            setEmailExists(false);
+            setInvalidPassword(false);
             setLoginSuccessMessage("Login Success");
             setTimeout(()=>{
               setLoginSuccessMessage("");
             },5000)
             const user = await response.json();
-            sendUser(user);
+            // sendUser(user);
+            userService.sendUser(user);  //subject
             localStorage.setItem("user", JSON.stringify(user));
             if(user.role === "admin"){
               console.log("admin")
-              navigate("/admin-panel")
+              navigate("/admin-panel/dashboard")
               return;
             }
             getCartItems();
             // if()
             // navigate(-1);   //redirect back to previous page (url/link)   
-        }
-        else if (response.status === 400) {
+        }else if(response.status === 400){
             setInvalidCredentials(true);
-            console.log("There was some error: ",response.statusText)
+            console.log("There was some error: ",response.statusText);
+        }else if(response.status === 401){   //invalid password
+          setInvalidPassword(true);
+          setEmailExists(false);
+          console.log(response);
+        }else if (response.status === 204) { //email doesn't exist
+          setEmailExists(true);
+          setInvalidPassword(false);
+          console.log(response);
         }
     }  
 
@@ -95,10 +106,10 @@ function Login() {
     <div className="loginForm"> 
     <FaUserCircle className='userIconLogin'/>
     {loginSuccessMessage !== "" && (
-          <div className='login-success'>
-              <p>{loginSuccessMessage}</p>
-          </div>
-        )}
+        <div className='login-success'>
+            <p>{loginSuccessMessage}</p>
+        </div>
+    )}
     <form className="form_" onSubmit={loginForm}>
       <input
         placeholder="Email"
@@ -108,16 +119,15 @@ function Login() {
         required
         onChange={handleChange}
       />
-
-        <input
-          id="password"
-          placeholder='Password' 
-          type="password" 
-          name="password" 
-          value={inputs.password || ""}
-          required 
-          onChange={handleChange}
-        />
+      <input
+        id="password"
+        placeholder='Password' 
+        type="password" 
+        name="password" 
+        value={inputs.password || ""}
+        required 
+        onChange={handleChange}
+      />
         
         {showPassword && (
           <FaEye onClick={showHidePassword} style={eyeStyle}/>
@@ -125,13 +135,23 @@ function Login() {
         {!showPassword && (
            <FaEyeSlash onClick={showHidePassword} style={eyeStyle}/>
         )}
-       
-       {invalidCredentails && (
+        {emailExists && (
+          <div className='pass-match-error'>
+              <p>Email not registered!</p>
+          </div>
+        )}
+        {invalidPassword && (
+          <div className='pass-match-error'>
+              <p>Incorrect Password!</p>
+          </div>
+        )}
+        {invalidCredentails && (
           <div className='pass-match-error'>
               <p>Please enter valid Login Credentials!</p>
           </div>
         )}
-         <input className="loginBtn" type="submit" value="Login" /><br/>
+        
+        <input className="loginBtn" type="submit" value="Login" /><br/>
         <span className="forgot"><Link to={"#"}>forgot password?</Link></span><br/><br/>
         <div className="notReg">
             <p className="notregtext">Don't have an account?</p> 

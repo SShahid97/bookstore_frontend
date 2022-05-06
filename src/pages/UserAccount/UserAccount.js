@@ -15,14 +15,30 @@ function UserAccount() {
     },[]);
 
     const getUserAddress = async(token,userId)=>{
-      const returnedAddress = await Address_Service.getUserAddress(token,userId);
-      console.log(returnedAddress);
-      setUserAddress(returnedAddress[0]);
+      const response = await Address_Service.getUserAddress(token,userId);
+      if(response.status === 200){
+        const returnedAddress = await response.json();
+        // console.log(returnedAddress);
+        setUserAddress(returnedAddress[0]);
+      }else if (response.status === 204){
+        setUserAddress({});
+      }else if (response.status === 400){
+        console.log("Bad Request");
+      }
+
     }
     const getOrderHistory = async (token, userId)=>{
-      const returnedHistory = await Order_Service.getOrderHistory(token,userId);
-      console.log(returnedHistory);
-      setOrderHistory(returnedHistory);
+      const response = await Order_Service.getOrderHistory(token,userId);
+      if(response.status === 200){
+        const returnedHistory = await response.json();
+        console.log(returnedHistory);
+        setOrderHistory(returnedHistory);
+      }else if (response.status === 204){
+        setOrderHistory([]);
+      }else if (response.status === 400){
+        console.log("Bad Request");
+      }
+      
     }
   return (
     <AccountOuter>
@@ -34,21 +50,40 @@ function UserAccount() {
               <div className='details'>
                 <p><strong>Name: </strong> {user.name}</p>
                 <p><strong>email: </strong> {user.email}</p>
-                <p><strong>Contact: </strong> {userAddress.contact}</p>
               </div>
           </Card>
-          <Card>
-              <h4 className='card-headings'>User Address</h4>
-              <div className='details'>
-                <p><strong>Country: </strong> {userAddress.country}</p>
-                <p><strong>State: </strong> {userAddress.state}</p>
-                <p><strong>City: </strong> {userAddress.city}</p>
-                <p><strong>Pincode: </strong> {userAddress.pincode}</p>
-                <p><strong>Address: </strong> {userAddress.address}</p>
-              </div>
-          </Card>
+            <Card>
+              {userAddress && (
+                <>
+                  <h4 className='card-headings'>User Address</h4>
+                  <div className='details'>
+                    <p><strong>Country: </strong> {userAddress.country}</p>
+                    <p><strong>State: </strong> {userAddress.state}</p>
+                    <p><strong>City: </strong> {userAddress.city}</p>
+                    <p><strong>Contact: </strong> {userAddress.contact}</p>
+                    <p><strong>Pincode: </strong> {userAddress.pincode}</p>
+                    <p><strong>Address: </strong> {userAddress.address}</p>
+                  </div>
+                </>
+              )}
+              {!userAddress && (
+                <div>
+                  <h4 className='card-headings'>User Address</h4>
+                  <h4 style={{marginTop:'1rem', fontWeight:'500'}}>Not Address Saved Yet.</h4>
+                </div>
+              )}
+            </Card>
+            {orderHistory.length===0 && (
+              <Card>
+                <h4 className='card-headings'>Order History</h4>
+                <h4 style={{padding:'20px', fontWeight:'500'}}>You have not ordered anything yet.</h4>
+              </Card>
+            )}
       </AccountInner>
-      <OrderHistory orderHistory={orderHistory}/>
+      <br/>
+      {orderHistory.length>0 && (
+        <OrderHistory orderHistory={orderHistory}/>
+      )}
     </AccountOuter>
   )
 }
@@ -57,15 +92,16 @@ function UserAccount() {
 const AccountOuter = styled.div`
     /* display: flex; */
     background-color: #e9e9e9;
-    width:80%;
-    margin:0 auto;
-    margin-bottom: 2rem;
-    height: auto;
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+    height: 100vh;
+    min-height:auto;
+    overflow-y: auto;
     box-shadow: 2px 4px 4px 1px #0000007a;
     text-align: center;
-    padding-bottom: 2rem;
-    padding-top: 2rem;
-    padding: auto auto;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
     
     .account-heading{
         margin-bottom:0.8rem ;
@@ -100,20 +136,27 @@ const AccountInner = styled.div`
 const Card = styled.div`
     color: black;
     background: white;
-    padding: 0.8rem;
+    /* padding: 0.8rem; */
     min-height:13rem;
     min-width:17rem;
-    border-radius:5px;
+    border-radius:3px;
     overflow:hidden;
     position:relative;
     margin-right:10px;
+    box-shadow: 5px 4px 5px grey;
+    border: 1px solid grey;
     
     .details{
       text-align: left;
       margin-top: 0.8rem;
+      padding-left: 10px;
     }
     .card-headings{
-      border-bottom: 2px solid black;
+      /* border-bottom: 2px solid black; */
+      text-align: center;
+      color: white;
+      background: grey;
+      padding: 7px;
     }
     @media (max-width:850px){
         margin-bottom:10px;

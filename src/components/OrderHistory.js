@@ -2,7 +2,6 @@ import React from 'react';
 import styled from "styled-components";
 
 function OrderHistory({orderHistory}) {
-  let i=0;
   return (
     <Orders >
       <h3 className='order-main-heading'>Order History</h3>
@@ -64,11 +63,11 @@ function OrderHistory({orderHistory}) {
       
     ) 
   }
-
-  {orderHistory.length<0  && (
-    <h3 style={{padding:'20px'}}>You have not ordered anything yet.</h3>
+  {orderHistory.length === 0  && (
+    <h3 style={{padding:'20px', fontWeight:'500', textAlign:'center' }}>User has not ordered anything yet.</h3>
   )}
   </OrdersInner>
+  
 </Orders>
   )
 }

@@ -274,7 +274,7 @@ function Navbar() {
                 {isUser && (
                   <>
                     <NavLinks to={"/user/account"} className='dropdown-item'>         
-                    <FaUser/><p className="sign_reg_icons" ><strong>Account</strong></p>
+                    <FaUser/><p className="sign_reg_icons" ><strong>My Account</strong></p>
                     </NavLinks>
                     <li className='dropdown-item' onClick={logout}> 
                     <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>

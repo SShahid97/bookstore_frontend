@@ -3,7 +3,7 @@ import {useParams, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import {Cart_Service,Stock_Service} from '../services/Service';
 import {cartService} from "../services/LocalService";
-
+import Loader from '../components/Loader';
 
 
 function Cart() {
@@ -15,8 +15,9 @@ function Cart() {
     const [emptyCart, setEmptyCart] = useState(false);
     const [quantity, setQuantity] = useState([]);
     const [stockArray, setStockArray] = useState([]);
-     
+    const [showLoader, setShowLoader] = useState(false); 
     useEffect(()=>{
+        setShowLoader(true);
         getCartItems();
     },[]);
     const handleQuantity = (e, index)=>{
@@ -25,39 +26,42 @@ function Cart() {
         newQtyArr[index] = e.target.value;
         setQuantity(newQtyArr)    
     }
-    // const getStockDetails = async(bookId)=>{
-    //     const stock = await Stock_Service.getStockDetails(bookId);
-    //     console.log(stock);
-    //     setStockDetails(stock);
-    // }
 
     const getCartItems = async()=>{
         let user = JSON.parse(localStorage.getItem('user'));
         try{
-            const cartResponse = await Cart_Service.getCartItems(params.id, user.token);
-            console.log("CART: ",cartResponse);
-            let stockArr=[];
-            cartResponse.forEach(async(item)=>{
-                let stock = await Stock_Service.getStockDetails(item.book._id);
-                stockArr.push(stock.count_in_stock);
-            });
-            console.log(stockArr);
-            setStockArray(stockArr);
-            
-            localStorage.setItem("cart",JSON.stringify(cartResponse));
-            if(cartResponse.length === 0){
+            const response = await Cart_Service.getCartItems(params.id, user.token);
+            if(response.status === 200){
+                setShowLoader(false);
+                const cartResponse = await response.json(); 
+                console.log("CART: ",cartResponse);
+                let stockArr=[];
+                cartResponse.forEach(async(item)=>{
+                    let stock = await Stock_Service.getStockDetails(item.book._id);
+                    stockArr.push(stock.count_in_stock);
+                });
+                console.log("Stock:",stockArr);
+                setStockArray(stockArr);
+                localStorage.setItem("cart",JSON.stringify(cartResponse));
+
+                let qty=[];
+                cartResponse.forEach(item =>{
+                    qty.push(item.quantity);
+                });
+                setQuantity(qty);
+                updateCartItems(cartResponse.length);
+                // localStorage.setItem("noOfCartItems",JSON.stringify(cartResponse.length));
+                // console.log(cartResponse);
+                setCartItems(cartResponse);
+                calculateTotalAmount(cartResponse);
+            }else if(response.status === 204){
+                setShowLoader(false);
                 setEmptyCart(true);
+                console.log(response.statusText)
+            }else if(response.status === 404 ){
+                setShowLoader(false);
+                console.log("Bad Request");
             }
-            let qty=[];
-            cartResponse.forEach(item =>{
-                qty.push(item.quantity);
-            });
-            setQuantity(qty);
-            updateCartItems(cartResponse.length);
-            // localStorage.setItem("noOfCartItems",JSON.stringify(cartResponse.length));
-            // console.log(cartResponse);
-            setCartItems(cartResponse);
-            calculateTotalAmount(cartResponse);
         }catch(err){
             console.log("There was some error: ",err)
         }
@@ -108,7 +112,6 @@ function Cart() {
     
     // Update quatity
     const updateQty = async(item_id,i)=>{
-         
         console.log(item_id, i);
         let user = JSON.parse(localStorage.getItem('user'));
         try{
@@ -126,7 +129,10 @@ function Cart() {
         navigate("/checkout/billing");
     }
     return (
-      <CartCard >
+    <>   
+    {showLoader && (<Loader/>) } 
+    {!showLoader && (
+      <CartCard >   
         {emptyCart && (
                 <div style={{padding:'30px'}}>
                     <h3 style={{color:'red'}} >Your Cart is Empty</h3>
@@ -205,6 +211,8 @@ function Cart() {
             </>
         )}
       </CartCard>
+      )}
+      </> 
   )
 }
 

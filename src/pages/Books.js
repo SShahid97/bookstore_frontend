@@ -1,7 +1,7 @@
 import React, { useEffect,useState } from 'react';
 import styled from 'styled-components';
 // import {motion} from 'framer-motion';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useParams, useNavigate} from 'react-router-dom';
 import Loader from '../components/Loader';
 import {User_Service} from '../services/Service';
 import Filters from '../components/Filters';
@@ -13,88 +13,88 @@ function Books() {
    const [tempBooks, setTempBooks]= useState([]);
    const [sortByValue, setSortByValue] = useState('');
    const [openSideNav,setOpenSideNav] = useState(false);
-   const [searchKeyword, setSearchKeyword] = useState("");
-//    const [isSliderOpen, setIsSliderOpen] = useState(false);
+//    const [searchKeyword, setSearchKeyword] = useState("");
+   const [notFound, setNotFound] = useState("");
+   const [isFound, setIsFound] = useState(false);
+   const [showLoader, setShowLoader] = useState(false);
+    let navigate = useNavigate(); 
+   //const [isSliderOpen, setIsSliderOpen] = useState(false);
    
     useEffect(()=>{
-        console.log(params.cat)
-
+        // console.log(params.cat);
+        setShowLoader(true);
         // const searchKeyword = params.cat.substring(7);
         window.scrollTo(0, 0);
         setTimeout(()=>{
-            if(params.cat.substring(0, 7) === "search_"){  
-                console.log(params.cat.substring(7))
-                setSearchKeyword(params.cat.substring(7))  
-                getSearched(searchKeyword);
+            if(params.cat.substring(0, 7) === "search_"){ 
+                let searchKey = params.cat.substring(7); 
+                getSearched(searchKey);
             }else{
                 getBooksByCategory(params.cat);
             }
-        },500)
-    },[params.cat,searchKeyword]);
+        },300)
+    },[params.cat]);
 
     const getSearched = async (searchKey)=>{
-        const fetchedData = await User_Service.getSearched(searchKey);
-        fetchedData.forEach((book)=>{
-            if(book.discount>0){
-                book.discountPercent = book.discount*100 + "%";
-                book.newPrice = book.price - (book.price* book.discount);
-           }
-           if(book.discount===0){
-                book.newPrice = book.price; 
-            }
-        });
-        setTempBooks(fetchedData);
-        
-        const fetchedData_2 = await User_Service.getSearched(searchKey);
-        fetchedData_2.forEach((book)=>{
-            if(book.discount>0){
-                book.discountPercent = book.discount*100 + "%";
-                book.newPrice = book.price - (book.price* book.discount);
-           }
-           if(book.discount===0){
-                book.newPrice = book.price; 
-            }
-        });
-        setBooks(fetchedData_2);
+        const response = await User_Service.getSearched(searchKey);
+        console.log(response.status);
+        if(response.status === 200){
+            const fetchedData = await response.json();
+            fetchedData.forEach((book)=>{
+                if(book.discount>0){
+                    book.discountPercent = book.discount*100 + "%";
+                    book.newPrice = book.price - (book.price* book.discount);
+               }
+               if(book.discount===0){
+                    book.newPrice = book.price; 
+                }
+            });
+            setTempBooks(fetchedData);
+            const data = fetchedData;
+            setBooks(data);
+            setIsFound(true);
+            setNotFound("");
+            setShowLoader(false);
+        }else if(response.status === 204){
+            setShowLoader(false);
+            setIsFound(false);
+            console.log(response);
+            setNotFound("No Results Found");
+            setTempBooks([]);
+        }else if(response.status === 400){
+            setShowLoader(false);
+            setIsFound(false);
+            console.log("Bad Request");
+        }
     }
 
     const getBooksByCategory = async (category)=>{
        const response = await User_Service.getBooksByCategory(category);
-       if(response.status === 200){
-        const fetchedBooks = await response.json();
-        fetchedBooks.forEach((book)=>{
-            if(book.discount>0){
-                 book.discountPercent = book.discount*100 + "%";
-                 book.newPrice = book.price - (book.price* book.discount);
-            }
-            if(book.discount===0){
-                 book.newPrice = book.price; 
-            }
-        });
-        setTempBooks(fetchedBooks); 
-        const books = fetchedBooks;
-        setBooks(books);
-       }else if(response.status === 404){
-            const data = await response.json();
-            console.log(data);
-            // setErrorMsg(data.message);
+       if(response.status === 200){ 
+            const fetchedBooks = await response.json();
+            fetchedBooks.forEach((book)=>{
+                if(book.discount>0){
+                    book.discountPercent = book.discount*100 + "%";
+                    book.newPrice = book.price - (book.price* book.discount);
+                }
+                if(book.discount===0){
+                    book.newPrice = book.price; 
+                }
+            });
+            setTempBooks(fetchedBooks); 
+            const books = fetchedBooks;
+            setBooks(books);
+            setIsFound(true);
+            setShowLoader(false);
+       }else if(response.status === 204){
+            setShowLoader(false);
+            console.log(response);
+            setNotFound("No Results Found");
        }else if(response.status === 400){
+            setShowLoader(false);
+            // setIsFound(false);
             console.log("Bad Request");
        }
-        // console.log(fetchedBooks[0])
-       
-    //    const booksReceived = await User_Service.getBooksByCategory(category);
-    //    booksReceived.forEach((book)=>{
-    //         if(book.discount>0){
-    //             book.discountPercent = book.discount*100 + "%";
-    //             book.newPrice = book.price - (book.price* book.discount);
-    //         }
-    //         if(book.discount===0){
-    //             book.newPrice = book.price; 
-    //         }
-    //     });
-    //    setBooks(booksReceived);
-       
     }
 
     ///// Filtering  Starts//////// 
@@ -120,33 +120,50 @@ function Books() {
         setOpenSideNav(!openSideNav);
     }
    return (
-    <Wrapper>
-
-    <SideNav>
-        <div>
-            <Filters books={books} setTempBooks={setTempBooks} />
-            <hr/>
-            <div>
-                <h4>Language</h4>
-            </div>
-        </div>
-        
-    </SideNav>
-    <SliderrIcon onClick={handleOpenSideNav}>
-        <BsSliders  />
-    {/* {isSliderOpen && ( */}
-        <div className={openSideNav? 'dropdown-sidenav show_sidenav':'dropdown-sidenav'}>
-           <Filters books={books} setTempBooks={setTempBooks} />  
-            <hr/>
-            <div>
-                <h4>Language</h4>
-            </div>
-        </div>
-    </SliderrIcon>
-    {/* )} */}
+      <> 
+    {showLoader && (<Loader/>)} 
+     {!showLoader && (  
+      <Wrapper>
+       {isFound && (
+           <>
+            <SideNav>
+           <div>
+               <Filters books={books} setTempBooks={setTempBooks} />
+               <hr/>
+               <div>
+                   <h4>Language</h4>
+               </div>
+           </div>
+           
+            </SideNav>
+            <SliderrIcon onClick={handleOpenSideNav}>
+                <BsSliders  />  {/*icon*/}
+                <div className={openSideNav? 'dropdown-sidenav show_sidenav':'dropdown-sidenav'}>
+                    <Filters books={books} setTempBooks={setTempBooks} />  
+                    <hr/>
+                    <div>
+                        <h4>Language</h4>
+                    </div>
+                </div>
+            </SliderrIcon>
+           </>
+       )} 
+        {!isFound && (
+            <>
+            <div></div>
+            </>
+        ) }
     <Main>
-        {(tempBooks.length < 1) && (<Loader/>)} 
-        {(tempBooks.length > 1) && (
+        {!isFound && (
+            <>
+            <div></div>
+            <div className='no-results-found'>
+                <p>{notFound}</p>
+            </div>
+            </>
+        ) }
+       
+        {(isFound) && (
             <Top>
             <div>
                 <strong> {tempBooks.length} results found </strong>
@@ -169,39 +186,44 @@ function Books() {
             </div>
         </Top> 
         )}
-    <Grid>
-        {/* <Searched/> */}
-      {tempBooks.map((book)=>{
-          return (
-              <Card key = {book._id}>
-                  {(book.discount>0) && (
-                    <span className='discount' >{book.discountPercent}</span>
-                  )}
-
-                  <Link to={"/book/"+book._id}>
-                      
-                   <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
-                    <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
-                        <p>{book.book_name}</p>
-                        {(book.discount===0)  && (
-                            <>
-                            <span>&#8377;</span><span>{book.price}</span>
-                            </>
-                        )}
-                        {(book.discount>0) && (
-                            <>
-                                <span>&#8377; {book.newPrice}</span>
-                                <span className='old-price'>&#8377;{book.price}</span>
-                            </>
-                        )}
-                    </div>
-                  </Link> 
-              </Card>
-          );
-      })}
-    </Grid>
+        {isFound && (
+            <Grid>
+            {/* <Searched/> */}
+          {tempBooks.map((book)=>{
+              return (
+                  <Card key = {book._id}>
+                      {(book.discount>0) && (
+                        <span className='discount' >{book.discountPercent}</span>
+                      )}
+    
+                      <Link to={"/book/"+book._id}>
+                          
+                       <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
+                        <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
+                            <p>{book.book_name}</p>
+                            {(book.discount===0)  && (
+                                <>
+                                <span>&#8377;</span><span>{book.price}</span>
+                                </>
+                            )}
+                            {(book.discount>0) && (
+                                <>
+                                    <span>&#8377; {book.newPrice}</span>
+                                    <span className='old-price'>&#8377;{book.price}</span>
+                                </>
+                            )}
+                        </div>
+                      </Link> 
+                  </Card>
+              );
+          })}
+        </Grid>
+        )}
+    
     </Main>
     </Wrapper>
+    )}
+    </>
   )
 }
 
@@ -210,6 +232,13 @@ const Main = styled.div`
     padding:5px;
     display:grid;
     grid-template-rows: 2rem 4fr;
+    .no-results-found{
+        width: 50%;
+        margin: auto auto;
+        color: red;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
 `;
 const Top = styled.div`
     display:flex;

@@ -21,7 +21,8 @@ function SearchOrder() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(orderId.length);
+    setShowLoader(true);
+    // console.log(orderId.length);
     let value = orderId;
     value = value.trim();
     if (value.includes(" ")) {
@@ -31,30 +32,26 @@ function SearchOrder() {
       return;
     }
     
-    console.log(value);
+    // console.log(value);
     let curr_user = JSON.parse(localStorage.getItem('user'));
     if (curr_user && curr_user.role === "admin") {
       const response = await Order_Service.searchOrderById(curr_user.token, value);
-      if (response.status === 404) {
-        const error = await response.json();
+      if (response.status === 204) {
+        setShowLoader(false);
         setIsOrderPlaced(false);
-        console.log(error.message);
-        setNotFoundMsg(error.message);
+        setNotFoundMsg("No order found with the given Order Id");
       } else if (response.status === 400) {
+        setShowLoader(false);
         setIsOrderPlaced(false);
         setNotFoundMsg("Invalid Order ID!");
       }
       else if (response.status === 200) {
         const returnedOrder = await response.json();
         console.log(returnedOrder);
-        if(!orderPlaced ){
-          setShowLoader(true)
-        }
-       setTimeout(()=>{
         setOrderPlaced(returnedOrder);
+        setShowLoader(false);
         setNotFoundMsg(false);
         setIsOrderPlaced(true);
-       },1500)
       }
     }
 
@@ -94,12 +91,15 @@ function SearchOrder() {
             className='search-bar'
             onKeyDown={handleKeys}
             onChange={handleSearch}
-            type="text" value={orderId} />
+            type="text" 
+            value={orderId}
+            required />
           {showClose && (
             <span className='close-icon'>
               <FaTimes onClick={handleCloseIcon} title="clear" />
             </span>
           )}
+          <button type="submit"><FaSearch></FaSearch></button>
           {invalidInput && (
             <div className='error-msg'>
               <p>White Spaces are not allowed</p>
@@ -108,45 +108,47 @@ function SearchOrder() {
         </div>
 
       </FormStyle>
+      {showLoader && (< Loader/>)}
       {isOrderPlaced && (
         <OrderedItem>
-          {showLoader && (< Loader/>)}      
-        <div className='orders' key={orderPlaced._id} >
-          <div className='dateOrderPlacedAt'>
-            <h4 className='order-heading'>Date</h4>
-            {orderPlaced.date.split("T")[0]}
-          </div>
-          <div className='orderID'>
-            <h4 className='order-heading'>Order ID</h4>
-            {orderPlaced._id}
-          </div>
-          <div className='orderItems'>
-          <h4 className='order-heading'>Order Info</h4>
-            {
-              orderPlaced.order.map((item) => {
-                return (
-                  <div key={item._id} className="individual-book">
-                    <div className='book-details'>
-                      <p><span>Book Name:</span>{item.book.book_name}</p>
-                      <p><span>Book Author:</span>{item.book.book_author}</p>
-                      <p><span>Quantity:</span> {item.quantity}</p>
-                      <p><span>Price: </span>&#8377;{item.price} 
-                      {item.discount>0 && (<span> (with discount)</span>)}  </p>
-                      <p><span>Discount:</span>{item.discount * 100}%</p>
+          {!showLoader && (      
+          <div className='orders' key={orderPlaced._id} >
+            <div className='dateOrderPlacedAt'>
+              <h4 className='order-heading'>Date</h4>
+              {orderPlaced.date.split("T")[0]}
+            </div>
+            <div className='orderID'>
+              <h4 className='order-heading'>Order ID</h4>
+              {orderPlaced._id}
+            </div>
+            <div className='orderItems'>
+            <h4 className='order-heading'>Order Info</h4>
+              {
+                orderPlaced.order.map((item) => {
+                  return (
+                    <div key={item._id} className="individual-book">
+                      <div className='book-details'>
+                        <p><span>Book Name:</span>{item.book.book_name}</p>
+                        <p><span>Book Author:</span>{item.book.book_author}</p>
+                        <p><span>Quantity:</span> {item.quantity}</p>
+                        <p><span>Price: </span>&#8377;{item.price} 
+                        {item.discount>0 && (<span> (with discount)</span>)}  </p>
+                        <p><span>Discount:</span>{item.discount * 100}%</p>
+                        
+                      </div>
                       
+                      <div className='book-image'>
+                        <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
+                      </div>
                     </div>
-                    
-                    <div className='book-image'>
-                      <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
-                    </div>
-                  </div>
-                )
-              })
-            }
-            <p className='total-amt'>Total Amount: &#8377;{orderPlaced.total_amount}</p>
-            <p className='total-amt'><span>Payment Status: </span>{orderPlaced.payment_status}</p>
+                  )
+                })
+              }
+              <p className='total-amt'>Total Amount: &#8377;{orderPlaced.total_amount}</p>
+              <p className='total-amt'><span>Payment Status: </span>{orderPlaced.payment_status}</p>
+            </div>
           </div>
-        </div>
+          )}
         </OrderedItem>
       )}
       {notFoundMsg && (
@@ -157,6 +159,7 @@ function SearchOrder() {
 }
 
 const SearchedOrders = styled.div`
+  width: 100%;
   .not-found{
       color:#b91111c4;
       width: 50%;
@@ -167,12 +170,17 @@ const SearchedOrders = styled.div`
 `;
 
 const FormStyle = styled.form`
-    width: 100%;
+    width: 50%;
+    margin: 0 auto;
     .close-icon{
-        position: absolute;
-        margin-left: -40px;
-        margin-top: 3px;
-        cursor: pointer;
+      position: relative;
+      margin-left: -22px;
+      margin-top: 10px;
+      cursor: pointer;
+      color:grey;
+      @media (max-width:650px){
+        margin-top: 7px;
+      }
     } 
     .close-icon svg:hover{
       color:black !important;
@@ -187,11 +195,11 @@ const FormStyle = styled.form`
       border: 1px solid #b91111c4;
       border-radius: 3px;
     }
-    .search-bar:hover{
-        /* display: block; */
-    }
+
     .form-div{
-        width:50%; 
+        width: 70%;
+        display:inline-flex; 
+        margin:0 auto;
         @media (max-width: 1000px){
             text-align:center;
         }
@@ -200,8 +208,17 @@ const FormStyle = styled.form`
         }
         @media (max-width: 650px){
             width:95%; 
+            margin:0 auto;
         }
-        margin:0 auto;
+    }
+    .form-div>svg{
+        position:absolute;
+        color:grey;
+        margin-top: 10px;
+        margin-left: 10px;
+        @media (max-width:650px){
+          margin-top:8px;
+        }        
     }
 
     input{
@@ -215,31 +232,36 @@ const FormStyle = styled.form`
         outline:none;
         width:100%;
         border-radius: 3px;
-        box-shadow: 5px 5px 4px grey;
+        box-shadow: 3px 4px 3px grey;
         @media (max-width: 850px){
             font-size:1rem;
             width:80%;
         }
-        @media (max-width: 550px){
+        @media (max-width: 650px){
             font-size:0.9rem;
             padding: 0.3rem 2rem;
-            width: 90%;
-        }
-        
+            width: 70%;
+            /* margin:0 auto; */
+        }   
     }
-    svg{
-        position:absolute;
-        color:grey;
-        margin-top: 10px;
-        margin-left: 10px;
-        /* @media (max-width: 1336px){
-            top:24%;
-        }
-        @media (max-width: 1000px){
-            top:55%;
-        } */
-        
+    button{
+      padding: 5px;
+      color: white;
+      background-color: blue;
+      width: 50px;
+      border-radius: 3px;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+      box-shadow: 3px 4px 3px grey;
     }
+    button>svg{
+      transform: scale(1.3);
+    }
+    button:hover {
+      background-color: #0404e5db;
+    }
+    
     @media (max-width: 1000px){
         width:inherit;
     }
@@ -332,12 +354,15 @@ const OrderedItem = styled.div`
       }
       .dateOrderPlacedAt{
         width:35%;
-        margin-right:1rem;
+        margin-right:2px;
         flex-wrap: wrap;
       }
       .orderID{
         width:55%;
         flex-wrap: wrap;
+      }
+      .order-heading{  
+        padding: 3px;
       }
     }
 `;

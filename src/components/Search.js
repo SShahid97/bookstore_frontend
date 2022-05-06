@@ -23,6 +23,7 @@ function Search() {
     const handleCloseIcon = ()=>{
         setInput("");
         setShowClose(false);
+        // navigate("/books/search_clear");
     }
   return (
     <FormStyle onSubmit={submitHandler}>
@@ -91,8 +92,11 @@ const FormStyle = styled.form`
         transform:translate(100%,-50%);
         color:grey;
         @media (max-width: 1336px){
-            top:24%;
+            top:35%;
         }
+        /* @media (max-width: 1150px){
+            top:35%;
+        } */
         @media (max-width: 1000px){
             top:55%;
         }

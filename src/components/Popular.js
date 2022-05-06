@@ -15,14 +15,26 @@ function Popular (){
 
 
     const getPopular = async()=>{
-        const fetchedData = await User_Service.getPopular();
-        fetchedData.forEach((book)=>{
-            if(book.discount>0){
-                book.discountPercent = book.discount*100 + "%";
-                book.newPrice = book.price - (book.price* book.discount);
-           }
-        });
-        setPopular(fetchedData);
+        const response = await User_Service.getPopular();
+        if(response.status === 200){
+            const fetchedBooks = await response.json();
+            fetchedBooks.forEach((book)=>{
+                if(book.discount>0){
+                    book.discountPercent = book.discount*100 + "%";
+                    book.newPrice = book.price - (book.price* book.discount);
+                }
+                if(book.discount===0){
+                    book.newPrice = book.price; 
+                }
+            });
+            setPopular(fetchedBooks);
+        }else if (response.status === 404){
+            const data = await response.json();
+            // setNotFound(data.message);
+            console.log(data);
+        }else if (response.status === 400){
+            console.log("Bad Request");
+        }
     }
     return (
         <Wrapper>

@@ -60,12 +60,18 @@ function EditItem() {
   },[imagePrevFile]);
 
   const getBookItem = async (id)=>{
-    const itemDetails = await User_Service.getBookDetails(id);
-    // console.log(itemDetails);
-    setDiscount(itemDetails.discount);
-    let itmImageName = [{id:itemDetails._id ,image: itemDetails.book_image, name:itemDetails.book_name}];
-    setBookImage(itmImageName);
-    setItem(itemDetails);
+    const response = await User_Service.getBookDetails(id);
+    if(response.status === 200){
+      const itemDetails = await response.json();
+      setDiscount(itemDetails.discount);
+      let itmImageName = [{id:itemDetails._id ,image: itemDetails.book_image, name:itemDetails.book_name}];
+      setBookImage(itmImageName);
+      setItem(itemDetails);
+    }else if(response.status === 204){
+      console.log("No Content")
+    }else if(response.status === 400){
+      console.log("Bad Request")
+    }
   }
   
   const handleformInput = (event) => {
