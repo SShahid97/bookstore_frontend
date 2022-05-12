@@ -56,10 +56,13 @@ const Wrapper = styled.div`
      margin-bottom: 20px;
     margin-top: -23px;
     margin-left: -8px;
-     @media (max-width:610px) {
+     @media (max-width:650px) {
         /* margin: 0rem 0rem 1rem 0rem !important;    */
        margin: -24px 0px 15px -3px !important;
 
+     }
+     @media (max-width:360px){
+        margin:-24px 0px 15px -1px !important;
      }
      .splide__arrow {
         width: 3rem;

@@ -131,7 +131,7 @@ function Books() {
                <Filters books={books} setTempBooks={setTempBooks} />
                <hr/>
                <div>
-                   <h4>Language</h4>
+                   {/* <h4>Language</h4> */}
                </div>
            </div>
            
@@ -142,7 +142,7 @@ function Books() {
                     <Filters books={books} setTempBooks={setTempBooks} />  
                     <hr/>
                     <div>
-                        <h4>Language</h4>
+                        {/* <h4>Language</h4> */}
                     </div>
                 </div>
             </SliderrIcon>
@@ -165,7 +165,7 @@ function Books() {
        
         {(isFound) && (
             <Top>
-            <div>
+            <div className='results-found'>
                 <strong> {tempBooks.length} results found </strong>
             </div>
             <div className='sortbydiv'>
@@ -245,6 +245,11 @@ const Top = styled.div`
     flex-direction: row;
     justify-content: space-between;
 
+    .results-found{
+        @media (max-width:650px){
+            padding-top: 10px;
+        }
+    }
     .sort-by{
         padding: 3px;
         cursor: pointer;
@@ -265,9 +270,6 @@ const Grid = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(11rem,1fr));
     grid-gap:1rem;
-    @media (max-width:600px){
-        /* margin-top: 1rem; */
-    }
 
 `;
 
@@ -278,10 +280,9 @@ const SliderrIcon = styled.div`
         color:white;
         z-index: 800;
         list-style: none;
-        position: absolute;
-        top:70px;
-        left:42px;
-        width:65%;
+        top: 52px;
+        left: 32px;
+        width:70%;
         border-radius: 3px;
         background: #a9a9a9;
         padding:0.7rem;
@@ -302,6 +303,7 @@ const SliderrIcon = styled.div`
      .show_sidenav{
         display:block;
         font-size:0.9rem;
+        position: absolute;
      }
      @media (max-width:850px) {
             display: inline-block;
@@ -313,11 +315,12 @@ const SliderrIcon = styled.div`
             border-radius: 3px;
      }
 
-     @media (max-width:600px){
+     @media (max-width:650px){
         padding: 2px;
         font-size: 1.6rem;
-        margin-top: 3px;
+        margin-top: -18px;
         border-radius: 2px;
+  
      }
 `; 
 const Wrapper = styled.div`

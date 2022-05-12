@@ -1,4 +1,5 @@
 import React, { useState,useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from "styled-components";
 import {FaCheckCircle} from "react-icons/fa";
 import Loader from '../../components/Loader';
@@ -6,27 +7,62 @@ import {Order_Service, Address_Service, Cart_Service} from "../../services/Servi
 import {cartService} from "../../services/LocalService";
 import emailjs from "@emailjs/browser";
 
-function Confirmation({paymentStatus, paymentMethod }) {
+function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
     const [orderId, setOrderId] = useState("");
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [user,setUser] = useState({});
     const [errorInMail, setErrorInMail] = useState(false);
+    // const [addressExits, setAddressExits] = useState(false);
+    let navigate = useNavigate();
     // const [customerAddress, setCustomerAddress] = useState({});
     // const [orderDetails, setOrderDetails] = useState({});
     // const userAddress = useRef();
     useEffect(()=>{
         let curr_user = JSON.parse(localStorage.getItem("user"));
-        setUser(curr_user);
+        if(curr_user)
+            setUser(curr_user);
+        else
+            alert("There was some error!");
 
         let custInfo = JSON.parse(localStorage.getItem("customerInfo"));
-        addCustomerAddress(custInfo,curr_user);
-
-        let custOrder = JSON.parse(localStorage.getItem("cart"));
-        addCustomerOrder(custOrder,curr_user);
+        if(custInfo)
+            addCustomerAddress(custInfo,curr_user);
+        else    
+            alert("There was some error!");
         
-    },[])
+        let custOrder = JSON.parse(localStorage.getItem("cart"));
+        if(custOrder)
+            addCustomerOrder(custOrder,curr_user);
+        else
+            alert("There was some error!");
+        // if(!custInfo || !custOrder){
+        //     navigate("/");
+        //     return;
+        // }
+        
+    },[]);
 
     const addCustomerAddress = async(info,curr_user)=>{
+        // Check if address already exists 
+        let isAddress = false;
+        let addressReturned = {}; 
+        const response = await Address_Service.getUserAddress(curr_user.token,curr_user._id);
+        if(response.status === 200){
+            addressReturned = await response.json();
+            console.log("Existed Address:", addressReturned);
+            isAddress = true;
+        }else if (response.status === 204){
+            isAddress = false;
+        }
+        //if exists then delete older one 
+        if(isAddress){
+            const response = await Address_Service.deleteAddress(curr_user.token, addressReturned._id);
+            if(response.status === 200){
+                const deletedAddress = await response.json();
+                console.log("Deleted Address:", deletedAddress.message)
+            }
+        }
+        //if not exists or if existed then add new address
         let addressObj = {
             user_id: curr_user._id,
             contact: info.contact,
@@ -38,9 +74,11 @@ function Confirmation({paymentStatus, paymentMethod }) {
         }
         // console.log(address);
         try{
-            const data = await Address_Service.addAddress(curr_user.token,addressObj);
-            if(data)
-                console.log(data);
+            const response = await Address_Service.addAddress(curr_user.token,addressObj);
+            if(response.status === 201){
+                const savedAddress = await response.json();
+                console.log(savedAddress);
+            }
         }catch(err){
             console.log("There was some error: ",err);
         }
@@ -50,33 +88,38 @@ function Confirmation({paymentStatus, paymentMethod }) {
     const addCustomerOrder = async (order,curr_user)=>{
         // console.log(order);
         let orderArr = [];
-        let shipping = 100;
+        let shipping = 50;
         order.forEach((item)=>{
             orderArr.push({
                 book_id:item.book._id,
                 price:(item.price - (item.price*item.book.discount)),
                 quantity:item.quantity,
                 discount:item.book.discount,
+
             });
         });
         let totalAmount=0;
         orderArr.forEach((item)=>{
             totalAmount+= item.price*item.quantity;
         })
+        let deliveryStatus = "Not Delivered";
         let orderObj = {
             user_id: curr_user._id,
             shipping_charges:shipping,
             total_amount:(totalAmount+shipping),
             payment_status:paymentStatus,
             payment_method:paymentMethod,
+            delivery_status:deliveryStatus,
             order:orderArr
         }
         console.log(orderObj);
          try{
-            const data = await Order_Service.addOrder(curr_user.token,orderObj);
-            if(data){
-                console.log(data._id);
-                setOrderId(data._id);
+            const response = await Order_Service.addOrder(curr_user.token,orderObj);
+            if(response.status === 201){
+                const savedOrder = await response.json(); 
+                console.log(savedOrder._id);
+                setOrderId(savedOrder._id);
+                
                 // deleting cart
                 const deleted = await Cart_Service.deleteCart(curr_user.token, curr_user._id);
                 if(deleted){
@@ -89,9 +132,10 @@ function Confirmation({paymentStatus, paymentMethod }) {
                 console.log(custAddress); 
                 let CustomerOrderInfo = {
                     customerAddress:custAddress,
-                    orderInfo:data
+                    orderInfo:savedOrder
                 }
                 console.log(CustomerOrderInfo);
+                // mail starts here
                 emailjs.send("service_2rgz7hq", "template_j3u9mxn", CustomerOrderInfo, "3DRAqhnj6rTu4Rzmb").then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     setErrorInMail(false);
@@ -102,8 +146,10 @@ function Confirmation({paymentStatus, paymentMethod }) {
                 // Mail Ends Here
 
                 localStorage.removeItem("cart");
+                cartService.updateCartItems(0);
                 localStorage.removeItem("customerInfo");
                 setIsConfirmed(true);
+                setConfirmed(true)
             }
         }catch(err){
             console.log("There was some error: ",err);

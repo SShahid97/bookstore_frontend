@@ -28,9 +28,7 @@ function EditItem() {
   let params = useParams();
   
   useEffect(() => {
-    // console.log("id: ",id);
     getBookItem(params.id);
-
     let curr_user = JSON.parse(localStorage.getItem('user'));
     if (curr_user) {
       if (curr_user && curr_user.role === "admin") {
@@ -51,7 +49,6 @@ function EditItem() {
             }         
         };
         reader.readAsDataURL(imagePrevFile);
-        
         // // for Storing imageName in database
         // setImageName(imagePrevFile.name);    
     }else{
@@ -87,17 +84,18 @@ function EditItem() {
       alert("Please edit any field...");
       return;
     }
-
-    console.log(formInput);  
-    try {
-      const data = await User_Service.updateBookItem(Item._id, Admin.token,formInput);
+    console.log(formInput); 
+    const response = await User_Service.updateBookItem(Item._id, Admin.token,formInput);
+    if(response.status === 200){
+      const updatedItem = await response.json();
+      console.log(updatedItem);
       alert("Item Updated Successfully");
-      console.log(data)
-    } catch (err) {
-      console.log("There was some error: ", err)
+    }else{
+      alert("There was some error while updating the Item.");
     }
 
   }
+  
   const handleDiscount = (e)=>{
     // console.log(Number(e.target.value));
     formInput.discount = Number(e.target.value);

@@ -10,16 +10,16 @@
   min-height: 80vh;
   margin-left: 10px;
   /* margin-bottom: 10px; */
+  
 }
 
-/* .menu-link{
-  width: 85%;
-  grid-column: 3/4;
-} */
-
-.hamburger-menu {
-  display: none;
+.userOnHome{
+  margin-top:-8px; 
 }
+.userNotOnHome{
+  margin-top:72px;
+}
+
 
 .mobile-menu-link{
   z-index: 1200;
@@ -64,32 +64,6 @@
   background: linear-gradient(to right, #f27121, #e94057);
 }
 
-.activeIcon{
-  /* grid-column: 5/5; */
-  display: flex;
-  margin: 0 auto;
-  cursor: pointer;
-  align-items: center;
-  border-radius: 3px;
-  color: white;
-  font-size: 1.4rem;
-  padding: 0px 9px;
-  background: linear-gradient(to right, #f27121, #e94057);
-}
-
-.active-menu{
-  margin-top: 2px;  
-  text-align: end;
-  display: block;
-  color:white;
-  font-size: 1.6rem;
-  cursor: pointer;
-  align-items: flex-end;
-  border-radius: 3px;
-  padding:3px;
-  background: linear-gradient(to right, #f27121, #e94057);
-}
-
 .container{
   display:flex;
 }
@@ -117,32 +91,46 @@
 
 
 ::-webkit-scrollbar {
-  width:0.8rem;
+  width:0.6rem;
+  height:0.6rem;
 }
 ::-webkit-scrollbar-track {
   background: rgb(226, 154, 154);
-  border-radius: 80vw;
-  /* margin-block:0.5em; */
+  border-radius: 60vw;
 }
 ::-webkit-scrollbar-thumb {
   background:linear-gradient(to bottom, #f27121a9, #e94057d2);
-  border-radius: 80vw;
+  border-radius: 60vw;
 }
 ::-webkit-scrollbar-thumb:hover {
   background:linear-gradient(to bottom, #f27121, #e94057);
 }
 
-
+.back-arrow-span{
+  border-radius: 50%;
+  background: gainsboro;
+  color: #5a5a5a;
+  padding: 5px 8px;
+  cursor: pointer;
+  margin-left: 6px;
+  position: fixed;
+}
+.back-arrow-span:hover{
+  background: #8f8f8f;
+  color: white;
+}
+.back-arrow-span:active{
+  background: #b1b1b1;;
+}
+.back-arrow{
+  padding-top: 2px;
+  transform: scale(1.1);
+}
 
 /* responsive css style  */
 @media (max-width: 1000px) {
-  .hamburger-menu {
-    display: block;
-    color:white;
-    font-size: 1.7rem;
-    cursor: pointer;
-    margin: 0 auto;
-    margin-top: 5px;
+  .logout-icon{
+    display: none;
   }
   .dropdown{
     top:47px !important;
@@ -152,17 +140,13 @@
 /* For Main NavBar */
 /* making responsive for form width */
 @media (max-width: 650px){
-  .hamburger-menu {
-    margin-top: 4px;
-  }
-  .activeIcon{
-    font-size: 1.5rem;
-    padding:2px;
-  }
 
   .dropdown{
     top:45px !important;
     width: 140px;
+  }
+  .logout-icon{
+    display: none;
   }
 }
 .discount{
@@ -173,7 +157,7 @@
   padding: 10px 5px;
   border-radius: 50%;
   color:white;
-
+ 
 }
 
 .hide-menu{
@@ -196,4 +180,15 @@
   }
 }
 
-
+@media (max-width:650px){
+  .main-container{
+    margin-left:0px;
+  }
+  .userOnHome{
+    margin-top:-20px; 
+  }
+  .discount{
+    font-size: 0.8rem !important;
+    padding: 8px 2px;
+  }
+}

@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {NavLink } from 'react-router-dom';
-import {FaAngleDown,FaAngleUp,FaAngleRight,FaAngleLeft} from "react-icons/fa";
+import {mobileMenuService} from "../services/LocalService";
+// import {FaAngleDown,FaAngleUp,FaAngleRight,FaAngleLeft} from "react-icons/fa";
 import {
     Compter_Science,
     Business_Management,
@@ -17,10 +18,17 @@ function MobileCategory({setmobileView}) {
     const [indecies2, setIndecies2]= useState();
     const [indecies3, setIndecies3]= useState();
     const [toggleSubMenuTwo, setToggleSubMenuTwo]= useState(false);
-
+    
     useEffect(()=>{
+        // console.log('hash', location.hash);
+        // console.log('search', location.search);
+    },[indecies3]);
 
-    },[indecies3])
+    mobileMenuService.onUpdateMobileMenuIndicies().subscribe(indecies => {
+        setIndecies(indecies);
+        setIndecies2(indecies);
+        setIndecies3(indecies);
+    });
     const handleSubLink=(e,index)=>{
         // setIsHidden(!isHidden);
         e.stopPropagation();
@@ -119,6 +127,9 @@ const List = styled.div`
       z-index: 1200;
       overflow-y: scroll;
       font-size: 0.9rem;
+      @media (max-width:650px){
+        top: 48px;
+      }
 `;
 const MainLinks = styled.span`
         .activate{

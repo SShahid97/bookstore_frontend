@@ -43,16 +43,17 @@ const AdminPanelConatiner = styled.div`
     margin-top: -5px;
     margin-left: -10px;
     min-height: 82vh;
-    .arrow-menu{
-      display: none;
-      position: fixed;
+    @media (max-width:850px){
+      width: 100%;
     }
     .side-nav{
       display: none !important;
     }
-    @media (max-width:850px){
-        width: 100%;
-        .arrow-menu{
+   
+      .arrow-menu{
+        display: none;
+        position: fixed;
+        @media (max-width:850px){
           display: block;
           height: 30px;
           width: 25px;
@@ -64,7 +65,13 @@ const AdminPanelConatiner = styled.div`
           border-bottom-right-radius: 15px;
           z-index:1300;
           opacity: 0.5;
+        }
+        @media (max-width:650px){
+          margin-left:10px;
+          margin-top: -10px;
+        }
       }
+
       .arrow{
         margin-left: 3px;
         margin-top: 8px;
@@ -88,6 +95,9 @@ const AdminPanelConatiner = styled.div`
         border-top-right-radius: unset;
         border-bottom-right-radius: unset;
         animation: 310ms slide-right;
+        @media (max-width:650px){
+          margin-left: 285px;
+        }
 
       }
       @keyframes slide-right {
@@ -98,13 +108,6 @@ const AdminPanelConatiner = styled.div`
           margin-left: 0%;
         }
       }
-    }
-   
-     @media (max-width:650px){
-      .arrow-menu{
-        margin-top: -10px;
-      }
-     }
     
 `;
 const AdminContainer = styled.div`
@@ -114,6 +117,13 @@ const AdminContainer = styled.div`
     margin: 0 auto;
     @media (max-width:950px){
         width: 100%;
+    }
+    @media (max-width:650px){
+      padding:10px;
+      margin-left: 15px;
+    }
+    @media (max-width:360px){
+        padding:5px;
     }
 `;
 

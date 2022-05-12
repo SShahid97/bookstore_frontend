@@ -96,7 +96,6 @@
     padding: 5px 2px;
     border: 1px solid green;
     border-radius: 3px;
-    /* background:green; */
     box-shadow: inset 0 0 20px rgba(4, 117, 4, 0.753);
 }
 .register-success{
@@ -117,27 +116,34 @@
    text-decoration: underline;
 }
 /* making responsive for form width */
-@media screen and (max-width: 300px) and (min-width: 100px) {
-    .loginForm, .RegisterForm{
-        width: 95%; 
-    }
-}
-@media screen and (max-width: 600px) and (min-width: 300px) {
-    .loginForm, .RegisterForm{
-        width: 85%;   
-    }
-    .loginBtn, .RegisterBtn{
-        width:85% !important;
-    }
-    .form_ input{
-        width: 85%;
-    }
-    .userIconLogin{
-        font-size: 7rem;
-    }
-}
-@media screen and (max-width: 850px) and (min-width: 600px) {
+@media (max-width: 850px){
     .loginForm, .RegisterForm{
         width: 45%;
+    }
+}
+@media (max-width: 650px){
+    .loginForm, .RegisterForm{
+        width: 90%;   
+    }
+    .loginBtn, .RegisterBtn{
+        width:90% !important;
+    }
+    .form_ input{
+        width: 90%;
+    }
+    .userIconLogin{
+        font-size: 6rem;
+        margin-top:0rem;
+    }
+    .pass-match-error{
+        width: 85%;
+    }
+    .login-success{
+        width: 85%;
+    }
+} 
+@media (max-wdith:360px){
+    .loginForm, .RegisterForm{
+        width: 90%; 
     }
 }

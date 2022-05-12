@@ -1,25 +1,40 @@
 import Latest from "../components/Latest";
 import Popular from "../components/Popular";
+import UserDetails from "../components/UserDetails";
 import React, { useEffect, useState } from 'react'
 import Courosal from "../components/Courosal";
 import AdminPanel from "./Admin_Panel/AdminPanel";
+// import styled from "styled-components";
+import {logOutService,mobileMenuService} from "../services/LocalService";
 
 function Home() {
     const [isAdmin, setIsAdmin] = useState(false); 
-    
+    const [user, setUser] = useState(null); 
+    let curr_user = JSON.parse(localStorage.getItem('user'));
     useEffect(()=>{
-      let user = JSON.parse(localStorage.getItem('user'));
-     if(user){
-      if(user.role === "admin"){
-        setIsAdmin(true);
-        console.log("i am admin well")
-      }
+      mobileMenuService.setMobileMenuIndicies(null);
+      if(curr_user){
+        if(curr_user.role === "admin"){
+          setIsAdmin(true);
+        }else{
+          setIsAdmin(false);
+          setUser(curr_user);
+        }
+     }else{
+       setUser(null);
+      //  console.log("log out")
      }
-    },[])
-  return (
-    <div>
-      {!isAdmin && (
-        <>
+    },[]);
+    
+    logOutService.onUpdateLogOut().subscribe(user => {
+      setUser(user);
+    });
+
+    return (
+    <div className={user?"userOnHome":"userNotOnHome"}>
+      { (
+         <>
+          {user && (<UserDetails user={user}/>) }
           <Courosal/>      
           <h2 style={{fontWeight: '500'}}>Latest Books</h2>
           <Latest category={'all_in_one'}/>
@@ -35,5 +50,9 @@ function Home() {
   )
 }
 
+// const HomeOuter =  styled.div`
+
+
+// `;  
 export default Home
 

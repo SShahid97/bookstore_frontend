@@ -1,24 +1,72 @@
 
 // All database calls are made from this service file
+const localdomain = "http://localhost:5001"; 
 // for ngrok
-// const books_url = 'http://0b9c-117-214-244-109.ngrok.io/api/books';
-// const cart_url = 'http://0b9c-117-214-244-109.ngrok.io/api/cart';
-// const auth_url = 'http://0b9c-117-214-244-109.ngrok.io/api/user';
+// const localdomain = "https://4d60-2409-4054-405-c607-d815-a0bc-ec14-d87c.in.ngrok.io"; 
 
-const books_url = 'http://localhost:5001/api/books';
-const cart_url = 'http://localhost:5001/api/cart';
-const auth_url = 'http://localhost:5001/api/user';
-const review_url = 'http://localhost:5001/api/reviews';
-const order_url = 'http://localhost:5001/api/order';
-const address_url = 'http://localhost:5001/api/address';
-const pincode_url = 'http://localhost:5001/api/pincode';
-const stock_url = 'http://localhost:5001/api/stock';
+
+const books_url = `${localdomain}/api/books`;
+const cart_url = `${localdomain}/api/cart`;
+const auth_url = `${localdomain}/api/user`;
+const review_url = `${localdomain}/api/reviews`;
+const order_url = `${localdomain}/api/order`;
+const address_url = `${localdomain}/api/address`;
+const pincode_url = `${localdomain}/api/pincode`;
+const stock_url = `${localdomain}/api/stock`;
+const wishlist_url = `${localdomain}/api/wishlist`;
+
+export const Wishlist_Service = {
+    addWishlistItem: async (token, formData)=>{
+        try{
+            const response = await fetch(wishlist_url,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                },
+                body:JSON.stringify(formData)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    getUserWishlist: async (token,userId)=>{
+        try{
+            const response = await fetch(`${wishlist_url}/${userId}`,{
+                headers:{
+                    'auth-token': token
+                }
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    deleteWishlistItem: async (token,itemId)=>{
+        try{
+            const response = await fetch(`${wishlist_url}/${itemId}`,{
+                method:'DELETE',
+                headers:{
+                    'auth-token': token
+                }
+            });
+            return response;
+        }catch(err){
+            return err;   
+        }
+    }
+    
+}
 
 export const Stock_Service = {
     getStockDetails: async (bookId)=>{
-        const response = await fetch(`${stock_url}/${bookId}`);
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(`${stock_url}/${bookId}`);
+            return response;
+        }catch(err){
+            return err;
+        }
     },
 }
 
@@ -32,16 +80,19 @@ export const Pincode_Service = {
 
 export const Address_Service = {
     addAddress: async (token, formData)=>{
-        const response = await fetch(address_url, {
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json',
-                'auth-token': token
-            },
-            body:JSON.stringify(formData) 
-        });
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(address_url, {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                },
+                body:JSON.stringify(formData) 
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
     },
     getUserAddress: async (token,userId)=>{
         try{
@@ -54,20 +105,38 @@ export const Address_Service = {
         }catch(err){
             return err;
         }
+    },
+    deleteAddress: async (token, addressId)=>{
+        try{
+            const response = await fetch(`${address_url}/${addressId}`,{
+                method:'DELETE',
+                headers:{
+                    'auth-token': token
+                }
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+
     }
+
 }
 export const Order_Service = {
     addOrder: async (token, formData)=>{
-        const response = await fetch(order_url, {
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json',
-                'auth-token': token
-            },
-            body:JSON.stringify(formData) 
-        });
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(order_url, {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                },
+                body:JSON.stringify(formData) 
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
     },
     getOrderHistory: async (token,userId)=>{
         try{
@@ -98,16 +167,19 @@ export const Order_Service = {
 
 export const Review_Service = {
     addReview: async (token,formData)=>{
-        const response = await fetch(review_url,{
-            method: 'POST',
-            headers: {
-                'Content-Type':'application/json',
-                'auth-token': token
-            },
-            body:JSON.stringify(formData)
-        });
-        const data = await response.json();
-        return data;
+       try{
+            const response = await fetch(review_url,{
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                },
+                body:JSON.stringify(formData)
+            });
+            return response;
+       }catch(err){
+           return err;
+       }
     },
     checkIfSubmitted: async (token,formData)=>{
         try{
@@ -204,22 +276,53 @@ export const User_Service = {
     },
 
     updateBookItem: async(bookId, token, formData)=>{
-        const response = await fetch(`${books_url}/${bookId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'auth-token': token
-        },
-        body: JSON.stringify(formData)
-      });
-      const data = await response.json();
-      return data;
+        try{
+            const response = await fetch(`${books_url}/${bookId}`, {
+                method: 'PATCH',
+                headers: {
+                'Content-Type': 'application/json',
+                'auth-token': token
+                },
+                body: JSON.stringify(formData)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    deleteBookItem: async (token,bookId)=>{
+        try{
+            const response = await fetch(`${books_url}/${bookId}`, {
+                method: 'DELETE',
+                headers: {
+                    'auth-token': token
+                },
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
     }
 
 }
 
 // Cart Service
 export const Cart_Service ={
+    addToCart: async(token, userItem)=>{
+        try{
+            const response = await fetch(cart_url,{
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                },
+                body:JSON.stringify(userItem)
+            });
+        return response;
+        }catch(err){
+            return err;
+        }
+    },
     deleteCart: async (token,userID)=>{
         const response = await fetch(`${cart_url}/whole/${userID}`,{
             method:'DELETE',
@@ -242,19 +345,6 @@ export const Cart_Service ={
             return err;
         }
         
-    },
-
-    addToCart: async(token, userItem)=>{
-        const response = await fetch(cart_url,{
-                method: 'POST',
-                headers: {
-                    'Content-Type':'application/json',
-                    'auth-token': token
-                },
-                body:JSON.stringify(userItem)
-        });
-        const data = await response.json();
-        return data;
     },
 
     removeFromCart: async(id,token)=>{
@@ -292,8 +382,7 @@ export const Auth_Service = {
                     'auth-token': token
                 }
             }); 
-            const data = await response.json();
-            return data;
+            return response;
         }catch(err){
             return err;
         }

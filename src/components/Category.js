@@ -32,12 +32,12 @@ function Category() {
                 return (
                     <MainLinks key={ind} onMouseEnter={handleMainLink}>
                         <h4>{item.name}</h4><span className='angle-down'><FaAngleDown /></span>
-                        <Dropdown className={isHidden ? 'hide' : 'droplinks'}>
+                        <DropdownOne className={isHidden ? 'hide' : 'droplinks'}>
                             {General_Categories[ind].categories.map((drop_1, index) => {
                                 return (
                                     <DropLinks key={index}>
                                         <h4>{drop_1.name}</h4> <span className='angle-right'><FaAngleRight /></span>
-                                        <Dropdown key={index} className={`droplinks_0 sub_${index} subb_${i}`}>
+                                        <DropdownTwo key={index} className={`droplinks_0 sub_${index} subb_${i}`}>
                                             {General_Categories[ind].categories[index].sub_categories.map((drop_link, inde) => {
                                                 return (
                                                     <SLink key={inde} to={drop_link.link} onClick={handleSubLink} >
@@ -45,11 +45,11 @@ function Category() {
                                                     </SLink>
                                                 );
                                             })}
-                                        </Dropdown>
+                                        </DropdownTwo>
                                     </DropLinks>
                                 );
                             })}
-                        </Dropdown>
+                        </DropdownOne>
                     </MainLinks>
                 )
             })}
@@ -95,14 +95,11 @@ const MainLinks = styled.span`
     padding:12px;
     text-decoration:none;
     cursor: pointer;
-    /* width: 9rem; */
     text-align: center;
-    /* background: linear-gradient(275deg,#4949498c,#313131e3); */
-
     cursor:pointer;
-    /* transform:scale(0.8); */
     @media (max-width: 1150px) {
         width: 7rem;
+        padding:5px;
     }
 
     @media (max-width: 1000px) {
@@ -113,6 +110,9 @@ const MainLinks = styled.span`
     h4{
         color:white;
         font-weight: 500;
+        @media (max-width: 1205px) {
+            font-size: 0.9rem;
+        }
     }
 `;
 const DropLinks = styled.div`
@@ -154,20 +154,64 @@ const DropLinks = styled.div`
             .sub_5{
                 top: 285px;
             }
+
+
             .subb_1{
                 left:388px;
+                @media (min-width:1000px) and (max-width:1030px){
+                    left: 365px;
+                }
+                @media (min-width:1031px) and (max-width:1150px){
+                    left:381px;
+                }
             }
             .subb_2{ 
                 left: 561px;
+                @media (min-width:1000px) and (max-width:1030px){
+                    left: 477px;
+                }
+                @media (min-width:1031px) and (max-width:1150px){
+                    left:493px;   
+                }
+                @media (min-width:1151px) and (max-width:1206px){
+                    left:549px;
+                }
             }
             .subb_3{
                 left: 767px;
+                @media (min-width:1000px) and (max-width:1030px){
+                    left: 589px;
+                }
+                @media (min-width:1031px) and (max-width:1150px){
+                    left: 605px;
+                }
+                @media (min-width:1151px) and (max-width:1206px){
+                    left: 739px;
+                }
             }
             .subb_4{
                 left: 865px;
+                @media (min-width:1000px) and (max-width:1030px){
+                    left: 701px;
+                }
+                @media (min-width:1031px) and (max-width:1150px){
+                    left: 717px;
+                }
+                @media (min-width:1151px) and (max-width:1206px){
+                    left: 830px;
+                }
             }
             .subb_5{
                 left: 1000px;
+                @media (min-width:1000px) and (max-width:1030px){
+                    left: 813px;
+                }
+                @media (min-width:1031px) and (max-width:1150px){
+                    left: 829px;
+                }
+                @media (min-width:1151px) and (max-width:1206px){
+                    left: 958px;
+                }
             }
         } 
         .angle-right{
@@ -176,7 +220,23 @@ const DropLinks = styled.div`
             margin-left:3px;
         }
 `;
-const Dropdown = styled.div`
+const DropdownOne = styled.div`
+        text-align: left;
+        color:white !important;
+        z-index: 900;
+        list-style: none;
+        position: absolute;
+        top:50px;
+        margin-left: -12px;
+        width:200px;
+        /* border-radius: 5px; */
+        background: grey;
+        /* padding:0.5rem; */
+        overflow: hidden; 
+        display: none;
+`;
+
+const DropdownTwo = styled.div`
         text-align: left;
         color:white !important;
         z-index: 900;

@@ -2,15 +2,15 @@ import React from 'react'
 import { useState,useEffect} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import "./styles.css";
-import {userService, cartService} from "../../services/LocalService";
+import {userService, cartService,mobileMenuService} from "../../services/LocalService";
 import {Auth_Service,Cart_Service} from "../../services/Service";
 // icon imports
 import { FaUserCircle, FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 function Login() {
-    const [inputs, setInputs] = useState({});
     const navigate = useNavigate();
+    const [inputs, setInputs] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [invalidCredentails,setInvalidCredentials] = useState(false);
     const [emailExists,setEmailExists] = useState(false);
@@ -18,8 +18,8 @@ function Login() {
     const [loginSuccessMessage, setLoginSuccessMessage] = useState("");
 
     useEffect(()=>{
-
-      return; 
+      mobileMenuService.setMobileMenuIndicies(null);
+      return () => {}; 
     },[])
     const handleChange = (event) => {
       setInvalidPassword(false);
@@ -64,11 +64,14 @@ function Login() {
             userService.sendUser(user);  //subject
             localStorage.setItem("user", JSON.stringify(user));
             if(user.role === "admin"){
-              console.log("admin")
-              navigate("/admin-panel/dashboard")
+              // console.log("admin")
+              navigate("/admin-panel/dashboard");
+              return;
+            }else{
+              getCartItems();
+              navigate("/");
               return;
             }
-            getCartItems();
             // if()
             // navigate(-1);   //redirect back to previous page (url/link)   
         }else if(response.status === 400){
@@ -88,9 +91,14 @@ function Login() {
     const getCartItems = async()=>{
       let user = JSON.parse(localStorage.getItem('user'));
       try{
-          const cartResponse = await Cart_Service.getCartItems(user._id, user.token);
-          cartService.updateCartItems(cartResponse.length);
-          localStorage.setItem("cart",JSON.stringify(cartResponse));
+          const response = await Cart_Service.getCartItems(user._id, user.token);
+          if(response.status === 200){
+            const cartResponse = await response.json(); 
+            cartService.updateCartItems(cartResponse.length);
+            localStorage.setItem("cart",JSON.stringify(cartResponse));            
+          }else if(response.status === 204){
+            console.log("No Cart Items saved");
+          }
       }catch(err){
           console.log("There was some error: ",err)
       }

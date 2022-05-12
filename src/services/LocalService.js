@@ -15,3 +15,17 @@ export const cartService = {
     clearCartItems: () => cartSubject.next(),
     onUpdateCartItems: () => cartSubject.asObservable()
 };
+
+const logOutSubject = new Subject();
+export const logOutService = {
+    setLogOut: user => logOutSubject.next(user),
+    clearLogOut: () => logOutSubject.next(),
+    onUpdateLogOut: () => logOutSubject.asObservable()
+};
+
+const mobileMenuSubject = new Subject();
+export const mobileMenuService = {
+    setMobileMenuIndicies: indecies => mobileMenuSubject.next(indecies),
+    clearMobileMenuIndicies: () => mobileMenuSubject.next(),
+    onUpdateMobileMenuIndicies: () => mobileMenuSubject.asObservable()
+};

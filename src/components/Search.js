@@ -60,13 +60,10 @@ const FormStyle = styled.form`
     width: 100%;
     .close-icon{
         position: absolute;
-        margin-left: -38px;
-        margin-top: 18px;
+        margin-left: -20px;
+        margin-top: 8px;
         cursor: pointer;
         color:grey;
-        @media (max-width:1210px){
-            margin-top:  20px;
-        }
         @media (max-width:650px){
             margin-top:  20px;
         }
@@ -80,18 +77,14 @@ const FormStyle = styled.form`
  
     .search-icon{
         position:absolute;
-        top:50%;
+        top:51%;
         transform: translate(42%,-50%);
         color: grey;
         font-size: 15px;
         @media (max-width: 1336px){
-            top:40%;
+            top:51%;
         }
-
-        @media (max-width: 1000px){
-            top:55%;
-        }
-
+        
         @media (max-width:650px){
             display: none;
         }
@@ -140,7 +133,7 @@ const FormStyle = styled.form`
         background:white;
         color:grey;
         padding: 0.4rem 1rem;
-        padding-left: 1.4rem;
+        padding-left: 1.6rem;
         border:none;
         outline:none;
         width:100%;
@@ -153,7 +146,7 @@ const FormStyle = styled.form`
         @media (max-width: 650px){
             font-size:1.1rem;
             padding: 0.3rem 2rem;
-            width: 100%;
+            width: 100% !important;
             height: 3rem;
             border-top: 1px solid grey;
             border-bottom: 1px solid grey;

@@ -3,7 +3,7 @@ import React,{useState,useEffect} from 'react';
 
 function Filters({books, setTempBooks }) {
     const [priceRange, setPriceRange] = useState(100);
-    const [discountRange, setDiscountRange] = useState(0.1);
+    const [discountRange, setDiscountRange] = useState(0.01);
     const [filters, setFilters]=useState(false);
     useEffect(()=>{
         setPriceRange(priceRange);
@@ -44,7 +44,7 @@ function Filters({books, setTempBooks }) {
     ////Filtering Ends//////
     const handleClearFilter = ()=>{
         setPriceRange(100);
-        setDiscountRange(0.1);
+        setDiscountRange(0.01);
         setFilters(false);
         setTempBooks(books);
     }
@@ -64,14 +64,14 @@ function Filters({books, setTempBooks }) {
             </div>    
         </div>
         <div className='refine-search'>
-            <p>Discount Under: &nbsp;<span>{discountRange*100}%</span> </p>
-            <input className='discount-range' type="range" min={0.1} value={discountRange} step={0.05} max={0.9} onChange={handleDiscountRange} onMouseUp={onDiscountRange}/>
+            <p>Discount upto: &nbsp;<span>{Math.round(discountRange*100)}%</span> </p>
+            <input className='discount-range' type="range" min={0.01} value={discountRange} step={0.01} max={1} onChange={handleDiscountRange} onMouseUp={onDiscountRange}/>
             <div style={{display:'flex', justifyContent:'space-between', width:'95%'}}>
                 <div>
-                &#8377;10%
+                &#8377;1%
                 </div>
                 <div>
-                &#8377;90%
+                &#8377;100%
                 </div>
             </div>
         </div>

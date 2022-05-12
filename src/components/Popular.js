@@ -51,17 +51,20 @@ function Popular (){
                     rewind: true,
                     breakpoints: {
                         1225: {
-                            perPage: 5,
-                           
-                          },
-                          1020: {
+                            perPage: 5,  
+                        },
+                        1050: {
+                            perPage: 4,
+                        },
+                        850: {
+                            perPage: 3,
+                        },
+                        650: {
                             perPage: 2,
-                      
-                          },
-                          380: {
-                              perPage: 1,
-                        
-                          },
+                        },
+                        360: {
+                            perPage: 2,
+                        },
                       }
 
                 }}
@@ -99,28 +102,43 @@ function Popular (){
         </Wrapper>
     );
 }
-
 const Wrapper = styled.div`
-    margin: 0.3rem 0rem 4rem 0rem  !important;
-    .splide__arrow {
+     margin: 0.3rem 0rem 4rem 0rem  !important;
+     .splide__arrow {
         width: 3rem;
         height: 3rem;
         margin-left: -13px;
         margin-right: -13px;
-        @media (max-width:610px) {
+        @media (max-width:650px) {
             width: 1.6rem;
             height: 1.6rem;
+        }
+        .splide__arrow svg {
+            fill: grey !important;
         }
      }
 `;
 
 const Card = styled.div`
-     border:1px solid #80808038 !important;
+    border:1px solid #80808038 !important;
     padding: 0.8rem;
     min-height:20rem;
     border-radius:5px;
     overflow:hidden;
     position:relative;
+
+    @media (max-width:650px){
+        padding: 8px;
+        min-height: 19rem;
+        border-radius:3px;
+    }
+    @media (max-width:360px){
+        padding: 3px;
+        min-height: 18rem;
+    }
+    .details{
+        font-size: 0.9rem;
+    }
     .old-price{
         text-decoration: line-through; 
         font-size: 0.9rem;
@@ -138,6 +156,13 @@ const Card = styled.div`
         border-radius:5px;
         left:0;
         width:100%;
+        @media (max-width:650px){
+            height: 230px;;
+            border-radius:3px;
+        }
+        @media (max-width:360px){
+            height: 210px;
+        }
     }
     span{
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;

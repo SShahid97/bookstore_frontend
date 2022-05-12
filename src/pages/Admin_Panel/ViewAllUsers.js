@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Auth_Service } from "../../services/Service";
 import {Link} from "react-router-dom";
+import Loader from "../../components/Loader";
 
 function ViewAllUsers() {
   let i=1;
   const [users, setUsers] = useState([]);
+  const [showLoader, setShowLoader] = useState(false);
   useEffect(() => {
+    setShowLoader(true);
     let curr_user = JSON.parse(localStorage.getItem('user'));
     if (curr_user && curr_user.role === "admin") {
       // setAdmin(curr_user);
@@ -15,18 +18,30 @@ function ViewAllUsers() {
   }, [])
 
   const getAllUsers = async (token) => {
-    const usersReturned = await Auth_Service.getUsers(token);
-    // console.log(usersReturned);
-    let onlyUsers = [];
-    usersReturned.forEach((user) => {
-      if (user.role !== "admin") {
-        onlyUsers.push(user);
-      }
-    });
-    // console.log(onlyUsers);
-    setUsers(onlyUsers)
+    const response = await Auth_Service.getUsers(token);
+    if(response.status === 200){
+      setShowLoader(false);
+      const usersReturned = await response.json();
+      let onlyUsers = [];
+      usersReturned.forEach((user) => {
+        if (user.role !== "admin") {
+          onlyUsers.push(user);
+        }
+      });
+      // console.log(onlyUsers);
+      setUsers(onlyUsers)
+    }else if(response.status === 204){
+      setShowLoader(false);
+    }else if(response.status === 400 ){
+      // setShowLoader(false);
+      console.log("Bad Request");
+    }
+    
   }
   return (
+    <>
+    {showLoader && (<Loader/>)}
+    {!showLoader && (
     <UsersOuter  className='user-outer' style={{}}>
       <table className="all-users-table">
         <thead >
@@ -62,6 +77,7 @@ function ViewAllUsers() {
           })}
           </table>
     </UsersOuter>
+    )}</>
   )
 }
 

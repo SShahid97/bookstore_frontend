@@ -1,6 +1,16 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom';
 import styled from "styled-components";
+import {
+  FaUserFriends,
+  FaFileImport,
+  FaSearchDollar,
+  FaRegEye,
+  FaEdit,
+  FaChalkboardTeacher
+  } from "react-icons/fa";
+
+import {MdLibraryAdd} from "react-icons/md"
 
 function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
   const handleCloseNav = ()=>{
@@ -9,28 +19,31 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
   return (
     <NavOuter>
       <List className={toggleArrowMenu?"mobile-view":"desktop-view"} onClick={handleCloseNav}>
+        <SLink to={"dashboard"} className='dropdown-item' style={{marginTop: '20px'}}>         
+          <span className='icons'> <FaChalkboardTeacher /></span><h4>Admin Dashboard</h4>
+        </SLink>
         <h4 className='headings'>Manage Books</h4>
         <SLink to={'manage-books/view-all-items'}  >
-          <h4>View Books</h4>
+          <span className='icons'> < FaRegEye/> </span><h4>View Books</h4>
         </SLink>
         <SLink to={'manage-books/add-item'} >
-          <h4>Add New Book</h4>
+        <span className='icons'> < FaFileImport/> </span> <h4>Add New Book</h4>
         </SLink>
 
         <h4 className='headings'>Manage Users & Orders</h4>
         <SLink to={'manage-users/view-all-users'}  >
-          <h4>View All Users</h4>
+        <span className='icons'> < FaUserFriends/> </span><h4>View All Users</h4>
         </SLink>
         <SLink to={'manage-users/search-order'} >
-          <h4>Search Order</h4>
+        <span className='icons'> < FaSearchDollar/> </span><h4>Search Order</h4>
         </SLink>
 
         <h4 className='headings'>Manage Stock</h4>
         <SLink to={'manage-users/add-stock-details'}  >
-          <h4>Add Stock Details</h4>
+        <span className='icons'> < MdLibraryAdd/> </span> <h4>Add Stock Details</h4>
         </SLink>
         <SLink to={'manage-users/view-stock-details'} >
-          <h4>View Stock Details</h4>
+        <span className='icons'> < FaEdit/> </span><h4>Edit Stock Details</h4>
         </SLink>
 
       </List>
@@ -89,25 +102,38 @@ const NavOuter = styled.div`
 const List = styled.div`
     .headings{
         padding: 0.4rem;
+        font-size: 1.1rem;
     }
     
 `;
 const SLink = styled(NavLink)`
+    &:hover{
+      background:linear-gradient(to right, #f27121, #e94057);
+        h4{
+            color:white;
+        }
+    }
     &.active{
         background:linear-gradient(to right, #f27121, #e94057);
         h4{
             color:white;
         }
     }
+
     color:white;
     display: flex;
     align-items: center;
     padding: 0.4rem;
     border-radius: 2px ;
     margin-left:0.6rem;
+    .icons{
+      margin-right: 5px;
+      margin-top: 5px;
+      font-size: 1.3rem;
+    }
     h4{
         color:white;
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 500;
     }
 `;

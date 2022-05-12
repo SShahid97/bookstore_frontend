@@ -3,10 +3,9 @@ import Search from './Search';
 import Category from './Category';
 import MobileCategory from './MobileCategory';
 // import MenuOnScroll from './MenuOnScroll';
-import { useNavigate } from 'react-router-dom';
-import {Link,NavLink} from 'react-router-dom';
+import { useNavigate,useLocation,Link,NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import {userService, cartService} from "../services/LocalService";
+import {userService, cartService, logOutService,mobileMenuService} from "../services/LocalService";
 // import {Service} from '../services/Service';
 
 import {SiElasticsearch} from 'react-icons/si';
@@ -21,14 +20,15 @@ import {
   FaChalkboardTeacher,
   FaShoppingCart,
   FaUserShield,
-  FaSearch } from "react-icons/fa";
+  FaSearch,
+  FaUserCircle,
+  FaGift,
+  FaHeart } from "react-icons/fa";
 
 
 function Navbar() {
     const [mobileView, setmobileView] = useState(false);
-    const [adminMobileView, setAdminMobileView] = useState(false);
     const [toggleDropdown, setToggleDropDown] = useState(false);
-    const [toggleAdminNav, setToggleAdminNav] = useState(false);
     const [isUser, setIsUser] = useState(false);
     const [user, setUser] = useState({});
     const [userName, setUserName]=useState("");
@@ -36,8 +36,12 @@ function Navbar() {
     const [isLoggedOut, setisLoggedOut] = useState(true);
     const [cartItemsLength, setCartItemsLength]= useState(0);
     const [showMobSearch, setShowMobSearch] = useState(false);
-    const [showHideSearch, setShowHideSearch] = useState(false);
     const navigate = useNavigate();
+    // const location = useLocation();
+    
+    // const [adminMobileView, setAdminMobileView] = useState(false);
+    // const [toggleAdminNav, setToggleAdminNav] = useState(false);
+    // const [showHideSearch, setShowHideSearch] = useState(false);
     // const [scrollPosition, setScrollPosition] = useState(0);   
     // const [isMenu, setIsMenu] = useState(false);
 
@@ -67,7 +71,7 @@ function Navbar() {
           // setIsUser(false);
         }
       });
-
+      
       // on refresh
       // let cartLen = JSON.parse(localStorage.getItem('noOfCartItems'));
       // if(cartLen){
@@ -83,10 +87,11 @@ function Navbar() {
 
     cartService.onUpdateCartItems().subscribe(cartItemsLen => {
       // debugger;
-      if(cartItemsLen){
+      if(cartItemsLen >= 0){
         setCartItemsLength(cartItemsLen);
       }
     });
+
     
     const handleScroll = () => {
       // const position = window.pageYOffset;
@@ -142,12 +147,11 @@ function Navbar() {
       setisLoggedOut(true);
       setCartItemsLength(0);
       setUserName("");
-      setUser("");  
+      setUser("");
+      logOutService.setLogOut(null);  
       localStorage.removeItem("user");
       localStorage.removeItem("cart");
       localStorage.removeItem("customerInfo");
-      // clearTimeout(LoginTimedOut);
-      
       // window.location.reload();
       navigate("/");
     }
@@ -158,13 +162,13 @@ function Navbar() {
         setToggleDropDown(false);  
       } 
     }
-    const handleAdminHamburger = ()=>{
-      setAdminMobileView(!adminMobileView);
-      // if(toggleAdminNav){
-        setToggleAdminNav(!toggleAdminNav)
-      // }
+    // const handleAdminHamburger = ()=>{
+    //   setAdminMobileView(!adminMobileView);
+    //   // if(toggleAdminNav){
+    //     setToggleAdminNav(!toggleAdminNav)
+    //   // }
 
-    }
+    // }
   
     const handleUserAccount=()=>{
       setToggleDropDown(!toggleDropdown);
@@ -207,9 +211,11 @@ function Navbar() {
           {(!isAdmin && (
               <>
                 <div className={showMobSearch?'search-box-mobile':'search-box' }>
-                 <Search setShowMobSearch={setShowMobSearch}/> 
+                  <Search setShowMobSearch={setShowMobSearch}/> 
                 </div>
-                <FaSearch className="search-icon-mobile" onClick={showMobSearchBar} ></FaSearch>
+               <div className="search-icon-mobile" onClick={showMobSearchBar}>
+                  <FaSearch  ></FaSearch>
+               </div>
               </>    
           ))}
           
@@ -218,9 +224,9 @@ function Navbar() {
            {/* Cart */}
            {!isAdmin && (
              <>    
-             <div className="cart-icon" onClick={handleCart}>
+             <div title='Cart' className="cart-icon" onClick={handleCart}>
                <span className='cart-bage'>{cartItemsLength}</span>
-               <FaShoppingCart className="cart"/>
+               <FaShoppingCart  />
              </div>
              </>
            )}
@@ -228,18 +234,20 @@ function Navbar() {
 
             {/* User */}
           {(!isAdmin && (
-            <div title={user.name} className={toggleDropdown?'activeIcon':'user-icon user-icon-name'} onClick={handleUserAccount}>
-              <span className='username'>{userName}</span>
-              <FaUserCog />
+            <div className={toggleDropdown?'user-icon activeIcon':'user-icon '} onClick={handleUserAccount}>
+              {/* <span className='username'>{userName}</span> */}
+              {isLoggedOut && (<FaUserCog   title="Account Info"/>)}
+              {!isLoggedOut && ( <FaUserCircle   title={user.name}/>) }
             </div>
+             
           ))}
 
 
           {/* Hamburger  */}
           {!isAdmin  && (
-            <div className="hamburger-menu" onClick={handleHamburger}>
-              {!mobileView && (<GiHamburgerMenu className={mobileView?"active-menu":"hamburger-menu"} />)}
-              {mobileView && (<FaTimes className={mobileView?"active-menu":"hamburger-menu"}/>)}
+            <div  onClick={handleHamburger}>
+              {!mobileView && (<GiHamburgerMenu className={mobileView?"hamburger-menu active-hamburger-menu":"hamburger-menu"} />)}
+              {mobileView && (<FaTimes className={mobileView?"hamburger-menu active-hamburger-menu":"hamburger-menu"}/>)}
             </div>
           )}
 
@@ -261,17 +269,21 @@ function Navbar() {
               </div>
             </>
           )}
-          {isAdmin && (
+          {/* {isAdmin && (
             <div >
             </div>
-          )}
+          )} */}
          
 
           {(isAdmin && (
-            <div title={user.name} className={toggleDropdown?'activeIcon':'user-icon user-icon-name'} onClick={handleUserAccount}>
-              <span className='username'>{userName}</span>
-              <FaUserCog />
-          </div>
+            // <div title={user.name} className={toggleDropdown?'user-icon activeIcon':'user-icon'} onClick={handleUserAccount}>
+            //   {/* <span className='username'>{userName}</span> */}
+            //   {isLoggedOut && (<FaUserCog />)}
+            //   {!isLoggedOut && ( <FaUserCircle/>) }
+            // </div>
+            <div className="logout-div" >
+               <p onClick={logout} className="logout-btn" ><FaSignOutAlt className='logout-icon' /> <strong>Logout</strong></p>
+             </div>
           ))} 
         {/* Admin Screen ends here */}
           {toggleDropdown && (
@@ -281,14 +293,20 @@ function Navbar() {
                 {isUser && (
                   <>
                     <NavLinks to={"/user/account"} className='dropdown-item'>         
-                    <FaUser/><p className="sign_reg_icons" ><strong>My Account</strong></p>
+                      <FaUser/><p className="sign_reg_icons" ><strong>My Account</strong></p>
+                    </NavLinks>
+                    <NavLinks to={"/user/orders"} className='dropdown-item'>         
+                      <FaGift/><p className="sign_reg_icons" ><strong>Orders</strong></p>
+                    </NavLinks>
+                    <NavLinks to={"/user/wishlist"} className='dropdown-item'>         
+                      <FaHeart/><p className="sign_reg_icons" ><strong>Wishlist</strong></p>
                     </NavLinks>
                     <li className='dropdown-item' onClick={logout}> 
                     <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>
                   </li>
                 </>
                 )}
-                {isAdmin && (
+                {/* {isAdmin && (
                   <>
                     <NavLinks to={"admin-panel/dashboard"} className='dropdown-item'>         
                     <FaChalkboardTeacher /><p className="sign_reg_icons" ><strong>Dashboard</strong></p>
@@ -297,7 +315,7 @@ function Navbar() {
                       <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>
                     </li>
                   </>
-                )} 
+                )}  */}
                 
                </>
               )}
@@ -405,15 +423,38 @@ const Nav = styled.div`
   .hideNav{
     display: none;
   }
-  .username{
+  /* .username{
     color: white;
     font-size: 9px;
     transform: scaleY(1.4);
-  }
-  .user-icon-name{
+  } */
+  /* .user-icon-name{
     margin-top:10px;
     display:flex;
     cursor: pointer;
+  } */
+  .logout-div{
+    display: flex;
+    margin-top: 12px;
+    flex-direction: column;
+    color: white;
+    align-items: end;
+    @media (max-width:650px){
+      margin-top: 8px;
+    }
+  }
+  .logout-btn{
+    background: orangered;
+    padding: 5px 15px;
+    cursor: pointer;
+    border-radius: 3px;
+    @media (max-width:650px){
+      padding: 3px 13px;
+      font-size: 0.9rem;
+    }
+    @media (max-width:360px){
+      margin-right: -30px;
+    }
   }
   .main-menu-links{
     @media (max-width:1000px) {
@@ -423,44 +464,94 @@ const Nav = styled.div`
 
   .search-box{
     margin-top: 0.6rem;
-    @media (max-width:1000px){
-      margin-top: 0.2rem;
-    }
     @media (max-width:650px){
       display:none;
     }
   }
+
   .search-box-mobile{
     display:block;
     position: absolute;
     width: 100%;
     z-index: 4;
   }
+
   .search-icon-mobile{
     display: none;
     cursor: pointer;
     @media (max-width:650px){
-      display:block;
+      display:flex;
+      margin:auto auto;
       color: white;
-      margin-top: 12px;
-      margin-left: 85%;
-      transform: scale(1.2);
+      margin-top: 5px;
+      margin-left: 80%;
+      transform: scale(1.3);
+      border-radius: 50%;
+      padding:6px;
+      &:hover{
+        background: linear-gradient(to right, #f27121, #e94057);
+      }
     }
   }
 
-  .cart-icon{
-    margin-top:11px;
-    margin-left: 45px;
+  .hamburger-menu {
+      display: none;
+      &:hover{
+        background: linear-gradient(to right, #f27121, #e94057);
+      }
     @media (max-width:1000px){
-      margin-top:6px;
+      display: block;
+      color:white;
+      font-size: 2rem;
+      cursor: pointer;
+      margin: auto auto;
+      margin-top: 6px;
+      padding:3px;
+
     } 
     @media (max-width:650px){
-      margin-top:8px;
-      margin-left: 0px;
-    }   
+      margin-top: 5px;
+      font-size: 1.9rem;
+    }
   }
+  .active-hamburger-menu{
+    background: linear-gradient(to right, #f27121, #e94057);
+  }
+
+  .cart-icon{
+    &:hover{
+      background: linear-gradient(to right, #f27121, #e94057);
+      .cart-bage{
+        background-color: #959595;
+      }
+    }
+    display: flex;
+    margin: auto auto;
+    margin-top:8px;
+    margin-left: 40px;
+    font-size:1.7rem;
+    color:white;
+    cursor: pointer;
+    border-radius: 50%;
+    padding:7px;
+    @media (max-width:1000px){
+      margin-top:3px;
+    } 
+    @media (max-width:650px){
+      margin-top:0px;
+      margin-left: -5px;
+      padding:5px;
+    } 
+    @media (max-width:360px){
+      margin-top: 2px;
+      margin-left: 0px;
+      padding: 5px;
+      font-size:1.5rem;
+    }  
+  }
+
   .cart-bage{
-    margin-left: 10px;
+    margin-left: 8px;
     margin-top: -5px;
     position: absolute;
     background-color: orangered;
@@ -475,47 +566,85 @@ const Nav = styled.div`
     @media (max-width:650px){
       width: 13px;
       height: 16px;
-      margin-top: -8px;
-      margin-left: 12px;
-      font-size: smaller;
+      margin-top: -5px;
+      margin-left: 10px;
+      font-size: 10px;
+    }
+    @media (max-width:360px){
+      height: 14px;
     }
   }
 
   .user-icon{
+    &:hover{
+      background: linear-gradient(to right, #f27121, #e94057);
+    }
     display: flex;
-    margin: 0 auto;
-    align-items: center;
-    font-size: 1.8rem;
+    margin: auto auto;
+    font-size: 1.7rem;
     color: white;
-    margin-left: 38px;
+    margin-left: 25px;
+    border-radius: 50%;
+    padding: 6px;
+    cursor: pointer;
+    margin-top: 8px;
+    
+    @media (max-width:1000px){
+      margin-top: 2px;
+      margin-left: 30px;
+    }
     @media (max-width:650px){
-      font-size: 1.5rem;
-      margin-left: 8px;
-      margin-top: 5px;
+      font-size: 1.6rem;
+      padding: 5px 5px;
+      margin-left: 2px;
+    }
+    @media (max-width:360px){
+      margin-left: 0px;
     }
   }
-
-  .user-icon:hover{
-    cursor: pointer;
-    color:antiquewhite;
+  .activeIcon{
+    background: linear-gradient(to right, #f27121, #e94057);
   }
-
-  .cart{
-    /* grid-column: 6/6; */
+  /* .user-icon:hover{
     display: flex;
-    margin: 0 auto;
-    align-items: center;
-    font-size: 1.8rem;
+    margin: auto auto;
+    font-size: 1.7rem;
     color: white;
+    margin-left: 25px;
+    border-radius: 50%;
+    padding: 6px 6px;
+    cursor: pointer;
+    margin-top: 8px;
+    background: linear-gradient(to right, #f27121, #e94057);
+    @media (max-width:1000px){
+      margin-top: 2px;
+      margin-left: 30px;
+    }
+    @media (max-width:650px){
+      font-size: 1.6rem;
+      padding: 5px 5px;
+      margin-left: 2px;
+    }
+    @media (max-width:360px){
+      margin-left: 0px;
+    }
+  } */
+
+  /* .cart{
+    display: flex;
+    margin: auto auto;
+    font-size: 1.7rem;
+    color: white;
+    cursor: pointer;
     @media (max-width:650px){
       font-size: 1.5rem;
     }
   }
 
   .cart:hover{
-    cursor: pointer;
-    color:rgb(228, 218, 206);
-  }
+    background: linear-gradient(to right, #f27121, #e94057);
+  } */
+
   .menu{
     font-size: x-large;
     color: white;
@@ -536,6 +665,7 @@ const Nav = styled.div`
       @media (max-width:650px){
         grid-column: 3/5;
         padding:5px;
+        margin-left: 0;
         h3{
           font-size: 15px;
           margin-top: 5px;
@@ -555,19 +685,27 @@ const Nav = styled.div`
     margin-right: 10px;
   }
 /* responsive for mobiles */
+
   @media (max-width:1000px) {
     grid-template-columns: 2rem 1fr 3fr 3rem 4rem 3rem;
     padding: 5px;
     padding-right:10px;
     
   }
+  @media (min-width:1000px) and (max-width:1030px) {
+    grid-template-columns: 2rem 8rem 6fr 9rem 4rem 4rem;
   
+  }
   @media (max-width:650px) {
     grid-template-columns: 1rem 1fr 1fr 2rem 2rem 3rem;
     .admin-icon{
       transform: scale(1);
       margin-right: 5px;
     }
+  }
+
+  @media (max-width:360px) {
+    grid-template-columns: 0.5rem 1fr 1fr 2rem 2rem 2rem;
   }
 `;
 

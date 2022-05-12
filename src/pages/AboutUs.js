@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import styled from "styled-components";
-
+import {mobileMenuService} from "../services/LocalService";
 function AboutUs(){
     useEffect(()=>{
         window.scrollTo(0,0);
+        mobileMenuService.setMobileMenuIndicies(null);
     },[])
     return(
         <AboutOuter>

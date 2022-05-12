@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { FaSearch, FaTimes } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { Order_Service } from '../../services/Service';
 import Loader from "../../components/Loader";
 
@@ -272,16 +272,23 @@ const FormStyle = styled.form`
 `;
 
 const OrderedItem = styled.div`
-  height:70vh;
-  overflow-y: auto;
-  min-width:20vw;
-  .order-heading{
+    .orders{
+      width:100%;
+      padding:5px;
+      display:flex;
+      flex-wrap: wrap;
+      margin-top: 15px;
+      height:70vh;
+      overflow-y: auto;
+      min-width:20vw;
+    }
+    .order-heading{
       text-align: center;
       color: white;
       background: grey;
       padding: 7px;
     }
-  .total-amt{
+    .total-amt{
         font-weight: 500;
     }
     .individual-book{
@@ -306,13 +313,7 @@ const OrderedItem = styled.div`
       height: 100%;
       width: 95%;
     }
-    .orders{
-      width:100%;
-      padding:5px;
-      display:flex;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
+    
     .orders-heading{
       width:100%;
       padding:10px;
@@ -331,7 +332,7 @@ const OrderedItem = styled.div`
     }
     .orderItems{
       text-align: left;
-      width:60%;
+      width:62%;
     }
 
    

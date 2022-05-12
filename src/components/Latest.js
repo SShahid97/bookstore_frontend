@@ -52,20 +52,25 @@ function Latest(props) {
                     gap: "1rem",
                     perPage: 5,
                     perMove: 1,
-                    autoplay:true,
-                    rewind: true,
+                    // autoplay:true,
+                    // rewind: true,
                     breakpoints: { 
                         1225: {
                           perPage: 4,
                          
                         },
                         1020: {
-                          perPage: 2,
+                          perPage: 3,
                     
                         },
-                        380: {
-                            perPage: 1,
+                        650: {
+                            perPage: 2,
+                            gap: "0.8rem",
                       
+                        },
+                        360: {
+                            perPage: 2,
+                            gap: "0.7rem",
                         },
                       }
 
@@ -80,8 +85,8 @@ function Latest(props) {
                                 )}
                                 <Link to={"/book/" + book._id}>
                                     <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
-                                    <div style={{ marginLeft: '0.3rem', marginTop: '0.5rem' }}>
-                                        <p>{book.book_name}</p>
+                                    <div className='details' style={{ marginLeft: '0.3rem', marginTop: '0.5rem',marginRight: '0.3rem' }}>
+                                        {book.book_name.length<=30? <p>{book.book_name}</p>:<p> {book.book_name.slice(0,30)}...</p> }
                                         {(book.discount===0)  && (
                                             <>
                                                 <span>&#8377;</span><span>{book.price}</span>
@@ -112,7 +117,7 @@ const Wrapper = styled.div`
         height: 3rem;
         margin-left: -13px;
         margin-right: -13px;
-        @media (max-width:610px) {
+        @media (max-width:650px) {
             width: 1.6rem;
             height: 1.6rem;
         }
@@ -129,6 +134,19 @@ const Card = styled.div`
     border-radius:5px;
     overflow:hidden;
     position:relative;
+
+    @media (max-width:650px){
+        padding: 8px;
+        min-height: 19rem;
+        border-radius:3px;
+    }
+    @media (max-width:360px){
+        padding: 3px;
+        min-height: 18rem;
+    }
+    .details{
+        font-size: 0.9rem;
+    }
     .old-price{
         text-decoration: line-through; 
         font-size: 0.9rem;
@@ -146,6 +164,13 @@ const Card = styled.div`
         border-radius:5px;
         left:0;
         width:100%;
+        @media (max-width:650px){
+            height: 230px;;
+            border-radius:3px;
+        }
+        @media (max-width:360px){
+            height: 210px;
+        }
     }
     span{
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;

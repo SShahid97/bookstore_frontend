@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import {User_Service} from "../../services/Service";
-// import Loader from '../../components/Loader';
+import Loader from '../../components/Loader';
 import {
     Compter_Science, 
     Business_Management,
@@ -27,13 +27,13 @@ function ViewAllItems() {
     const [category, setCategory] = useState(0);
     const [subCategory, setSubCategory] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+    const [showLoader, setShowLoader] = useState(false);
     // let navigate = useNavigate();
     // let params = useParams();
     // const [categoryName, setCategoryName] = useState("");
 
     useEffect(()=>{
-        // console.log(params.cat);
-        // getAllBooks();
+        
         let curr_user = JSON.parse(localStorage.getItem('user'));
           if (curr_user && curr_user.role === "admin") {
             Admin = curr_user;
@@ -53,33 +53,28 @@ function ViewAllItems() {
         const response = await User_Service.getAllBooks();
         // console.log(response.status);
         if(response.status === 200){
+            setShowLoader(false);
             const books = await response.json();
             setAllBooks(books);
+            setTempBooks(books);
         }else if(response.status === 400){
+            setShowLoader(false);
             console.log("Bad Request");
         }
     }
   
     // Deleting an Item 
     const deleteBook = async(id)=>{
-        const confirmation = window.confirm("Do you really want to delete this item.");
+        const confirmation = window.confirm("Do you really want to delete this item?");
         if(confirmation){
-            // console.log("ID: ",id)
-            const response = await fetch(`http://localhost:5001/api/books/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'auth-token': Admin.token
-                },
-            }); 
+            const response = await User_Service.deleteBookItem(Admin.token,id);
             console.log(response);
             if(response.status === 200){
                 const data = await response.json();
                 alert(data.message);
-                // console.log(data.message);
-                // getAllBooks();
-            }else if(response.status === 401){  //when token is missing
-                const data = await response.json();
-                alert(data.message);   
+                getAllBooks();
+            }else if(response.status === 204){  
+                console.log("No content");   
             }else {
                 alert("There was some error while deleting the book");
             }
@@ -89,18 +84,14 @@ function ViewAllItems() {
     }
     const handleGeneral = (e)=>{
         setGeneral(e.target.value);
-        // console.log(e.target.value);
         if(e.target.value === "1"){
-            // console.log("yess")
+            setShowLoader(true);
             getAllBooks();
-            setTempBooks(allBooks);
             return;
         }
         setCategory(0);
         setErrorMsg("");
         setTempBooks([]);
-        
-        // console.log(e.target.value);
     }
     const handleCategory = (e)=>{
         setCategory(e.target.value);
@@ -109,19 +100,22 @@ function ViewAllItems() {
         setTempBooks([]);
     }
     const handleSubCategory = async(e)=>{
+        setShowLoader(true);
         const value = e.target.value;
         setSubCategory(e.target.value);
         const category = value.split("/")[2];
         // console.log(value, category);
         const response = await User_Service.getBooksByCategory(category);
         if(response.status === 200){
+            setShowLoader(false);
             const data = await response.json();
             setTempBooks(data);
             setErrorMsg("");
-        }else if(response.status === 404){
-            const data = await response.json();
-            setErrorMsg(data.message);
+        }else if(response.status === 204){
+            setShowLoader(false);
+            setErrorMsg("No Results found for the given category.");
         }else if(response.status === 400){
+            setShowLoader(false);
             setErrorMsg("");
             console.log("Bad Request");
         }
@@ -221,14 +215,19 @@ function ViewAllItems() {
         <hr style={{marginBottom:'1rem'}}/>
         {/* <div className="BookHeading">        
         </div> */}
+        
         <ViewItemsInner>
+        {showLoader && (<Loader/>)}
+        {!showLoader && (
+            <>
             {errorMsg && (
                 <div ><h3 style={{color:'red'}}>{errorMsg}</h3></div>
             )}
-        {(!errorMsg && tempBooks.length < 1) && (
-            <div ><h3 style={{color:'red'}}>Please Select Categories!</h3></div>
-        )}
-        {tempBooks.length > 0 && tempBooks.map((book)=>{
+            {(!errorMsg && tempBooks.length < 1) && (
+                <div ><h3 style={{color:'red'}}>Please Select Categories!</h3></div>
+            )}
+            
+            {tempBooks.length > 0 && tempBooks.map((book)=>{
             return (
                 <Card key={book._id}>
                     <div className='imgDiv'> 
@@ -263,6 +262,7 @@ function ViewAllItems() {
             )
          })
         }
+        </>)}
         </ViewItemsInner>
     </ViewItemsDiv>
   )

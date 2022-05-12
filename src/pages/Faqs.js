@@ -1,6 +1,6 @@
 import React, { useEffect,useState } from 'react';
 import styled from "styled-components";
-
+import {mobileMenuService} from "../services/LocalService";
 function Faqs(){
     let faqs =   [
         {
@@ -28,6 +28,7 @@ function Faqs(){
     const [questionNumber, setQuestionNumber]= useState("");
     useEffect(()=>{
         window.scrollTo(0,0);
+        mobileMenuService.setMobileMenuIndicies(null);
         setQuestions(faqs);
     },[]);
     const handleToggle = (e,index)=>{

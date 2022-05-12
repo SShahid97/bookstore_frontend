@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import {Cart_Service,Stock_Service} from '../services/Service';
-import {cartService} from "../services/LocalService";
+import {cartService,mobileMenuService} from "../services/LocalService";
 import Loader from '../components/Loader';
 
 
@@ -16,9 +16,16 @@ function Cart() {
     const [quantity, setQuantity] = useState([]);
     const [stockArray, setStockArray] = useState([]);
     const [showLoader, setShowLoader] = useState(false); 
+    const [deliveryCharges, setDeliveryCharges] = useState(50); 
     useEffect(()=>{
         setShowLoader(true);
+        mobileMenuService.setMobileMenuIndicies(null);
         getCartItems();
+        // let area_code_details = JSON.parse(localStorage.getItem("area_code_details"));
+        // if(area_code_details){
+        //     console.log(area_code_details);
+        //     setAreaCodeDetails(area_code_details);
+        // }
     },[]);
     const handleQuantity = (e, index)=>{
         e.preventDefault();
@@ -82,32 +89,37 @@ function Cart() {
     
     // Remove Item from cart
     const handleRemoveItem = async(id,index)=>{
-        const newQtyArr = [...quantity];
-        newQtyArr.splice(index, 1);
-        console.log(newQtyArr);
-        setQuantity(newQtyArr);
+        const confirmation = window.confirm("Do you want to deleted this item?");
+        if(confirmation){
+            const newQtyArr = [...quantity];
+            newQtyArr.splice(index, 1);
+            console.log(newQtyArr);
+            setQuantity(newQtyArr);
 
-        //removes item from localStorage
-        let cart = JSON.parse(localStorage.getItem('cart'));
-        cart.splice(index,1);  
-        localStorage.setItem('cart', JSON.stringify(cart));
-        
-        // when it is the last item in the cart remove cart from localStorage
-        if(index === 0){
-            localStorage.removeItem('cart');
-            updateCartItems(0)
+            //removes item from localStorage
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            cart.splice(index,1);  
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // when it is the last item in the cart remove cart from localStorage
+            if(index === 0){
+                localStorage.removeItem('cart');
+                updateCartItems(0)
+            }else{
+                updateCartItems(cart.length)
+            }
+
+            let user = JSON.parse(localStorage.getItem('user'));
+            try{
+                const data = await Cart_Service.removeFromCart(id, user.token);
+                alert(data.message);
+                getCartItems();
+            }catch(err){
+                console.log("There was some error: ",err)
+            } 
         }else{
-            updateCartItems(cart.length)
-        }
-
-        let user = JSON.parse(localStorage.getItem('user'));
-        try{
-            const data = await Cart_Service.removeFromCart(id, user.token);
-            alert(data.message);
-            getCartItems();
-        }catch(err){
-            console.log("There was some error: ",err)
-        }    
+            console.log("cancelled")
+        }     
     }
     
     // Update quatity
@@ -132,7 +144,8 @@ function Cart() {
     <>   
     {showLoader && (<Loader/>) } 
     {!showLoader && (
-      <CartCard >   
+        <>
+      <CartCard  >   
         {emptyCart && (
                 <div style={{padding:'30px'}}>
                     <h3 style={{color:'red'}} >Your Cart is Empty</h3>
@@ -146,7 +159,6 @@ function Cart() {
                     <table>
                         <thead>
                         <tr>
-                            <th>S.No.</th>
                             <th>Book</th>
                             <th>Name</th>
                             <th>Qty</th>
@@ -160,7 +172,6 @@ function Cart() {
                         return (
                             <tbody key={item._id}>
                             <tr>
-                            <td>{i++}</td>
                             <td>
                             {(item.book.discount>0) && (
                                 <span className='discount-badge' >{item.book.discount*100}%</span>
@@ -169,11 +180,16 @@ function Cart() {
                             </td>
                             <td>{item.book.book_name}</td>
                             <td>
-                                {quantity[index]}  
+                                {quantity[index]} 
+                                {quantity[index]>0 && ( 
                                 <div className='qty'>
                                     <input className='qty-input' type="number" step={1} min={1} max={stockArray[index]} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
                                     <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
                                 </div> 
+                                )}    
+                                {quantity[index]===0 && (
+                                    <p style={{color:'#db0c0c', marginTop:'15px', fontSize:'14px'}}>Out of Stock!</p>
+                                )}
                             </td>
                             <td>&#8377;{item.price-item.price*item.book.discount}</td>
                             <td>&#8377;{item.quantity*(item.price-item.price*item.book.discount)}</td>
@@ -192,13 +208,13 @@ function Cart() {
                             <td></td> 
                             <td></td> 
                             <td colSpan="2"><b>Delivery Charges:</b></td> 
-                            <td>&#8377;100</td>
+                            <td>&#8377;{deliveryCharges}</td>
                             <td></td> 
                             </tr>
                         </tbody>
                     </table>
                 <div className='amount'>
-                    <strong>Total Amount: </strong><b>&#8377;{totalAmount+100}</b>
+                    <strong>Total Amount: </strong><b>&#8377;{totalAmount+deliveryCharges}</b>
                 </div>
                 </div>    
         
@@ -211,6 +227,55 @@ function Cart() {
             </>
         )}
       </CartCard>
+      <CartCardMobile>
+        {emptyCart && (
+            <div style={{padding:'10px'}}>
+                <h3 style={{color:'red'}} >Your Cart is Empty</h3>
+            </div>
+        )}
+         {!emptyCart && (
+            <>
+            <h4 className='cart-heading'>Your Cart Items</h4>
+          {cartItems.map((item,index) => {     
+            return (
+              <div key={item._id} className='item'>
+                <div className='left'>
+                    <div className='img-badge'>
+                        {(item.book.discount>0) && (
+                            <span className='discount-badge' >{item.book.discount*100}%</span>
+                        )}
+                        <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
+                    </div>
+                    <div className='qty-mobile'>
+                        {quantity[index]>0 && ( 
+                            <div className='qty'>
+                                <input className='qty-input' type="number" step={1} min={1} max={stockArray[index]} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
+                                <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
+                            </div> 
+                        )}    
+                        {quantity[index]===0 && (
+                        <p style={{color:'#db0c0c', marginTop:'15px', fontSize:'14px'}}>Out of Stock!</p>
+                        )}    
+                    </div>
+                </div>
+                <div className='right'>
+                   <div className='detailsBook'>
+                        <p className='book-name'>{item.book.book_name}</p>
+                        <p className='price'><strong>&#8377;{item.price-item.price*item.book.discount}</strong></p>
+                   </div>
+                   <div className='delete-item'>
+                        <button className='delete-item-btn' onClick={() => handleRemoveItem(item._id,index) }>Remove</button> 
+                   </div>
+                </div>
+             </div>  
+             
+            )}
+          
+          )}
+        </>
+        )}           
+      </CartCardMobile>
+      </>
       )}
       </> 
   )
@@ -225,6 +290,17 @@ const CartCard = styled.div`
     margin-top: 5px;
     text-align: center;
     margin-bottom: 1rem;
+
+    @media (max-width:1100px) {
+            width: 90%;
+    }
+    @media (max-width:850px) {
+            width: 95%;
+            margin-top: -20px;
+    }
+    @media (max-width:650px){
+            display:none;
+    }
     
     table {
         width: 100%;
@@ -232,13 +308,15 @@ const CartCard = styled.div`
         border-collapse: collapse;
         font-weight: 700;
         @media (max-width:650px) {
-            font-size: 0.8rem !important;
+            font-size: 0.7rem !important;
+            /* width:100; */
+            display: none;
         }
     }
     table thead{
         font-size: 1rem !important;
         @media (max-width:650px) {
-            font-size: 0.9rem !important;
+            font-size: 0.7rem !important;
         }
     }
         
@@ -251,13 +329,12 @@ const CartCard = styled.div`
     tr td{
         padding: 5px;
         max-width: 120px;
+        @media (max-wdith:650px){
+            padding:3px;
+            max-width: 90px;
+        }
     }
-
-    @media (max-width:850px) {
-            width: 100%;
-    }
-
- 
+    
 
     .discount-badge{
         position: absolute;
@@ -267,49 +344,122 @@ const CartCard = styled.div`
         color: white;
         font-size: 0.9rem;
         font-weight: 500;
+        @media (max-width:650px){
+            font-size: 0.7rem;
+        }
     }
     .cart-heading{
         padding: 10px;
         background: #8080808f;
         color: white;
         font-weight: 600;
+        @media (max-width:650px){
+            padding: 5px;
+            font-size: 1rem;
+        }
     }
     .cart-div-inner{
         padding:30px;
+        @media (max-width:650px){
+            padding:5px;
+        }
+        @media (max-width:360px){
+            padding:2px;
+        }
     }
     .cart-items-div{
         text-align: left;
-        @media (max-width:620px){
-            overflow-x: scroll !important;
-            width: 525px !important;
-            display: block !important;
+        @media (max-width:650px){
+            border-radius: 3px;
         } 
-        @media (max-width:590px){
-            overflow-x: scroll !important;
-            width: 400px !important;
-            display: block !important;
-        }
-        @media (max-width:440px){
-            overflow-x: scroll !important;
-            width: 300px !important;
-            display: block !important;
-        }  
-    }
-    .discount-badge{
-        @media (max-width:620px){
-            position: relative;
-            background: #e30606;
-            padding: 5px 3px;
-            border-radius: 50%;
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
     }
 
     .cart-items-div img{
         height:150px;
         width:100px;
+        @media(max-width:650px){
+            height:110px;
+            width:90px;
+        }
+    }
+`;
+
+const CartCardMobile = styled.div`
+    display: none;
+    @media (max-width:650px){
+        display: block;
+        width: 98%;
+        margin: 0 auto;
+        margin-top: -20px;
+    }
+    .item{
+        display:flex;
+        flex-direction: row;
+        margin-top:10px;
+        box-shadow: 1px 2px 2px 1px #00000036;
+        border:1px solid lightgrey;
+    }
+    .left{
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+    }
+    .detailsBook .book-name{
+        font-size:0.8rem;
+    }
+    .detailsBook .price{
+        font-size:0.9rem;
+    }
+    .right{
+        width:60%;
+        display: flex;
+        flex-direction: column;
+    }
+    .delete-item{
+        margin-top:5px;
+    }
+    .delete-item-btn{
+        padding: 4px 6px;
+        font-size: 0.9rem;
+        background-color: white;
+        border:1px solid red;
+        color:red;
+        border-radius: 2px;
+    }
+
+    .delete-item-btn:hover{
+        background:red;
+        color:white;
+        cursor: pointer;
+    }
+    .qty-mobile{
+        margin-top:5px;
+    }
+    .img-badge img{
+        width: 110px;
+        height: 120px
+    }
+    .discount-badge{
+        position: absolute;
+        background: #e30606;
+        padding: 5px 3px;
+        border-radius: 50%;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 500;
+        @media (max-width:650px){
+            font-size: 0.7rem;
+        }
+    }
+
+    .cart-heading{
+        padding: 5px;
+        font-size: 1rem;
+        background: #8080808f;
+        color: white;
+        font-weight: 600;
+        text-align: center;
+       
     }
 `;
 export default Cart

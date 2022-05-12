@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from "react";
 import {useNavigate, Link} from 'react-router-dom';
 import {Auth_Service} from '../../services/Service';
+import {mobileMenuService} from "../../services/LocalService";
 import "./styles.css";
 
 // icon imports
@@ -21,11 +22,26 @@ function Register() {
     const [emailAlreadyExists, setEmailAlreadyExists] = useState(false);
     const [registeredSuccess, setRegisteredSuccess] = useState();
 
+    useEffect(()=>{
+        mobileMenuService.setMobileMenuIndicies(null);
+    },[])
     const handleChange = (event) => {
-        setEmailAlreadyExists(false);
-        const name = event.target.name;
-        const value = event.target.value;
-        setInputs(values => ({ ...values, [name]: value }))
+        if(event.target.name === "name"){
+            const re = /^[ A-Za-z ]+$/;
+            if (event.target.value === ""||re.test(event.target.value)){
+                setEmailAlreadyExists(false);
+                const name = event.target.name;
+                const value = event.target.value;
+                setInputs(values => ({ ...values, [name]: value }))
+            }
+        }else{
+            setEmailAlreadyExists(false);
+            const name = event.target.name;
+            const value = event.target.value;
+            setInputs(values => ({ ...values, [name]: value }));
+        }
+            
+
     }
 
     const showHidePassword = ()=>{
@@ -46,6 +62,8 @@ function Register() {
             const data = await response.json();
             console.log(data);
             setRegisteredSuccess(true);
+            setInputs({});
+            setConfirmPass(" ");
         }else if (response.status === 400) {
             setRegisteredSuccess(false);
             console.log("There was some error: ",response)
@@ -72,9 +90,9 @@ function Register() {
     const handleNameError = (e)=>{
         const value= e.target.value;
         console.log(value.length);
-        if(value.length <6){
+        if(value.length < 3){
             setIsInvalid(true);
-            setNameError("Name must be at least 6 characters");
+            setNameError("Name must be at least 3 characters");
         }else{
             setIsInvalid(false);
             setNameError("");
@@ -98,14 +116,14 @@ function Register() {
         if( !value.includes(at_the_rate) || !value.includes(dot)){
             if(!value.includes(at_the_rate)){
                 setIsInvalid(true);
-                setEmailErrorRate("Email must contain '@' symbol");
+                setEmailErrorRate("Email must contain '@<domian name>' string");
             }else{
                 setEmailErrorRate("");
                 setIsInvalid(false);
             }
             if(!value.includes(dot)){
                 setIsInvalid(true);
-                setEmailErrorDot("Email must contain '.' symbol");
+                setEmailErrorDot("Email must contain '.<com or org or in,etc..>' string");
             }else{
                 setEmailErrorDot("");
                 setIsInvalid(false);
@@ -126,7 +144,7 @@ function Register() {
     }
     return (
         <div className="RegisterForm">
-            <FaUserPlus style={{fontSize: '8rem',color:'grey' }}/>
+            <FaUserPlus className="userIconLogin"/>
             {registeredSuccess && (
                 <div className='register-success'>
                     <p>Successfully Registered!! 
@@ -146,7 +164,8 @@ function Register() {
                     placeholder="Name"
                     type="text"
                     name="name"
-                    min={6}
+                    // onKeyPress={event => (event.code >= 65 && event.code <= 90) || (event.code >= 97 && event.code <= 122)}
+                    min={3}
                     value={inputs.name || ""}
                     required
                     onChange={handleChange}

@@ -17,9 +17,9 @@ function UserAddress() {
         const response = await Address_Service.getUserAddress(token,userId);
         if(response.status === 200){
             const returnedAddress = await response.json();
-            setUserAddress(returnedAddress[0]);
+            setUserAddress(returnedAddress);
         }else if (response.status === 204){
-            setUserAddress({});
+            setUserAddress(null);
         }else if (response.status === 400){
             console.log("Bad Request");
         }

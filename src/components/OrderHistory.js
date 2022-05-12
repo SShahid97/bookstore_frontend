@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from "styled-components";
 
+
 function OrderHistory({orderHistory}) {
   return (
+
     <Orders >
       <h3 className='order-main-heading'>Order History</h3>
     <OrdersInner>
-    {orderHistory.length>0 && (
+    {orderHistory && (
        <>
         <div className='orders-heading' >
             <div className='SNO'>
@@ -63,8 +65,8 @@ function OrderHistory({orderHistory}) {
       
     ) 
   }
-  {orderHistory.length === 0  && (
-    <h3 style={{padding:'20px', fontWeight:'500', textAlign:'center' }}>User has not ordered anything yet.</h3>
+  {!orderHistory && (
+    <h3 style={{padding:'20px', fontWeight:'500', textAlign:'center' }}>User has no order history.</h3>
   )}
   </OrdersInner>
   
@@ -101,7 +103,7 @@ const OrdersInner = styled.div`
   height: 90%;
   overflow-y: auto;
   
-  .total-amt{
+    .total-amt{
         font-weight: 500;
     }
     .individual-book{

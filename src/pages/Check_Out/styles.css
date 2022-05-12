@@ -21,12 +21,7 @@
 .billing-form{
     padding:30px;
 }
-.review-order-heading{
-    text-align: center;
-    background: grey;
-    padding: 10px;
-    color: white;
-}
+
 
 .inner-div span{
     color:red;
@@ -43,10 +38,7 @@
     outline:none;
 }
 
-.btns-div{
-    display:flex; 
-    justify-content:space-between;
-}
+
 .billing-btns{
     background-color: #e3e3e3;
     padding: 8px 12px;
@@ -72,13 +64,10 @@
     color:white;
     background: rgba(4, 4, 243, 0.808);
 }
-.review-btns{
-    background-color: #e3e3e3;
-    padding: 8px 12px;
-    border-radius: 3px;
-    width:20%;
-    font-size: 1rem;
-    border:none;
+
+.btns-div{
+    display:flex; 
+    justify-content:space-between;
 }
 .btn-prev, .btn-next {
     font-size: 1rem;
@@ -92,94 +81,6 @@
     color:white;
 }
 
-.discount-badge{
-    position: absolute;
-    background: #e30606;
-    padding: 5px 3px;
-    border-radius: 50%;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: 500;
-}
-.payment-btns{
-    background-color: #e3e3e3;
-    padding: 8px 12px;
-    border-radius: 3px;
-    width:20%;
-    font-size: 1rem;
-    border:none;
-}
-
-.tAmount{
-    text-align: right;
-    margin-right: 6%;
-    font-size: 1.2em;
-    margin-top: 5px;
-}
-.review-order-outer{
-    border:1px solid #808080b5;
-    border-radius: 5px;;
-    width: 50%;
-    margin: 0 auto;
-    box-shadow: 3px 6px 7px 4px grey;
-}
-.review-order-inner{
-    padding:30px;
-}
-.order-info img{
-    width:100px;
-    height:150px;
-}
-
-.address-info h3{
-    margin-bottom: 5px;
-}
-
-.order-info table{
-    text-align: left;
-}
-.order-info thead {
-    border-bottom: 2px solid rgb(48, 48, 48);
-    font-size: 1.1rem !important;
-}
-
-.order-info tr td{
-    padding-left: 0px;
-}
-.payment-heading{
-    text-align: center;
-    background: grey;
-    padding: 10px;
-    color: white;
-}
-.payment-method-screen{
-    box-shadow: 3px 6px 7px 4px grey;
-    width:50%;
-    margin:0 auto;
-    border:1px solid #808080b5;
-    border-radius:5px;
-    /* transform: translate(0%, 50%); */
-}
-.payment-method-screen-inner{
-    padding: 30px;
-}
-.pay-online-label{
-    margin-left:1rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-.cod-label{
-    margin-left:1rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-.pay-online-input{
-    transform: scale(1.5);
-}
-.cod-input{
-    transform: scale(1.5);
-}
 
 .country-state-fields{
     display: flex;
@@ -220,9 +121,6 @@
         width: 95%;
         font-size: 0.9rem;
     }
-    .review-order-outer{
-        width:95%;
-    }
     .outer-div{
         width: 95%;
     }
@@ -230,63 +128,3 @@
         width:40%;
     }
 }
-@media (max-width:620px){
-    .order-info{
-        overflow-x: scroll !important;
-        width: 525px !important;
-        display: block !important;
-        margin-bottom: 1rem;
-    }
-    .review-btns{
-        width:40%;   
-    }
-    .discount-badge{
-        position: relative;
-        background: #e30606;
-        padding: 5px 3px;
-        border-radius: 50%;
-        color: white;
-        font-size: 0.7rem;
-        font-weight: 500;
-    }
-    
-    .review-order-inner {
-        padding: 15px;
-    }
-} 
-@media (max-width:590px){
-    .order-info{
-        overflow-x: scroll !important;
-        width: 400px !important;
-        display: block !important;
-        margin-bottom: 1rem;
-    }
-    .order-info img {
-        width: 80px;
-        height: 120px;
-        margin-top: -20px;
-    }
-    
-}
-@media (max-width:450px){
-    .order-info{
-         overflow-x: scroll !important;
-         width: 340px !important;
-         display: block !important;
-         margin-bottom: 1rem;
-    }
- } 
-@media (max-width:380px){
-   .order-info{
-        overflow-x: scroll !important;
-        width: 290px !important;
-        display: block !important;
-        margin-bottom: 1rem;
-   }
-   .tAmount{
-        text-align: right;
-        margin-right: 0%;
-        font-size: 1rem;
-        margin-top: 5px;
-    }
-} 

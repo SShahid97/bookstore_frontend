@@ -1,17 +1,23 @@
-import React,{useState} from 'react'
-import {useEffect, useNavigate} from "react-router-dom"; 
+import React,{useState,useEffect} from 'react'
+import {useNavigate} from "react-router-dom"; 
 import Confirmation from './Confirmation';
+import styled from "styled-components";
 function PaymentMode() {
     const navigate = useNavigate();
     const [currentRadioValue, setCurrentRadioValue] = useState();
     const [submitOrderDetails, setSubmitOrderDetails] = useState(false);
+    const [confirmed, setConfirmed] = useState(false);
     const [paymentStatus, setPaymentStatus] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("");
     // const [user,setUser] = useState({});
-    // useEffect(()=>{
-    //     let curr_user = JSON.parse(localStorage.getItem("user"));
-    //     setUser(curr_user);
-    // },[])
+    useEffect(()=>{
+        // let curr_user = JSON.parse(localStorage.getItem("user"));
+        // setUser(curr_user);
+        // if(confirmed){
+        //     navigate("/");
+        //     return;
+        // }
+    },[])
 
     const handlePrev=()=>{
         navigate(-1);
@@ -24,28 +30,31 @@ function PaymentMode() {
             setPaymentMethod(currentRadioValue.toUpperCase());
         }
         // else if(currentRadioValue === "payolnine"){
-
+            
         // }
     }
     
     const handleRadioChange = (e) => {
         console.log(e.target.value)
         setCurrentRadioValue(e.target.value);
+        if( e.target.value === "payonline"){
+            alert("Online Payment temporarily suspended!! try other options");
+        }
     };
   return (
       <>
         {!submitOrderDetails && (
-        <div className="payment-method-screen" >
+        <PaymentMethodScreen >
         <h3 className='payment-heading'>Select Payment Method</h3>
         <div className='payment-method-screen-inner'>
             <div className="form-check" style={{marginTop:'1.5rem'}}>
-                <input className="pay-online-input" 
+            <input className="pay-online-input" 
                  name="pay-olnine"
                  type="radio"
-                 value="payolnine"
+                 value="payonline"
                  onChange={handleRadioChange}
-                 checked={currentRadioValue === 'payolnine'} />
-                <label className="pay-online-label" htmlFor="exampleRadios1">
+                 checked={currentRadioValue === 'payonline'} />
+                 <label className="pay-online-label" htmlFor="exampleRadios1">
                     Pay Online
                 </label>
             </div>
@@ -66,15 +75,82 @@ function PaymentMode() {
                     <button type="button"  name="next" className="payment-btns btn-next" onClick={handleConfirm} >Confirm</button>
             </div>
         </div>        
-        </div>
+        </PaymentMethodScreen>
       )}
       
       {submitOrderDetails && (
-          <Confirmation paymentStatus={paymentStatus} paymentMethod={paymentMethod}/>
+          <Confirmation paymentStatus={paymentStatus} paymentMethod={paymentMethod} setConfirmed={setConfirmed}/>
       )}
       </>
     
   )
 }
 
+const PaymentMethodScreen = styled.div`
+    
+    box-shadow: 3px 6px 7px 4px grey;
+    width:40%;
+    margin:0 auto;
+    border:1px solid #808080b5;
+    border-radius:5px;
+    @media (max-width:850px){
+        width:60%
+    }
+    @media (max-width:650px){
+        width:85%;
+    }
+    .payment-btns{
+        background-color: #e3e3e3;
+        padding: 8px 12px;
+        border-radius: 3px;
+        width:20%;
+        font-size: 1rem;
+        border:none;
+        @media (max-width:650px){
+            width:35%;
+        }
+    }
+
+    .payment-heading{
+        text-align: center;
+        background: grey;
+        padding: 10px;
+        color: white;
+    }
+    .payment-method-screen-inner{
+        padding: 30px;
+    }
+    .pay-online-label{
+        margin-left:1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    .cod-label{
+        margin-left:1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .pay-online-input{
+        transform: scale(1.5);
+    }
+    .cod-input{
+        transform: scale(1.5);
+    }
+    .btns-div{
+        display:flex; 
+        justify-content:space-between;
+    }
+    .btn-prev, .btn-next {
+        font-size: 1rem;
+        color: blue;
+        border-radius: 3px;   
+    }
+
+    .btn-prev:hover, .btn-next:hover {
+        cursor: pointer;
+        background:rgba(0, 0, 255, 0.788);
+        color:white;
+    }
+`;
 export default PaymentMode

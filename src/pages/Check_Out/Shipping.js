@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate} from "react-router-dom";
+import {Address_Service} from "../../services/Service";
 import "./styles.css";
-import {useParams, useNavigate} from "react-router-dom";
 
 function Billing() {
     const states=['Jammu & Kashmir','Delhi','Rajasthan','Maharashtra','Gujrat','Assam','Andhra Pradesh','Madhya Pradesh'];
@@ -13,15 +14,36 @@ function Billing() {
     const [city, setCity]=useState('');
     const [postalCode, setPostalCode]=useState('');
     const [address, setAddress]=useState('');
+    // const [registeredUserAddress, setRegisteredUserAddress] = useState({});
+    const navigate = useNavigate();
 
     useEffect(()=>{
-        let user = JSON.parse(localStorage.getItem("user"));
-        setFullName(user.name);
-        setEmail(user.email);
+        let curr_user = JSON.parse(localStorage.getItem("user"));
+        // console.log(curr_user)
+        getUserAddressIfAny(curr_user.token,curr_user._id);
+        setFullName(curr_user.name);
+        setEmail(curr_user.email);
     },[])
 
-    const navigate = useNavigate();
-    
+    const getUserAddressIfAny = async(token, userId) =>{
+        const response = await Address_Service.getUserAddress(token,userId);
+        if(response.status === 200){
+           const  addressReturned = await response.json();
+        //    setRegisteredUserAddress(addressReturned);
+            console.log(addressReturned);
+            //set form input values to the returned address values
+            setContact(addressReturned.contact);
+            setPostalCode(addressReturned.pincode);
+            setAddress(addressReturned.address);
+            setCountry(addressReturned.country);
+            setState(addressReturned.state);
+            setCity(addressReturned.city);
+            // setAddressExits(true);
+        }else if (response.status === 204){
+            // setAddressExits(false);
+            console.log("No address saved");
+        }
+    }
     const handleFullName=(e) => {
         setFullName(e.target.value);
     }
@@ -29,13 +51,13 @@ function Billing() {
         setEmail(e.target.value);
     }
     const handleContact = (e) => {
-        setContact(e.target.value)
+        setContact(e.target.value);
     }
     const handlePostalCode = (e) => {
-        setPostalCode(e.target.value)
+        setPostalCode(e.target.value);
     }
     const handleAddress = (e) => {
-        setAddress(e.target.value)
+        setAddress(e.target.value);
     }
     const handleState = (e)=>{
         setState(e.target.value);
@@ -65,7 +87,6 @@ function Billing() {
         // setIsOrderPlaced(true);
         
         // localStorage.setItem("customerInfo", JSON.stringify(formObject));
-
     }
 
     const handleCancel = ()=>{
@@ -82,21 +103,21 @@ function Billing() {
                     <input type="text" className="form-control" name="name"  
                             placeholder="Enter full name"
                             onChange={handleFullName}
-                            value={fullName}
+                            value={fullName || " "}
                             required/>
                     <br/>
                     <label htmlFor="email"><strong>Email<span >*</span>:</strong></label><br/>
                     <input type="email" className="form-control" name="email" 
                             placeholder="Enter E-mail" 
                             onChange={handleEmail}
-                            value={email}
+                            value={email || " "}
                             required/>
                     <br/>
                     <label htmlFor="contact"><strong>Contact<span >*</span>:</strong></label><br/>
                     <input type="tel" className="form-control" name="contact" maxLength={12} 
                             placeholder="Contact Number" 
                             onChange={handleContact}
-                            value={contact}
+                            value={contact || " "}
                             required/>
                     <br/>
                     <div className='country-state-fields'>
@@ -104,7 +125,7 @@ function Billing() {
                             <label htmlFor="country"><strong>Country<span >*</span>:</strong></label><br/>
                             <input type="text" className="form-control" name="country" 
                                     onChange={handleCountry}
-                                    value={country}
+                                    value={country || ""}
                                     disabled
                                     required
                             />
@@ -113,7 +134,7 @@ function Billing() {
                         <div className='state-div'>
                             <label htmlFor="state"><strong>State/UT<span >*</span>:</strong></label><br/>
                             <select  className="form-control" 
-                                    value={state} 
+                                    value={state  || ""} 
                                     onChange={handleState}
                                     required>
                                 <option value="">Choose</option>
@@ -130,7 +151,7 @@ function Billing() {
                             <input type="text" className="form-control" name="city" 
                                     placeholder='City/Town/District'
                                     onChange={handleCity}
-                                    value={city}
+                                    value={city || ""}
                                     required
                             />
                         </div>
@@ -140,7 +161,7 @@ function Billing() {
                             <input type="text" maxLength={6} className="form-control" 
                                     placeholder="Postal code" 
                                     onChange={handlePostalCode}
-                                    value={postalCode}
+                                    value={postalCode || ""}
                                     required/>
                         </div>
                     </div>
@@ -149,14 +170,14 @@ function Billing() {
                     <textarea name="textarea"  rows="3" className="form-control"
                               placeholder='Address'
                               onChange={handleAddress}
-                              value={address}
+                              value={address || ""}
                               required/><br/>
                     <br/>
-                <div className='btns-div' >
-                    <button className="billing-btns btn-cancel" type="button" onClick={handleCancel}>Cancel</button>    
-                    <input type="submit"  name="next" className="billing-btns btn-billingNextBtn" value="Next"/>
-                </div>
-                  
+                    <div className='btns-div' >
+                        <button className="billing-btns btn-cancel" type="button" onClick={handleCancel}>Cancel</button>    
+                        <input type="submit"  name="next" className="billing-btns btn-billingNextBtn" value="Next"/>
+                    </div>
+                    
                 </form>
             {/* </div> */}
             </div>

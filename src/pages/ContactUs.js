@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import emailjs from '@emailjs/browser';
 import styled from 'styled-components';
+import {mobileMenuService} from "../services/LocalService";
 
 function ContactUs() {
     const [name, setName] = useState("");
@@ -10,6 +11,7 @@ function ContactUs() {
 
     useEffect(()=>{
         window.scrollTo(0, 0);
+        mobileMenuService.setMobileMenuIndicies(null);
     },[])
     const handleSubmit = (e) =>{
         e.preventDefault();

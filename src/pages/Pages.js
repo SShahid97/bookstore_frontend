@@ -6,12 +6,14 @@ import PageNotFound from "./PageNotFound";
 import Books from './Books';
 import Register from './LogIn_Out/Register';
 import Login from './LogIn_Out/Login';
+import Cart from './Cart';
 import UserAccount from './UserAccount/UserAccount';
+import UserOrders from './UserAccount/UserOrders';
+import UserWishlist from './UserAccount/UserWishlist';
+
 import Checkout from './Check_Out/Checkout';
 import Searched from './Searched';
 import Book from './Book';
-import Cart from './Cart';
-
 import AdminPanel from './Admin_Panel/AdminPanel';
 import Dashboard from './Admin_Panel/Dashboard';
 import AddItem from './Admin_Panel/AddItem';
@@ -38,6 +40,8 @@ function Pages() {
         {/* <Route path="/admin-panel/:name" element={<AdminPanel/>} /> */}
         {/* <Route path="/admin-panel" element={<AdminHome/>} /> */}
         <Route path="/user/account" element={<UserAccount/>} />
+        <Route path="/user/orders" element={<UserOrders/>} />
+        <Route path="/user/wishlist" element={<UserWishlist/>} />
         <Route path="/cart/:id" element={<Cart/>} />
         <Route path="/checkout/:name" element={<Checkout/>} />
         <Route path="/contact-us" element={<ContactUs/>}/>
