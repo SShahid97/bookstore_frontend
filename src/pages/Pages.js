@@ -27,6 +27,9 @@ import UserOrderHistory from './Admin_Panel/UserOrderHistory';
 import ContactUs from './ContactUs';
 import AboutUs from './AboutUs';
 import Faqs from './Faqs';
+import AddStock from './Admin_Panel/AddStock';
+import ViewEditStock from './Admin_Panel/ViewEditStock';
+import ChangePassword from './UserAccount/ChangePassword';
 
 function Pages() {
   return (
@@ -42,6 +45,7 @@ function Pages() {
         <Route path="/user/account" element={<UserAccount/>} />
         <Route path="/user/orders" element={<UserOrders/>} />
         <Route path="/user/wishlist" element={<UserWishlist/>} />
+        <Route path="/user/change-password" element={<ChangePassword/>} />
         <Route path="/cart/:id" element={<Cart/>} />
         <Route path="/checkout/:name" element={<Checkout/>} />
         <Route path="/contact-us" element={<ContactUs/>}/>
@@ -60,6 +64,8 @@ function Pages() {
             <Route path="manage-users/view-all-users/user-orderhistory/:id" element={<UserOrderHistory />} />
             <Route path="manage-users/search-user" element={<SearchUser />} />
             <Route path="manage-users/search-order" element={<SearchOrder />} />
+            <Route path="manage-books/add-stock" element={<AddStock />} />
+            <Route path="manage-books/view-all-items/view-edit-stock/:code" element={<ViewEditStock />} />
             <Route path="*" element={<PageNotFound />} />
         </Route>
 

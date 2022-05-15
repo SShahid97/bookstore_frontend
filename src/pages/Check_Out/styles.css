@@ -1,12 +1,14 @@
-.outer-div{
-    margin-top:2em;
+
+/* Billing Page Styles */
+.outer-div{  
     display:block;
     width: 70%;
     margin: 0 auto;
-    
+    margin-top:1rem;
+    margin-bottom: 1rem;
 }
 .inner-div{
-    box-shadow: 3px 6px 7px 4px grey;
+    box-shadow: 3px 4px 5px grey;
     width:70%;
     margin: 0 auto;
     border:1px solid #808080b5;
@@ -123,8 +125,12 @@
     }
     .outer-div{
         width: 95%;
+        margin-top: -15px;
     }
     .billing-btns{
         width:40%;
+    }
+    .billing-form{
+        padding:15px;
     }
 }

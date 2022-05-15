@@ -3,14 +3,16 @@ import styled from 'styled-components';
 import { Auth_Service } from "../../services/Service";
 import {Link} from "react-router-dom";
 import Loader from "../../components/Loader";
+import {FaTrash} from "react-icons/fa";
 
+let curr_user = JSON.parse(localStorage.getItem('user'));
 function ViewAllUsers() {
   let i=1;
   const [users, setUsers] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
   useEffect(() => {
+    window.scrollTo(0,0);
     setShowLoader(true);
-    let curr_user = JSON.parse(localStorage.getItem('user'));
     if (curr_user && curr_user.role === "admin") {
       // setAdmin(curr_user);
       getAllUsers(curr_user.token);
@@ -38,6 +40,21 @@ function ViewAllUsers() {
     }
     
   }
+  const handleDeleteUser = async(userId)=>{
+    console.log(userId);
+    const confirmation = window.confirm("Do you want to deleted the User?");
+    if(confirmation){
+      const response = await Auth_Service.deleteUser(curr_user.token, userId);
+      if(response.status === 200){
+        alert("User Deleted Successfully");
+        getAllUsers(curr_user.token);
+      }else{
+        alert("There was some error while deleting the user!");
+      }
+    }else{
+      console.log("cancelled");
+    }
+  }
   return (
     <>
     {showLoader && (<Loader/>)}
@@ -51,6 +68,7 @@ function ViewAllUsers() {
             <th>Email</th>
             <th>Address</th>
             <th>Order History</th>
+            <th>Delete User</th>
           </tr>
         </thead>
         {
@@ -71,6 +89,9 @@ function ViewAllUsers() {
                       <p>order history</p>
                   </Link>
                   </td>
+                  <td style={{textAlign:'center'}}>
+                    <span className='delete-user' onClick={()=>handleDeleteUser(user._id)}><FaTrash/></span>
+                  </td>
                 </tr>
               </tbody>
             )
@@ -85,7 +106,20 @@ const UsersOuter = styled.div`
   border:1px solid grey;
   border-radius:3px;
   min-height: 70vh; 
-  overflow-x:auto;  
+  overflow-x:auto;
+  
+  .delete-user{
+    color:#e33535;
+    padding:5px;
+    padding-top:7px;
+    border:1px solid #e33535;
+    border-radius: 3px;
+    cursor: pointer;
+    &:hover{
+      background-color: #e33535;
+      color:white;
+    }
+  }
   .all-users-table{
     border-radius:3px;
   }

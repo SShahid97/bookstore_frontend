@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {useParams, useNavigate, Link} from 'react-router-dom';
 import Latest from "../components/Latest";
-import {User_Service, 
+import {Item_Service, 
     Cart_Service, 
     Review_Service, 
     Pincode_Service,
@@ -13,16 +13,12 @@ import ReviewAndRating from "../components/ReviewAndRating";
 import Rating from "../components/Rating";
 import "./styles.css";
 import Loader from '../components/Loader';
-import {FaCartArrowDown,FaArrowLeft,FaHeart,FaStar,FaRegStar } from "react-icons/fa";
+import PopUp from "../components/PopUp";
+import {FaCartArrowDown,FaArrowLeft,FaHeart,FaStar,FaRegStar,FaMinus, FaPlus } from "react-icons/fa";
 // import {FaUserCircle, FaStar,FaStarHalfAlt,FaRegStar} from "react-icons/fa";
 
 
-function Book() {
-    const ratingArray = [{name:"0",value: 0},{name:"0.5",value: 0.5},
-    {name:"1",value: 1}, {name:"1.5",value:1.5},{name:"2",value:2},{name:"2.5",value:2.5}, 
-    {name:"3",value:3},{name:"3.5",value:3.5},{name:"4",value:4},{name:"4.5",value:4.5},
-    {name:"5",value:5}];
-  
+function Book() {  
     const [urating, setUrating] = useState(null);
     const [hover, setHover] = useState(null);
     const [ureview, setUreview]=useState("");
@@ -38,7 +34,9 @@ function Book() {
     const [shippingCharges, setShippingCharges] = useState(0);
     const [stockDetails, setStockDetails] = useState({});
     const [itemAddedToCartMsg, setItemAddedToCartMsg] = useState("");
+    const [messageSuccess, setMessageSuccess] = useState("");
     const [itemAddedToWishlistMsg, setItemAddedToWishlistMsg] = useState("");
+    const [returnedPincode,setReturnedPincode] = useState("")
 
     let params = useParams();
     let navigate = useNavigate();
@@ -95,8 +93,8 @@ function Book() {
         // } 
     }
 
-    const getStockDetails = async(bookId)=>{
-        const response = await Stock_Service.getStockDetails(bookId);
+    const getStockDetails = async(bookCode)=>{
+        const response = await Stock_Service.getStockDetails(bookCode);
         if(response.status === 200){
             const stock = await response.json();
             if(stock.count_in_stock === 0){
@@ -111,7 +109,7 @@ function Book() {
     }
 
     const getBookDetails = async (bookId)=>{
-        const response = await User_Service.getBookDetails(bookId);
+        const response = await Item_Service.getBookDetails(bookId);
         if(response.status === 200){
             const bookDetails = await response.json();
             if(bookDetails.discount>0){
@@ -122,7 +120,8 @@ function Book() {
             let itmImageName = [{id:bookDetails._id ,image: bookDetails.book_image, name:bookDetails.book_name}];
             setBookImage(itmImageName);
             setNotFound("");
-            getStockDetails(bookDetails._id);
+            getStockDetails(bookDetails.book_code);
+
             setShowLoader(false);
         }else if(response.status === 204){
             setShowLoader(false);
@@ -143,6 +142,11 @@ function Book() {
                 let ratingSum=0;
                 let ratingAvg=0;
                 const reviewsReturned = await response.json();
+                reviewsReturned.forEach((item)=>{
+                    const dateFormat = new Date(item.date);
+                    const dateOnly = dateFormat.toDateString();  //e,g Wed May 11 2022
+                    item.date = dateOnly;
+                });
                 setReviews(reviewsReturned);
                 reviewsReturned.forEach((item)=>{
                     ratingSum = ratingSum+item.rating;
@@ -171,9 +175,19 @@ function Book() {
             }
     }
 
-    const handleQuantity = (e)=>{
-        e.preventDefault();
-        setQuantity(e.target.value);
+    // const handleQuantity = (e)=>{
+    //     e.preventDefault();
+    //     setQuantity(e.target.value);
+    // }
+    const handleDecrement = () =>{
+        if(quantity>1){
+			setQuantity(prevCount => prevCount - 1);
+        }
+    }
+    const handleIncrement = () =>{
+        if(quantity<stockDetails.count_in_stock){
+			setQuantity(prevCount => prevCount + 1);
+        }
     }
     const handleAddToWishlist = async(bookId)=>{
         let user = JSON.parse(localStorage.getItem('user'));
@@ -189,20 +203,24 @@ function Book() {
             if(response.status === 201){
                 const addedItem = await response.json();
                 console.log(addedItem);
-                setItemAddedToWishlistMsg("Item Added to Wishlist!");
+                // setItemAddedToWishlistMsg("Item Added to Wishlist!");
+                // setTimeout(()=>{
+                //     setItemAddedToWishlistMsg("");
+                // },6000);
+                setMessageSuccess("Item Added to Wishlist");
                 setTimeout(()=>{
-                    setItemAddedToWishlistMsg("");
-                },6000);
+                    setMessageSuccess("");
+                },4000);
             }else{
                 alert("There was some error!");
             }
         }
     }
     const handleAddToCart = async(id, price)=>{
-        if(quantity===0){
-            alert("Item currently out of Stock");
-            return;
-        }
+        // if(quantity===0){
+        //     alert("Item currently out of Stock");
+        //     return;
+        // }
         let cart;
         let user = JSON.parse(localStorage.getItem('user'));
         if(!user){
@@ -229,8 +247,9 @@ function Book() {
                 // console.log("Book Id:", element.book_id);
                 if( element.book_id === id){
                     flag=true;
-                    alert("This Item is already added to cart");
-                    // navigate("/cart/"+user._id);
+                    // alert("This Item is already added to cart");
+                    navigate("/cart/"+user._id);
+                    return;
                 }
             });
             // when item is not already added
@@ -248,10 +267,14 @@ function Book() {
             if(response.status === 201){
                 const data = await response.json();
                 // alert("Item Added to Cart Successfully");
-                setItemAddedToCartMsg("Item Added to cart!");
+                // setItemAddedToCartMsg("Item Added to cart!");
+                // setTimeout(()=>{
+                //     setItemAddedToCartMsg("");
+                // },6000)
+                setMessageSuccess("Item Added to Cart");
                 setTimeout(()=>{
-                    setItemAddedToCartMsg("");
-                },6000)
+                    setMessageSuccess("");
+                },4000);
                 let cart = JSON.parse(localStorage.getItem("cart"));
                 updateCartItems(cart.length)
                 setQuantity(1);
@@ -286,15 +309,6 @@ function Book() {
         setUreview(value);
     }
     
-    // const handleAddReview = (e)=>{
-    //     e.preventDefault();
-    //     let reviewObj = {
-    //         urating : urating,
-    //         ureview : ureview
-    //     }
-    //     console.log(reviewObj);
-    //     setUreview("");
-    // }
 
     const handleAddReview = async (e)=>{
         e.preventDefault();
@@ -331,6 +345,9 @@ function Book() {
     }
     const handleCheckPincode = (e)=>{
         const val = e.target.value;
+        if (val.length < 6 ){
+            setDeliveryAvailable(false);
+        }
         if (e.target.validity.valid) 
             setPincode(e.target.value);
         else if (val === '') 
@@ -359,6 +376,7 @@ function Book() {
             if(pincodeReturned.length>0){
                 // console.log(pincodeReturned);
                 setShippingCharges(pincodeReturned[0].shipping_charges);
+                setReturnedPincode(pincodeReturned[0].pincode);
                 setDeliveryAvailable(true);
                 setDeliveryNotAvailable(false);
             }else{
@@ -382,7 +400,9 @@ function Book() {
             {/* <span style={{marginLeft: '-40px'}} className='hide-back back-arrow-span' title="back" onClick={handleBack}>
                 <FaArrowLeft className='back-arrow'/>
             </span> */}
-               
+               {messageSuccess !== "" && (
+                    <PopUp messageSuccess={messageSuccess}/> 
+               )}
             <DetailWrapper>
                 <DetailWrapperInner>
                 <BookImg>
@@ -405,7 +425,7 @@ function Book() {
                         <div style={{marginTop:'5px'}}>
                         {reviews && (
                             <>
-                             <Rating rating={totalRating}/> <span className='total-reviews'>({reviews.length} Reveiws)</span>
+                             <Rating rating={totalRating}/> <span className='total-reviews'>({reviews.length} Reviews)</span>
                             </>
                         )}
                         </div>
@@ -444,7 +464,7 @@ function Book() {
 
                                 {deliveryAvailable && (
                                     <div className='delivery-status'>
-                                        <p>Delivery Available to pincode <strong>{pincode}</strong></p>
+                                        <p>Delivery Available to pincode <strong>{returnedPincode}</strong></p>
                                         <p>Delivery Charges: <strong>&#8377;{shippingCharges}</strong> </p>
                                     </div>
                                 )}
@@ -462,7 +482,7 @@ function Book() {
                         </div>
                     </BookDetail>
                    <></>
-                        {itemAddedToCartMsg !== "" && (
+                        {/* {itemAddedToCartMsg !== "" && (
                             <div className='item-added'>
                                 <p>{itemAddedToCartMsg}  &nbsp;&nbsp;<Link to={"/cart/"+uuser._id}>View Cart</Link> </p>
                             </div>
@@ -471,21 +491,28 @@ function Book() {
                             <div className='item-added'>
                                 <p>{itemAddedToWishlistMsg}  &nbsp;&nbsp;<Link to={"/user/wishlist"}>View Wishlist</Link> </p>
                             </div>
-                        )}
+                        )} */}
                     <BuyCartBtns > 
-                        <Quantity >
-                                {/* <span> */}
+                        {/* <Quantity >
                                 <strong><p style={{fontSize: '0.9rem'}}>Qty:</p></strong>
-                                {/* </span> */}
                                 <input type="number" disabled={stockDetails.count_in_stock === 0} min={1} step={1}  max={stockDetails.count_in_stock} value={quantity} name="quantity" onChange={handleQuantity}/>
-                        </Quantity> 
-    
+                        </Quantity>  */}
+                         <Quantity >
+                            <button  disabled={stockDetails.count_in_stock === 0} className = "btn-qty btn-quantity-minus" onClick={handleDecrement}>
+                                <FaMinus/>
+                            </button>
+                            <input min={1} max={stockDetails.count_in_stock} type="text" disabled value={quantity}/>
+                            <button  disabled={stockDetails.count_in_stock === 0} className = "btn-qty btn-quantity-plus"  onClick={handleIncrement}>
+                                <FaPlus/>
+                            </button>
+                         </Quantity >
                         <div className='cart-btns'>
                             {/* disabled={!deliveryAvailable} className={!deliveryAvailable?"disableCartbtn":""} */}
-                           
-                            <Button  onClick={() => handleAddToCart(bookDetails._id,bookDetails.price)}>
-                                <FaCartArrowDown className='wish-cart-btn'/> Add to Cart
-                            </Button>
+                            {stockDetails.count_in_stock > 0 && (
+                                <Button  onClick={() => handleAddToCart(bookDetails._id,bookDetails.price)}>
+                                    <FaCartArrowDown className='wish-cart-btn'/> Add to Cart
+                                </Button>
+                            )}
                             <Button style={{background:'rgb(247 57 163)'}} onClick={() => handleAddToWishlist(bookDetails._id)}>
                                 <FaHeart className='wish-cart-btn' /> Add to Wishlist
                             </Button>
@@ -598,6 +625,12 @@ const Wrapper = styled.div`
         width:95%;
         margin:0 auto;
     }
+    .pop-up {
+        transform: translate(873px,-10px) !important;
+        @media (max-width:650px){
+            transform: translate(10px, -12px) !important;
+        }
+    }
     .hide-back{
         @media (min-width:650px){
             display:none;
@@ -648,6 +681,9 @@ const Wrapper = styled.div`
         width:50%;
         border-radius:5px;
     }
+    .display-reviews-outer .rating-div{
+        width:20%;
+    }
     .book-reviews{
         margin-bottom: 10px;
         padding: 10px 0px;
@@ -680,6 +716,14 @@ const Wrapper = styled.div`
     .review-date{
         color:#0404cf;
         font-size:13px;
+    }
+    .rating-div{
+        display: flex;
+        justify-content: space-around;
+        width: 40%;
+        transform: scale(1.2);
+        margin-left: 5px;
+        margin-top: 5px;
     }
     .rating-div span{
         color:#ffcb0e;
@@ -962,13 +1006,33 @@ const BookDetail = styled.div`
 `;
 
 const Quantity = styled.div`
+    margin-top:5px;
+    margin-bottom: 5px;
     input{
-        width: 60px;
-        padding: 2px;
-        font-size: 1rem;
-        outline:none;
-        border:1px solid black;
-        margin-bottom: 5px;
+        height: 2.27rem;
+        width: 2.6rem;
+        text-align: center;
+        color: teal;
+        font-size: 19px;
+        border-top: 1px solid #bbbbbb;
+        border-bottom: 1px solid #bbbbbb;
+        border-left: none;
+        border-right: none;
+    }
+    .btn-qty{
+        cursor: pointer;
+        border: 1px solid #bbbbbb;
+        width:2.3rem;
+        padding: 8px;
+        padding-top: 10px;
+        border: 1px solid #bbbbbb;
+        background: #dfdfdfb3;
+    }
+    .btn-quantity-minus{
+        border-radius: 7px 0 0 7px;
+    }
+    .btn-quantity-plus{
+        border-radius:0 7px 7px 0;
     }
 `;
 const BuyCartBtns = styled.div`
@@ -1026,8 +1090,14 @@ const BookAuthorDetails = styled.div`
         margin-bottom:5px;
         margin-top:1rem;
     }
+    .author-lang-div p {
+        font-size: 0.9rem;
+    }
     .author{
         width:40%;
+        @media (max-width:650px){
+            width: 60%;
+        }
     }
     .lang{
         width:40%;

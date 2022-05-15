@@ -2,7 +2,7 @@ import React from 'react';
 import {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
 import styled from 'styled-components';
-import {User_Service} from '../services/Service';
+import {Item_Service} from '../services/Service';
 // import Loader from '../components/Loader';
 
 function Searched() {
@@ -14,7 +14,7 @@ function Searched() {
      },[params.search]);
 
      const getSearched = async (name)=>{
-        const fetchedData = await User_Service.getSearched(name);
+        const fetchedData = await Item_Service.getSearched(name);
         if(fetchedData.length === 0){
             setEmptyCart(true);
         }else{

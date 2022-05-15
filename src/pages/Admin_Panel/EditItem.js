@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import "./styles.css";
 import {useNavigate, useParams} from 'react-router-dom';
-import { User_Service } from '../../services/Service';
+import { Item_Service } from '../../services/Service';
 import styled from "styled-components";
 import {FaUpload,FaArrowLeft} from "react-icons/fa";
 
 let Admin = {};
 function EditItem() {
-  // console.log("id: ",id);
-  const dicountArray = [{name:"Select discount",value:0},{name:"10%",value: 0.1},{name:"15%",value: 0.15}, {name:"20%",value:0.2}, 
-  {name:"25%",value:0.25},{name:"30%",value: 0.3}, {name:"35%",value:0.35}, {name:"40%",value:0.4}, 
-  {name:"45%",value:0.45},{name:"50%",value: 0.5}, {name:"55%",value:0.55}, {name:"60%",value:0.6}, 
-  {name:"65%",value:0.65}, {name:"70%",value:0.7}, {name:"75%",value:0.75}, {name:"80%",value:0.8}, 
-  {name:"90%",value:0.9}]
   const [formInput, setformInput] = useState({});
   const [discount, setDiscount] = useState(0);
   const [imageFile, setImageFile]= useState(null);
@@ -57,7 +51,7 @@ function EditItem() {
   },[imagePrevFile]);
 
   const getBookItem = async (id)=>{
-    const response = await User_Service.getBookDetails(id);
+    const response = await Item_Service.getBookDetails(id);
     if(response.status === 200){
       const itemDetails = await response.json();
       setDiscount(itemDetails.discount);
@@ -85,7 +79,7 @@ function EditItem() {
       return;
     }
     console.log(formInput); 
-    const response = await User_Service.updateBookItem(Item._id, Admin.token,formInput);
+    const response = await Item_Service.updateBookItem(Item._id, Admin.token,formInput);
     if(response.status === 200){
       const updatedItem = await response.json();
       console.log(updatedItem);
@@ -229,9 +223,9 @@ const sumbitImageUpload = async (e)=>{
                                     value={discount || ""} 
                                     onChange={handleDiscount}
                                     >
-                                {/* <option value="select" >Select discount</option> */}
-                                {dicountArray.map((dis,index)=>{
-                                    return <option key={index} value={dis.value}>{dis.name}</option>
+                                <option value="" disabled={true} >Select discount</option>
+                                {[...Array(101)].map((dis,index)=>{
+                                    return <option key={index} value={index/100}>{index}%</option>
                                 })}
                             </select><br/>
                         </div>

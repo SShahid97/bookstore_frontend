@@ -47,7 +47,7 @@ function PaymentMode() {
         <PaymentMethodScreen >
         <h3 className='payment-heading'>Select Payment Method</h3>
         <div className='payment-method-screen-inner'>
-            <div className="form-check" style={{marginTop:'1.5rem'}}>
+            <div className="form-check" >
             <input className="pay-online-input" 
                  name="pay-olnine"
                  type="radio"
@@ -110,7 +110,9 @@ const PaymentMethodScreen = styled.div`
             width:35%;
         }
     }
-
+    .form-check{
+        margin-top:1rem;
+    }
     .payment-heading{
         text-align: center;
         background: grey;
@@ -119,6 +121,9 @@ const PaymentMethodScreen = styled.div`
     }
     .payment-method-screen-inner{
         padding: 30px;
+        @media (max-width:650px){
+            padding: 20px;
+        }
     }
     .pay-online-label{
         margin-left:1rem;

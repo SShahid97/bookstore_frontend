@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 
 function ReviewOrder() {
-    let i=1;
+    let deliveryCharges = 50;
     // let params = useParams();
     let navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
@@ -52,54 +52,61 @@ function ReviewOrder() {
             <ReviewOrderInner>
                 <h3 style={{ marginBottom: '5px' }}>Order Information</h3>
                 <div className='order-info'>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>S.No.</th>
-                                <th>Book</th>
-                                <th>Name</th>
-                                <th>Qty</th>
-                                <th>Price</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        {
-                            cartItems.map((item, index) => {
-                                return (
-                                    <tbody key={item._id}>
-                                        <tr>
-                                            <td>{i++}</td>
-                                            <td>
-                                            {(item.book.discount>0) && (
-                                                <span className='discount-badge' >{item.book.discount*100}%</span>
-                                            )}
-                                                <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
-                                            </td>
-                                            <td>{item.book.book_name}</td>
-                                            <td>
-                                                {item.quantity} 
-                                            </td>
-                                             <td>&#8377;{item.price-item.price*item.book.discount}</td>
-                                            <td>&#8377;{item.quantity*(item.price-item.price*item.book.discount)}</td>
-                                        </tr>
-                                    </tbody>
-                                )
-                            })
+                    <div className='cart-items-heading'>
+                        <div className='width-15 image-heading'>
+                            Book
+                        </div>
+                        <div className='width-30 name-heading'>
+                            Name
+                        </div>
+                        <div className='width-25 qty-heading'>
+                            Qty
+                        </div>
+                        <div className='width-25 price-heading'>
+                            Price
+                        </div> 
+                        <div className='width-25 amount-heading'>
+                            Amount
+                        </div>
+                    </div>  
+                    <div className='cart-items'>
+                        { cartItems.map((item,index) => {     
+                        return (
+                            <div className='cart-item' key={item._id}>
+                                <div className='image-mobile'>
+                                <div className='width-15 book_image'>
+                                    {(item.book.discount>0) && (
+                                        <span className='discount-badge' >{item.book.discount*100}%</span>
+                                    )}
+                                    <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
+                                </div>
+                                </div>
+                                <div className='details-mobile'>
+                                    <div className='width-30  book_name'>
+                                        {item.book.book_name}
+                                    </div>
+                                    <div className='width-25 book_qty'>
+                                        <span className='price-sub'>Quantity:</span> {item.quantity}
+                                    </div>
+                                    <div className='width-25 book_price'>
+                                      <span className='price-sub'>Price:</span> &#8377;{item.price-item.price*item.book.discount}
+                                    </div>
+                                    <div className='width-25 book_amount'>
+                                     <span className='price-sub'>Subtotal:</span> &#8377;{item.quantity*(item.price-item.price*item.book.discount)}
+                                    </div>
+                                </div>        
+                            </div>
+                        )})
                         }
-                        <tbody>
-                            <tr style={{ background: '#b3a9346b' }}>
-                                <td></td>
-                                <td></td>
-                                {/* <td></td> */}
-                                <td colSpan="3" style={{ textAlign: 'right' }}><b>Delivery Charges:</b></td>
-                                <td>&#8377; {50}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div className='tAmount'>
-                        <strong>Total Amount: </strong><b>&#8377;{totalAmount+50}</b>
+                        <div className='final-total'>
+                            <div className='amt-charges'>
+                                Delivery Charges: &#8377;{deliveryCharges}
+                            </div>
+                            <div className='amt-total'>
+                                <strong>Total Amount: </strong><b>&#8377;{totalAmount+deliveryCharges}</b>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
 
                 <AddressInfo >
@@ -133,14 +140,8 @@ const ReviewOrderOuter = styled.div`
     border-radius: 5px;;
     width: 60%;
     margin: 0 auto;
-    box-shadow: 3px 6px 7px 4px grey;
+    box-shadow: 3px 4px 5px grey;
     margin-bottom:1rem;
-    .review-order-heading{
-        text-align: center;
-        background: grey;
-        padding: 10px;
-        color: white;
-    }
 
     @media (max-width:1100px) {
             width: 90%;
@@ -148,62 +149,160 @@ const ReviewOrderOuter = styled.div`
     @media (max-width:850px) {
             width: 95%;
     }
+    @media (max-width:650px){
+        margin-top:-15px;
+    }
+    .review-order-heading{
+        text-align: center;
+        background: grey;
+        padding: 10px;
+        color: white;
+        @media (max-width:650px){
+            padding:5px;
+        }
+    }
 
 `;
 
 const ReviewOrderInner = styled.div`
     padding:20px;
+    @media (max-width:650px){
+        padding:5px;
+    }
     .order-info{
-        @media (max-width:630px){
-            overflow-x: scroll !important;
-            border:1px solid grey;
-            border-radius: 3px;
-        } 
+       
+    }
+    h3{
+        font-size: 1.1rem;
     }
     .order-info img{
-        width:100px;
         height:150px;
+        width:100px;
         @media(max-width:650px){
-            height:100px;
-            width:90px;
+            height:140px;
+            width:100px;
         }
     }
-    table {
+    .cart-items-heading{
+        display: flex;
         width: 100%;
-        height: auto;
-        border-collapse: collapse;
+        padding: 10px;
+        border-bottom: 2px solid grey;
+        justify-content: space-between;
+        font-size: 1rem;
         font-weight: 700;
-        @media (max-width:650px) {
-            font-size: 0.8rem !important;
-            width:500px;
-            height:200px;
-        }
-    }
-    table thead {
-        border-bottom: 1px solid rgb(48, 48, 48);
-        font-size: 1rem !important;
-        @media (max-width:650px) {
-            font-size: 0.9rem !important;
-        }
-    }
-    thead tr th {
         @media (max-width:650px){
-            padding: 10px;
+            display: none;
         }
     }
-    tr td{
-        padding:3px;
-        padding-left: 0px;
+    .cart-items{
+        display: flex;
+        width: 100%;
+        flex-direction: column;
     }
-    .tAmount{
-        text-align: right;
-        margin-right: 6%;
-        font-size: 1.2rem;
+    .cart-item{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        border-bottom: 1px solid grey;
+        padding: 5px;
+    }
+    .width-30{
+        width:30%;
+    }
+    .width-25{
+        width:25%;
+    }
+    .amt-total{
+        font-size: 1.1rem;
         margin-top: 5px;
-        margin-bottom: 5px;
         @media (max-width:650px){
             font-size: 1rem;
+        }
+    }
+    .amt-charges{
+        font-weight: 500;
+        @media (max-width:650px){
+            margin-top: 5px;
+        }
+    }
+    .image-mobile{
+        display: flex;
+        width: 15%;
+        @media (max-width:650px){
+            width:35%;
+        }
+    }
+    .book_image{
+        @media (max-width:650px){
+            width:100%;
+        }
+    }
+    .book_name{
+        @media (max-width:650px){
+            width: 100%;
+            text-align: left;
+            padding-left: 10px;
+        }
+    }
+    .details-mobile{
+        display: flex;
+        align-items: center;
+        width: 85%;
+        font-weight: 500;
+        @media (max-width:650px){
+            width: 65%;
+            flex-direction: row;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+        }
+    }
 
+    .book_qty{
+        text-align: -webkit-center;
+        @media (max-width:650px){
+            width: 100%;
+            text-align: left;
+            padding-left: 10px;
+        }
+    }
+    .book_price{
+        @media (max-width:650px){
+            width: 100%;
+            font-weight: 700;
+            text-align: left;
+            padding-left: 10px;
+            font-size: 0.8rem;
+        }
+    }
+    .book_amount{
+        @media (max-width:650px){
+            font-weight: 700;
+            width: 100%;
+            text-align: left;
+            padding-left: 10px;
+            font-size: 0.8rem;
+        }
+    }
+    .cart-items-div img{
+        height:150px;
+        width:100px;
+        @media(max-width:650px){
+            height:140px;
+            width:100px;
+        }
+    }
+    .price-sub{
+        @media (min-width:650px){
+            display:none;
+        }
+    }
+    .final-total{
+        display: flex;
+        align-items: flex-end;
+        @media (max-width:650px){
+            flex-direction: column;
+            align-items: center;
         }
     }
     .discount-badge{

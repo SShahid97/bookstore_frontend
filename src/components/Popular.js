@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import {Splide, SplideSlide} from '@splidejs/react-splide';
 import "@splidejs/splide/dist/css/splide.min.css";
 import { Link } from 'react-router-dom';
-import {User_Service} from '../services/Service'
+import {Item_Service} from '../services/Service';
+import Rating from "./Rating";
  
 function Popular (){
     const [popular, setPopular] = useState([]);
@@ -15,7 +16,7 @@ function Popular (){
 
 
     const getPopular = async()=>{
-        const response = await User_Service.getPopular();
+        const response = await Item_Service.getPopular();
         if(response.status === 200){
             const fetchedBooks = await response.json();
             fetchedBooks.forEach((book)=>{
@@ -92,6 +93,11 @@ function Popular (){
                                         <span className='old-price'>&#8377;{book.price}</span>
                                     </>
                                 )}
+                                {book.rating>0 && (
+                                    <>
+                                        <Rating rating={book.rating}/> 
+                                    </>
+                                )} 
                             </div>
                        </Link>
                     </Card>
@@ -117,24 +123,34 @@ const Wrapper = styled.div`
             fill: grey !important;
         }
      }
+     .splide__track{
+        height: 22rem;
+     }
 `;
 
 const Card = styled.div`
     border:1px solid #80808038 !important;
     padding: 0.8rem;
-    min-height:20rem;
+    height:21rem;
     border-radius:5px;
     overflow:hidden;
     position:relative;
 
     @media (max-width:650px){
-        padding: 8px;
-        min-height: 19rem;
+        padding: 5px;
+        height: 20rem;
         border-radius:3px;
     }
-    @media (max-width:360px){
-        padding: 3px;
-        min-height: 18rem;
+    .rating-div{
+        display: flex;
+        justify-content: space-between;
+        width: 70%;
+        transform: scale(1.1);
+        margin-left: 5px;
+        margin-top: 5px;
+    }
+    .rating-div span{
+        color:#ffcb0e;
     }
     .details{
         font-size: 0.9rem;

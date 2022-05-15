@@ -16,10 +16,11 @@ function ReviewAndRating({reviews}) {
                         <div key={review._id} className='book-reviews'>
                             <div className='review-user'>
                                 <FaUserCircle className='review-user-icon' />
-                                <h4 className='review-username'>{review.user.name}</h4>
+                                {review.user && (<h4 className='review-username'>{review.user.name}</h4>)}
+                                {!review.user && (<h4 className='review-username'>Anonymous</h4>)}
                             </div>
-                            <Rating rating={review.rating}/>
-                            <div className='review-date'>{review.date.split("T")[0]}</div>
+                            <Rating  rating={review.rating}/>
+                            <div className='review-date'>Reviewed on {review.date}</div>
                             <div className='review-text'>
                                 <p>
                                    {review.review}

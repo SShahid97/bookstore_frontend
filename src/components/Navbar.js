@@ -91,7 +91,6 @@ function Navbar() {
         setCartItemsLength(cartItemsLen);
       }
     });
-
     
     const handleScroll = () => {
       // const position = window.pageYOffset;
@@ -124,12 +123,13 @@ function Navbar() {
 
     function handleCart(){
       if(isLoggedOut){
-        alert("Please login first");
+        navigate("/login");
         return;
       }
       if(isUser){
         let user = JSON.parse(localStorage.getItem('user'));
         navigate("/cart/"+user._id);
+        return;
       }
     }
 
@@ -141,6 +141,7 @@ function Navbar() {
   //  },86400000);    //timer for 24 hours
 
     // isUser,isAdmin
+
     function logout(){
       setIsUser(false);
       setIsAdmin(false);
@@ -152,6 +153,11 @@ function Navbar() {
       localStorage.removeItem("user");
       localStorage.removeItem("cart");
       localStorage.removeItem("customerInfo");
+      localStorage.removeItem("general")
+      localStorage.removeItem("category")
+      localStorage.removeItem("sub_category");
+      localStorage.removeItem("area_code_details");
+
       // window.location.reload();
       navigate("/");
     }
@@ -178,7 +184,7 @@ function Navbar() {
 
     }
     const showMobSearchBar = ()=>{
-      console.log("clicked")
+      // console.log("clicked")
       setShowMobSearch(true);
     }
 
@@ -286,10 +292,8 @@ function Navbar() {
              </div>
           ))} 
         {/* Admin Screen ends here */}
-          {toggleDropdown && (
+          {(!isAdmin && toggleDropdown) && (
             <ul className='dropdown' onClick={()=>setToggleDropDown(!toggleDropdown)}> 
-              {(isUser || isAdmin) && (
-                <>
                 {isUser && (
                   <>
                     <NavLinks to={"/user/account"} className='dropdown-item'>         
@@ -306,26 +310,6 @@ function Navbar() {
                   </li>
                 </>
                 )}
-                {/* {isAdmin && (
-                  <>
-                    <NavLinks to={"admin-panel/dashboard"} className='dropdown-item'>         
-                    <FaChalkboardTeacher /><p className="sign_reg_icons" ><strong>Dashboard</strong></p>
-                    </NavLinks>
-                    <li className='dropdown-item' onClick={logout}> 
-                      <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>
-                    </li>
-                  </>
-                )}  */}
-                
-               </>
-              )}
-              {/* {isAdmin && (
-                  <>
-                  <NavLinks  to={"/admin-panel"} className='dropdown-item'> 
-                    <FaChalkboardTeacher /><p className="sign_reg_icons" ><strong>Admin Panel</strong></p>
-                  </NavLinks>
-                  </>
-              )} */}
 
               {(isLoggedOut) && (
                 <>

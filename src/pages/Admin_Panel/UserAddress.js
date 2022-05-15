@@ -3,12 +3,16 @@ import {useParams,useNavigate} from "react-router-dom";
 import {Address_Service} from "../../services/Service";
 import styled from "styled-components";
 import {FaArrowLeft} from "react-icons/fa";
+import Loader from "../../components/Loader";
 function UserAddress() {
     const [userAddress, setUserAddress] = useState({});
+    const [showLoader, setShowLoader]= useState(false);
     let params = useParams();
     let navigate = useNavigate();
     useEffect(()=>{
-        console.log(params.id);
+        window.scrollTo(0,0);
+        // console.log(params.id);
+        setShowLoader(true);
         let curr_user = JSON.parse(localStorage.getItem('user'));
         getUserAddress(curr_user.token, params.id);
     },[]);
@@ -18,8 +22,10 @@ function UserAddress() {
         if(response.status === 200){
             const returnedAddress = await response.json();
             setUserAddress(returnedAddress);
+            setShowLoader(false);
         }else if (response.status === 204){
             setUserAddress(null);
+            setShowLoader(false);
         }else if (response.status === 400){
             console.log("Bad Request");
         }
@@ -32,28 +38,30 @@ function UserAddress() {
         <span className='back-arrow-span' title="back" onClick={handleBack}>
             <FaArrowLeft className='back-arrow'/>
         </span>
-        <Card>
-        {userAddress && (
-            <>  
-           <h4 className='card-headings'>User Address</h4>
-           <div className='details'>
-             <p><strong>Country: </strong> {userAddress.country}</p>
-             <p><strong>State: </strong> {userAddress.state}</p>
-             <p><strong>City: </strong> {userAddress.city}</p>
-             <p><strong>Contact: </strong> {userAddress.contact}</p>
-             <p><strong>Pincode: </strong> {userAddress.pincode}</p>
-             <p><strong>Address: </strong> {userAddress.address}</p>
-           </div>
-           </>
-       )}
-        {!userAddress && (
-           <>
+        {showLoader && (<Loader/>)}
+        {!showLoader && (
+            <Card>
+            {userAddress && (
+                <>  
             <h4 className='card-headings'>User Address</h4>
-            <h4 className='no-address'>No Address Saved</h4>
-           </>
-       )}
-       </Card>
-      
+            <div className='details'>
+                <p><strong>Country: </strong> {userAddress.country}</p>
+                <p><strong>State: </strong> {userAddress.state}</p>
+                <p><strong>City: </strong> {userAddress.city}</p>
+                <p><strong>Contact: </strong> {userAddress.contact}</p>
+                <p><strong>Pincode: </strong> {userAddress.pincode}</p>
+                <p><strong>Address: </strong> {userAddress.address}</p>
+            </div>
+            </>
+            )}
+            {!userAddress && (
+            <>
+                <h4 className='card-headings'>User Address</h4>
+                <h4 className='no-address'>No Address Saved</h4>
+            </>
+            )}
+            </Card>
+        )}
     </UserAdd>
   )
 }

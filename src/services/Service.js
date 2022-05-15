@@ -2,7 +2,7 @@
 // All database calls are made from this service file
 const localdomain = "http://localhost:5001"; 
 // for ngrok
-// const localdomain = "https://4d60-2409-4054-405-c607-d815-a0bc-ec14-d87c.in.ngrok.io"; 
+// const localdomain = "https://5d95-2409-4054-409-ebbf-e4f1-21a2-1449-abb3.in.ngrok.io"; 
 
 
 const books_url = `${localdomain}/api/books`;
@@ -60,14 +60,44 @@ export const Wishlist_Service = {
 }
 
 export const Stock_Service = {
-    getStockDetails: async (bookId)=>{
+    getStockDetails: async (bookCode)=>{
         try{
-            const response = await fetch(`${stock_url}/${bookId}`);
+            const response = await fetch(`${stock_url}/${bookCode}`);
             return response;
         }catch(err){
             return err;
         }
     },
+    addStockDetails: async (token, formData)=>{
+        try{
+            const response =  await fetch(stock_url,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                },
+                body:JSON.stringify(formData) 
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    editStockDetails: async (token, stockId,formData)=>{
+        try{
+            const response = await fetch(`${stock_url}/${stockId}`,{
+                method:'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'auth-token':token
+                },
+                body: JSON.stringify(formData)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    }
 }
 
 export const Pincode_Service = {
@@ -162,6 +192,21 @@ export const Order_Service = {
             return err;
         }
     },
+    updateOrder: async (token,orderId,formData)=>{
+        try{
+            const response = await fetch(`${order_url}/${orderId}`,{
+                method:'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'auth-token':token
+                },
+                body: JSON.stringify(formData)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    }
 
 }
 
@@ -206,18 +251,21 @@ export const Review_Service = {
 }
 
 // Item/book Service
-export const User_Service = {
+export const Item_Service = {
     addBookItem: async (token,formData)=>{
-        const response = await fetch(books_url,{
-            method: 'POST',
-            headers: {
-                'Content-Type':'application/json',
-                'auth-token': token
-            },
-            body:JSON.stringify(formData)
-        });
-        const data = await response.json();
-        return data;
+        try{
+            const response = await fetch(books_url,{
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                },
+                body:JSON.stringify(formData)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
     },
 
     getLatest: async(cat)=>{
@@ -416,6 +464,49 @@ export const Auth_Service = {
        }catch(err){
         return err;
        }
+    },
+    deleteUser: async (token, userId)=>{
+        try{
+            const response = await fetch(`${auth_url}/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'auth-token': token
+                },
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    verifycurrentPassword: async(userInfo)=>{
+        try{
+            const response = await fetch(`${auth_url}/verifypassword`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json',
+                    'Accept': 'application/json',
+                    'auth-token': userInfo.token
+                },
+                body:JSON.stringify(userInfo)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    changePassword: async (userId,token, passwordObj)=>{
+        try{
+            const response = await fetch(`${auth_url}/${userId}`, {
+                method: 'PATCH',
+                headers: {
+                'Content-Type': 'application/json',
+                'auth-token': token
+            },
+            body: JSON.stringify(passwordObj)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
     }
-
 }

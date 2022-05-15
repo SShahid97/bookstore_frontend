@@ -18,8 +18,11 @@ function Login() {
     const [loginSuccessMessage, setLoginSuccessMessage] = useState("");
 
     useEffect(()=>{
-      mobileMenuService.setMobileMenuIndicies(null);
-      return () => {}; 
+      let isMounted = true;
+        if (isMounted){
+          mobileMenuService.setMobileMenuIndicies(null);
+        }
+        return () => { isMounted = false }; 
     },[])
     const handleChange = (event) => {
       setInvalidPassword(false);

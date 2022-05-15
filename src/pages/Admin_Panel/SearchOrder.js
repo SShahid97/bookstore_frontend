@@ -15,10 +15,13 @@ function SearchOrder() {
   const [invalidInput, setInvalidInput] = useState(false);
   const [showClose, setShowClose] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const [deliveryStatus, setDeliveryStatus] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [editOrderDetails, setEditOrderDetails] = useState(false);
   // useEffect(() => {
 
   // }, [])
-
+  let curr_user = JSON.parse(localStorage.getItem('user'));
   const submitHandler = async (e) => {
     e.preventDefault();
     setShowLoader(true);
@@ -26,47 +29,56 @@ function SearchOrder() {
     let value = orderId;
     value = value.trim();
     if (value.includes(" ")) {
-      console.log("space found");
+      // console.log("space found");
       setInvalidInput(true);
       setNotFoundMsg(false);
       return;
     }
-    
-    // console.log(value);
-    let curr_user = JSON.parse(localStorage.getItem('user'));
+    await getOrder(curr_user, value);    
+  }
+
+  const getOrder = async(curr_user,value)=>{
     if (curr_user && curr_user.role === "admin") {
       const response = await Order_Service.searchOrderById(curr_user.token, value);
       if (response.status === 204) {
         setShowLoader(false);
         setIsOrderPlaced(false);
+        setEditOrderDetails(false);
         setNotFoundMsg("No order found with the given Order Id");
       } else if (response.status === 400) {
         setShowLoader(false);
+        setEditOrderDetails(false);
         setIsOrderPlaced(false);
         setNotFoundMsg("Invalid Order ID!");
       }
       else if (response.status === 200) {
         const returnedOrder = await response.json();
         console.log(returnedOrder);
+        returnedOrder.forEach((item)=>{
+          const dateFormat = new Date(item.date);
+          const dateOnly = dateFormat.toDateString();  //e,g Wed May 11 2022
+          const timeOnly = dateFormat.toLocaleTimeString();  // e,g 3:30:03 PM
+          item.date = dateOnly;
+          item.time = timeOnly;
+        });
         setOrderPlaced(returnedOrder);
         setShowLoader(false);
         setNotFoundMsg(false);
         setIsOrderPlaced(true);
       }
     }
-
   }
-
   const handleSearch = (evt) => {
     setShowClose(true);
     setOrderId(evt.target.value);
     if (evt.target.value === "") {
       setShowClose(false);
+      setEditOrderDetails(false);
     }
   }
   const handleKeys = (e) => {
     if (e.which === 32) {
-      console.log('Space Detected');
+      // console.log('Space Detected');
       setInvalidInput(true);
       setNotFoundMsg(false);
       return false;
@@ -79,8 +91,43 @@ function SearchOrder() {
     setNotFoundMsg("");
     setIsOrderPlaced(false);
     setOrderPlaced({});
+    setEditOrderDetails(false);
     setShowClose(false);
     setInvalidInput(false);
+  }
+
+  const handleDeliveryStatus =(e)=>{
+    const value = e.target.value;
+    setDeliveryStatus(value);
+    console.log(value);
+  }
+
+  const handlePaymentStatus = (e)=>{
+    const value = e.target.value;
+    setPaymentStatus(value);
+    console.log(value);
+  }
+  const onEditDetailsSubmit = async(e)=>{
+    e.preventDefault();
+    let detailsObj = {
+      payment_status:paymentStatus,
+      delivery_status:deliveryStatus
+    }
+    const response = await Order_Service.updateOrder(curr_user.token,orderPlaced._id,detailsObj);
+    if(response.status === 200){
+      // const updatedOrder = await response.json();
+      alert("Order Updated");
+      getOrder(curr_user,orderId);
+      setEditOrderDetails(false);
+    }else{
+      alert("Order not updated!")
+    }
+   
+  }
+  const handleEditOrder = ()=>{
+    setEditOrderDetails(true);
+    setDeliveryStatus(orderPlaced.delivery_status);
+    setPaymentStatus(orderPlaced.payment_status)
   }
   return (
     <SearchedOrders>
@@ -108,14 +155,17 @@ function SearchOrder() {
         </div>
 
       </FormStyle>
+      <hr/>
       {showLoader && (< Loader/>)}
       {isOrderPlaced && (
-        <OrderedItem>
+        <OrderedItem onClick={handleEditOrder}>
           {!showLoader && (      
           <div className='orders' key={orderPlaced._id} >
             <div className='dateOrderPlacedAt'>
               <h4 className='order-heading'>Date</h4>
-              {orderPlaced.date.split("T")[0]}
+                {orderPlaced.date}
+                &nbsp;&nbsp;<span style={{fontSize:'12px',color: 'darkblue'}}>{orderPlaced.time}</span>
+              {/* {orderPlaced.date.split("T")[0]} */}
             </div>
             <div className='orderID'>
               <h4 className='order-heading'>Order ID</h4>
@@ -146,6 +196,7 @@ function SearchOrder() {
               }
               <p className='total-amt'>Total Amount: &#8377;{orderPlaced.total_amount}</p>
               <p className='total-amt'><span>Payment Status: </span>{orderPlaced.payment_status}</p>
+              <p className='total-amt'><span>Delivery Status: </span>{orderPlaced.delivery_status}</p>
             </div>
           </div>
           )}
@@ -153,7 +204,37 @@ function SearchOrder() {
       )}
       {notFoundMsg && (
         <h3 className='not-found'>{notFoundMsg}</h3>
-      )}  
+      )} 
+
+      {editOrderDetails && (
+      <EditDetails>
+        <h4>Edit Order Details</h4>
+          <form className="editDetailsForm" onSubmit={onEditDetailsSubmit}>
+              <label htmlFor="delveryStatus"><strong>Delivery Status<span >*</span>:</strong></label>
+              <select  className="form-control" 
+                value={deliveryStatus  } 
+                onChange={handleDeliveryStatus}
+                required>
+                <option value="Not Delivered">Not Delivered</option>
+                <option value="Delivered">Delivered</option>
+              </select><br/>
+             
+              <label htmlFor="paymentStatus"><strong>Payment Status<span >*</span>:</strong></label>
+             <select  className="form-control" 
+                value={paymentStatus } 
+                onChange={handlePaymentStatus}
+                required>
+                <option value="Not Paid">Not Paid</option>
+                <option value="Paid">Paid</option>
+              </select><br/>
+
+              <div className='update-details-div'>
+                <button type='submit' className='update-details-btn'>UPDATE</button>
+              </div>
+          </form>  
+          {/* 627be03216b7c7109836bee9 */}
+      </EditDetails>
+      )} 
     </SearchedOrders>
   )
 }
@@ -172,6 +253,8 @@ const SearchedOrders = styled.div`
 const FormStyle = styled.form`
     width: 50%;
     margin: 0 auto;
+    margin-bottom: 10px;
+    display:flex;
     .close-icon{
       position: relative;
       margin-left: -22px;
@@ -222,8 +305,6 @@ const FormStyle = styled.form`
     }
 
     input{
-        border:none;
-        background: linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131);
         font-size:1.2rem;
         background:white;
         color:grey;
@@ -232,7 +313,7 @@ const FormStyle = styled.form`
         outline:none;
         width:100%;
         border-radius: 3px;
-        box-shadow: 3px 4px 3px grey;
+        box-shadow: 2px 2px 2px grey;;
         @media (max-width: 850px){
             font-size:1rem;
             width:80%;
@@ -253,7 +334,7 @@ const FormStyle = styled.form`
       border: none;
       cursor: pointer;
       margin-left: 10px;
-      box-shadow: 3px 4px 3px grey;
+      box-shadow: 2px 2px 2px grey;;
     }
     button>svg{
       transform: scale(1.3);
@@ -265,21 +346,24 @@ const FormStyle = styled.form`
     @media (max-width: 1000px){
         width:inherit;
     }
-    @media (max-width: 550px){
+    @media (max-width: 650px){
         font-size:smaller;
-        width:inherit;
+        width:90%;
     }
 `;
 
 const OrderedItem = styled.div`
+      box-shadow: 2px 2px 2px grey;
+      cursor: pointer;
+      &:hover{
+        box-shadow: 3px 3px 3px grey;
+      }
     .orders{
       width:100%;
       padding:5px;
       display:flex;
       flex-wrap: wrap;
       margin-top: 15px;
-      height:70vh;
-      overflow-y: auto;
       min-width:20vw;
     }
     .order-heading{
@@ -364,6 +448,49 @@ const OrderedItem = styled.div`
       }
       .order-heading{  
         padding: 3px;
+      }
+    }
+`;
+
+const EditDetails = styled.div`
+    width: 50%;
+    margin: 0 auto;
+    border-left: 1px solid grey;
+    margin-top: 1rem;
+    box-shadow: 2px 2px 2px grey;
+    @media (max-width:650px){
+      width: 100%;
+      font-size: 0.9rem;
+    }
+    h4 {
+      padding: 5px;
+      text-align: center;
+      background: grey;
+      color: white;
+    }
+    form{
+      width: 70%;
+      margin: 0 auto;
+      padding: 15px;
+    }
+    .update-details-div{
+      text-align: center;
+    }
+    .update-details-btn{
+      width: 70%;
+      margin: 0 auto;
+      padding: 10px;
+      border-radius: 3px;
+      border:none;
+      opacity: 0.9;
+      cursor: pointer;
+      background-color: blue;
+      color:white;
+      &:hover{
+        opacity: 1;
+      }
+      @media (max-width:650px){
+        padding:8px;
       }
     }
 `;

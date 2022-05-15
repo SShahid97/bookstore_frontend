@@ -9,10 +9,10 @@ import "./styles.css";
 import { FaUserPlus,FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Register() {
+    const navigate = useNavigate();
     const [inputs, setInputs] = useState({});
     const [confirmPass, setConfirmPass] = useState('');
     const [isMatched, setIsMatched] = useState(true);
-    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [passwordError, setPasswordError]= useState("");
     const [emailErrorDot, setEmailErrorDot] = useState("");

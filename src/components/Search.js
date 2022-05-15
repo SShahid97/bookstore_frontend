@@ -8,7 +8,7 @@ function Search({setShowMobSearch}) {
     const [showClose, setShowClose]=useState(false);
     const navigate = useNavigate();
     useEffect(()=>{
-        console.log("aav")
+        // console.log("aav");
     },[])
     const submitHandler = (e)=>{
         navigate("/books/search_"+input);

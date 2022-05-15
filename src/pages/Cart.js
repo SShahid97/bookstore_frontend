@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import {Cart_Service,Stock_Service} from '../services/Service';
 import {cartService,mobileMenuService} from "../services/LocalService";
 import Loader from '../components/Loader';
-
+import PopUp from "../components/PopUp";
+import {BiRefresh} from "react-icons/bi";
+import {FaPlus,FaMinus} from "react-icons/fa";
 
 function Cart() {
     let i=1;
@@ -17,6 +19,7 @@ function Cart() {
     const [stockArray, setStockArray] = useState([]);
     const [showLoader, setShowLoader] = useState(false); 
     const [deliveryCharges, setDeliveryCharges] = useState(50); 
+    const [messageSuccess, setMessageSuccess] = useState("");
     useEffect(()=>{
         setShowLoader(true);
         mobileMenuService.setMobileMenuIndicies(null);
@@ -27,11 +30,55 @@ function Cart() {
         //     setAreaCodeDetails(area_code_details);
         // }
     },[]);
+    const hanldeCheckout = (userId)=>{
+        // console.log(userId);
+        navigate("/checkout/billing");
+    }
     const handleQuantity = (e, index)=>{
         e.preventDefault();
         const newQtyArr = [...quantity];
         newQtyArr[index] = e.target.value;
         setQuantity(newQtyArr)    
+    }
+    
+    const handleDecrement = (index) =>{
+        console.log(index,"minus")
+        if(quantity[index]>1){
+            const newQtyArr = [...quantity];
+            newQtyArr[index] = newQtyArr[index]-1;
+            console.log(newQtyArr[index])
+			setQuantity(newQtyArr);
+        }
+    }
+    const handleIncrement = (index) =>{
+        if(quantity[index]<stockArray[index]){
+			const newQtyArr = [...quantity];
+            newQtyArr[index] = newQtyArr[index]+1;
+            console.log(newQtyArr[index])
+			setQuantity(newQtyArr);
+
+        }
+        
+    }
+    // Update quatity
+    const updateQty = async(item_id,i)=>{
+        console.log(item_id, i);
+        let user = JSON.parse(localStorage.getItem('user'));
+        try{
+            const data = await Cart_Service.updataCartItem(item_id, user.token, {quantity:quantity[i]});
+            getCartItems();
+            if(data){
+                // alert("Quantity updated");
+                setMessageSuccess("Quantity updated");
+                setTimeout(()=>{
+                    setMessageSuccess("");
+                },4000);
+            }
+        }catch(err){
+            setMessageSuccess("");
+            console.log("There was some error: ",err)
+        }
+
     }
 
     const getCartItems = async()=>{
@@ -41,13 +88,16 @@ function Cart() {
             if(response.status === 200){
                 setShowLoader(false);
                 const cartResponse = await response.json(); 
-                console.log("CART: ",cartResponse);
+                // console.log("CART: ",cartResponse);
                 let stockArr=[];
                 cartResponse.forEach(async(item)=>{
-                    let stock = await Stock_Service.getStockDetails(item.book._id);
-                    stockArr.push(stock.count_in_stock);
+                    let response = await Stock_Service.getStockDetails(item.book.book_code);
+                    if(response.status === 200){
+                        const stock=await response.json();
+                        stockArr.push(stock.count_in_stock);
+                    }
                 });
-                console.log("Stock:",stockArr);
+                // console.log("Stock:",stockArr);
                 setStockArray(stockArr);
                 localStorage.setItem("cart",JSON.stringify(cartResponse));
 
@@ -89,8 +139,6 @@ function Cart() {
     
     // Remove Item from cart
     const handleRemoveItem = async(id,index)=>{
-        const confirmation = window.confirm("Do you want to deleted this item?");
-        if(confirmation){
             const newQtyArr = [...quantity];
             newQtyArr.splice(index, 1);
             console.log(newQtyArr);
@@ -112,34 +160,19 @@ function Cart() {
             let user = JSON.parse(localStorage.getItem('user'));
             try{
                 const data = await Cart_Service.removeFromCart(id, user.token);
-                alert(data.message);
+                // alert(data.message);
+                setMessageSuccess(data.message);
+                setTimeout(()=>{
+                    setMessageSuccess("");
+                },4000);
                 getCartItems();
             }catch(err){
                 console.log("There was some error: ",err)
-            } 
-        }else{
-            console.log("cancelled")
-        }     
+            }  
     }
     
-    // Update quatity
-    const updateQty = async(item_id,i)=>{
-        console.log(item_id, i);
-        let user = JSON.parse(localStorage.getItem('user'));
-        try{
-            const data = await Cart_Service.updataCartItem(item_id, user.token, {quantity:quantity[i]});
-            getCartItems();
-            if(data)
-                alert("Quantity updated");
-        }catch(err){
-            console.log("There was some error: ",err)
-        }
-        
-    }
-    const hanldeCheckout = (userId)=>{
-        // console.log(userId);
-        navigate("/checkout/billing");
-    }
+    
+    
     return (
     <>   
     {showLoader && (<Loader/>) } 
@@ -153,69 +186,87 @@ function Cart() {
         )}  
         {!emptyCart && (
             <>
+            {messageSuccess !== "" && (
+                <PopUp messageSuccess={messageSuccess}/> 
+            )} 
             <h3 className='cart-heading'>Your Cart Items</h3>
             <div className='cart-div-inner'>
-                <div className='cart-items-div'>  
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Book</th>
-                            <th>Name</th>
-                            <th>Qty</th>
-                            <th>Price(in &#8377;)</th>
-                            <th>Amount</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        { 
-                        cartItems.map((item,index) => {     
+                <div className='cart-items-div'>
+                    <div className='cart-items-heading'>
+                        <div className='width-15 image-heading'>
+                            Book
+                        </div>
+                        <div className='width-30 name-heading'>
+                            Name
+                        </div>
+                        <div className='width-25 qty-heading'>
+                            Qty
+                        </div>
+                        <div className='width-15 price-heading'>
+                            Price
+                        </div> 
+                        <div className='width-15 amount-heading'>
+                            Amount
+                        </div>
+                        <div className='width-15 remove-heading'>
+                            Remove
+                        </div>
+                    </div>  
+                    <div className='cart-items'>
+                        { cartItems.map((item,index) => {     
                         return (
-                            <tbody key={item._id}>
-                            <tr>
-                            <td>
-                            {(item.book.discount>0) && (
-                                <span className='discount-badge' >{item.book.discount*100}%</span>
-                            )}
-                                <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
-                            </td>
-                            <td>{item.book.book_name}</td>
-                            <td>
-                                {quantity[index]} 
-                                {quantity[index]>0 && ( 
-                                <div className='qty'>
-                                    <input className='qty-input' type="number" step={1} min={1} max={stockArray[index]} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
-                                    <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
-                                </div> 
-                                )}    
-                                {quantity[index]===0 && (
-                                    <p style={{color:'#db0c0c', marginTop:'15px', fontSize:'14px'}}>Out of Stock!</p>
-                                )}
-                            </td>
-                            <td>&#8377;{item.price-item.price*item.book.discount}</td>
-                            <td>&#8377;{item.quantity*(item.price-item.price*item.book.discount)}</td>
-                            <td>
-                                <div className='remove-item'>
-                                    <button className='remove-item-btn' onClick={() => handleRemoveItem(item._id,index) }>Remove</button> 
+                            <div className='cart-item' key={item._id}>
+                                <div className='image-mobile'>
+                                <div className='width-15 book_image'>
+                                    {(item.book.discount>0) && (
+                                        <span className='discount-badge' >{item.book.discount*100}%</span>
+                                    )}
+                                    <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
                                 </div>
-                            </td>
-                            </tr>
-                            </tbody>
-                        )
-                        })}
-                    <tbody>
-                            <tr style={{background:'#b3a9346b'}}>
-                            <td></td> 
-                            <td></td> 
-                            <td></td> 
-                            <td colSpan="2"><b>Delivery Charges:</b></td> 
-                            <td>&#8377;{deliveryCharges}</td>
-                            <td></td> 
-                            </tr>
-                        </tbody>
-                    </table>
-                <div className='amount'>
-                    <strong>Total Amount: </strong><b>&#8377;{totalAmount+deliveryCharges}</b>
-                </div>
+                                </div>
+                                <div className='details-mobile'>
+                                    <div className='width-30  book_name'>
+                                        {item.book.book_name}
+                                    </div>
+                                    <div className='width-25 book_qty'>
+                                        {quantity[index]>0 && ( 
+                                        <div className='qty'>
+                                            {/* <input className='qty-input' type="number" step={1} min={1} max={stockArray[index]} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/> */}
+                                            <button  className = "btn-qty btn-quantity-minus" onClick={()=>handleDecrement(index)}>
+                                                <FaMinus/>
+                                            </button>
+                                            <input min={1} max={stockArray[index]} type="text" disabled name="quantity"  value={quantity[index]}/>
+                                            <button className = "btn-qty btn-quantity-plus"  onClick={()=>handleIncrement(index)}>
+                                                <FaPlus/>
+                                            </button>
+                                            <button className='qty-btn' title='Update' onClick={() =>updateQty(item._id,index) }><BiRefresh/></button> 
+                                        </div> 
+                                        )}    
+                                        {quantity[index]===0 && (
+                                            <p style={{color:'#db0c0c', marginTop:'15px', fontSize:'14px'}}>Out of Stock!</p>
+                                        )}
+                                    </div>
+                                    <div className='width-15 book_price'>
+                                      <span className='price-sub'>Price:</span> &#8377;{item.price-item.price*item.book.discount}
+                                    </div>
+                                    <div className='width-15 book_amount'>
+                                     <span className='price-sub'>Subtotal:</span> &#8377;{item.quantity*(item.price-item.price*item.book.discount)}
+                                    </div>
+                                    <div className='width-15 remove-item'>
+                                        <button className='remove-item-btn' onClick={() => handleRemoveItem(item._id,index) }>Remove</button> 
+                                    </div>
+                                </div>        
+                            </div>
+                        )})
+                        }
+                        <div className='amt-charges'>
+                            Delivery Charges: &#8377;{deliveryCharges}
+                        </div>
+                        <div className='amt-total'>
+                            <strong>Total Amount: </strong><b>&#8377;{totalAmount+deliveryCharges}</b>
+                        </div>
+                    </div>
+                 
                 </div>    
         
                 {/* Buttons */}
@@ -227,54 +278,6 @@ function Cart() {
             </>
         )}
       </CartCard>
-      <CartCardMobile>
-        {emptyCart && (
-            <div style={{padding:'10px'}}>
-                <h3 style={{color:'red'}} >Your Cart is Empty</h3>
-            </div>
-        )}
-         {!emptyCart && (
-            <>
-            <h4 className='cart-heading'>Your Cart Items</h4>
-          {cartItems.map((item,index) => {     
-            return (
-              <div key={item._id} className='item'>
-                <div className='left'>
-                    <div className='img-badge'>
-                        {(item.book.discount>0) && (
-                            <span className='discount-badge' >{item.book.discount*100}%</span>
-                        )}
-                        <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
-                    </div>
-                    <div className='qty-mobile'>
-                        {quantity[index]>0 && ( 
-                            <div className='qty'>
-                                <input className='qty-input' type="number" step={1} min={1} max={stockArray[index]} value={quantity[index]} name="quantity"  onChange={(e)=>handleQuantity(e,index)}/>
-                                <button className='qty-btn' onClick={() =>updateQty(item._id,index) }>update</button> 
-                            </div> 
-                        )}    
-                        {quantity[index]===0 && (
-                        <p style={{color:'#db0c0c', marginTop:'15px', fontSize:'14px'}}>Out of Stock!</p>
-                        )}    
-                    </div>
-                </div>
-                <div className='right'>
-                   <div className='detailsBook'>
-                        <p className='book-name'>{item.book.book_name}</p>
-                        <p className='price'><strong>&#8377;{item.price-item.price*item.book.discount}</strong></p>
-                   </div>
-                   <div className='delete-item'>
-                        <button className='delete-item-btn' onClick={() => handleRemoveItem(item._id,index) }>Remove</button> 
-                   </div>
-                </div>
-             </div>  
-             
-            )}
-          
-          )}
-        </>
-        )}           
-      </CartCardMobile>
       </>
       )}
       </> 
@@ -290,52 +293,223 @@ const CartCard = styled.div`
     margin-top: 5px;
     text-align: center;
     margin-bottom: 1rem;
-
+    .pop-up {
+        transform: translate(738px,-10px) !important;
+        @media (max-width:650px){
+            transform: translate(10px, -12px) !important;
+        }
+    }
     @media (max-width:1100px) {
             width: 90%;
     }
     @media (max-width:850px) {
             width: 95%;
-            margin-top: -20px;
-    }
-    @media (max-width:650px){
-            display:none;
+            margin-top: -10px;
     }
     
-    table {
+    .qty{
+        margin-top:5px;
+        margin-bottom: 5px;
+        input{
+            height: 2.27rem;
+            width: 2rem;
+            text-align: center;
+            color: teal;
+            font-size: 19px;
+            border-top: 1px solid #bbbbbb;
+            border-bottom: 1px solid #bbbbbb;
+            border-left: none;
+            border-right: none;
+        }
+        .btn-qty{
+            cursor: pointer;
+            border: 1px solid #bbbbbb;
+            width:2rem;
+            padding: 6px;
+            padding-top: 10px;
+            border: 1px solid #bbbbbb;
+            background: #dfdfdfb3;
+        }
+        .btn-quantity-minus{
+            border-radius: 7px 0 0 7px;
+        }
+        .btn-quantity-plus{
+            border-radius:0 7px 7px 0;
+        }
+    }
+    .cart-items-div{
+
+    }
+    .cart-items-heading{
+        display: flex;
         width: 100%;
-        height: auto;
-        border-collapse: collapse;
+        padding: 10px;
+        border-bottom: 2px solid grey;
+        justify-content: space-between;
+        font-size: 1rem;
         font-weight: 700;
-        @media (max-width:650px) {
-            font-size: 0.7rem !important;
-            /* width:100; */
+        @media (max-width:650px){
             display: none;
         }
     }
-    table thead{
-        font-size: 1rem !important;
-        @media (max-width:650px) {
-            font-size: 0.7rem !important;
-        }
+    .cart-items{
+        display: flex;
+        width: 100%;
+        flex-direction: column;
     }
-        
-    th {
-        border-bottom: 2px solid rgb(48, 48, 48);
-    }
-    tr{
+    .cart-item{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
         border-bottom: 1px solid grey;
-    }
-    tr td{
         padding: 5px;
-        max-width: 120px;
-        @media (max-wdith:650px){
-            padding:3px;
-            max-width: 90px;
+    }
+    .width-15{
+        width:15%;
+    }
+    .width-30{
+        width:30%;
+    }
+    .width-25{
+        width:25%;
+    }
+    .amt-total{
+        font-size: 1.1rem;
+        margin-top: 5px;
+        @media (max-width:650px){
+            font-size: 1rem;
         }
     }
-    
+    .amt-charges{
+        font-weight: 500;
+        @media (max-width:650px){
+            margin-top: 5px;
+        }
+    }
+    .image-mobile{
+        display: flex;
+        width: 15%;
+        @media (max-width:650px){
+            width:32%;
+        }
+    }
+    .book_image{
+        @media (max-width:650px){
+            width:100%;
+        }
+    }
+    .book_name{
+        @media (max-width:650px){
+            width: 100%;
+            text-align: left;
+            padding-left: 10px;
+        }
+    }
+    .details-mobile{
+        display: flex;
+        align-items: center;
+        width: 85%;
+        font-weight: 500;
+        @media (max-width:650px){
+            width: 68%;
+            flex-direction: row;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+        }
+    }
 
+    .book_qty{
+        text-align: -webkit-center;
+        @media (max-width:650px){
+            width: 100%;
+            transform: scale(0.8);
+        }
+    }
+    .book_price{
+        @media (max-width:650px){
+            width: 42%;
+            font-weight: 700;
+            text-align: left;
+            padding-left: 10px;
+            font-size: 0.8rem;
+        }
+    }
+    .book_amount{
+        @media (max-width:650px){
+            font-weight: 700;
+            width: 58%;
+            text-align: left;
+            padding-left: 10px;
+            font-size: 0.8rem;
+        }
+    }
+    .cart-items-div img{
+        height:150px;
+        width:100px;
+        @media(max-width:650px){
+            height:140px;
+            width:100px;
+        }
+    }
+    .remove-item-btn{
+        border:1px solid red;
+        color:red;
+        padding: 8px 10px;
+        border-radius: 3px;
+        font-size: 1rem;
+        @media (max-width:650px){
+            padding: 5px 6px;
+            font-size: 0.9rem;
+            width: 90%;
+        }
+    }
+
+    .remove-item-btn:hover{
+        background:red;
+        color:white;
+        cursor: pointer;
+    }
+    .remove-item{
+        margin-top: 10px;
+        @media (max-width:650px){
+            width:100%;
+        }
+    }
+    .price-sub{
+        @media (min-width:650px){
+            display:none;
+        }
+    }
+    .checkout-btns{
+        margin-top:2rem;
+        display: flex;
+        justify-content: space-between;
+        @media (max-width:650px){
+            width: 95%;
+            margin: 0 auto;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .checkout-btns .btns{
+        border:1px solid blue;
+        color:blue;
+        padding: 10px 12px;
+        border-radius: 3px;
+        font-size: 1rem;
+        margin-bottom: 0px;
+        @media (max-width:650px){
+            padding: 5px 6px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+    }
+    .checkout-btns .btns:hover{
+        background:blue;
+        color:white;
+        cursor: pointer;
+    }
     .discount-badge{
         position: absolute;
         background: #e30606;
@@ -359,7 +533,7 @@ const CartCard = styled.div`
         }
     }
     .cart-div-inner{
-        padding:30px;
+        padding:15px;
         @media (max-width:650px){
             padding:5px;
         }
@@ -367,99 +541,8 @@ const CartCard = styled.div`
             padding:2px;
         }
     }
-    .cart-items-div{
-        text-align: left;
-        @media (max-width:650px){
-            border-radius: 3px;
-        } 
-    }
-
-    .cart-items-div img{
-        height:150px;
-        width:100px;
-        @media(max-width:650px){
-            height:110px;
-            width:90px;
-        }
-    }
+    
 `;
 
-const CartCardMobile = styled.div`
-    display: none;
-    @media (max-width:650px){
-        display: block;
-        width: 98%;
-        margin: 0 auto;
-        margin-top: -20px;
-    }
-    .item{
-        display:flex;
-        flex-direction: row;
-        margin-top:10px;
-        box-shadow: 1px 2px 2px 1px #00000036;
-        border:1px solid lightgrey;
-    }
-    .left{
-        width: 40%;
-        display: flex;
-        flex-direction: column;
-    }
-    .detailsBook .book-name{
-        font-size:0.8rem;
-    }
-    .detailsBook .price{
-        font-size:0.9rem;
-    }
-    .right{
-        width:60%;
-        display: flex;
-        flex-direction: column;
-    }
-    .delete-item{
-        margin-top:5px;
-    }
-    .delete-item-btn{
-        padding: 4px 6px;
-        font-size: 0.9rem;
-        background-color: white;
-        border:1px solid red;
-        color:red;
-        border-radius: 2px;
-    }
 
-    .delete-item-btn:hover{
-        background:red;
-        color:white;
-        cursor: pointer;
-    }
-    .qty-mobile{
-        margin-top:5px;
-    }
-    .img-badge img{
-        width: 110px;
-        height: 120px
-    }
-    .discount-badge{
-        position: absolute;
-        background: #e30606;
-        padding: 5px 3px;
-        border-radius: 50%;
-        color: white;
-        font-size: 0.9rem;
-        font-weight: 500;
-        @media (max-width:650px){
-            font-size: 0.7rem;
-        }
-    }
-
-    .cart-heading{
-        padding: 5px;
-        font-size: 1rem;
-        background: #8080808f;
-        color: white;
-        font-weight: 600;
-        text-align: center;
-       
-    }
-`;
 export default Cart

@@ -19,7 +19,7 @@ function Rating({rating}) {
             <span>
                 {rating >= 5 ? <FaStar /> :rating >= 4.5 ? <FaStarHalfAlt /> : <FaRegStar />}
             </span>
-            <span className='rating'>({rating})</span>
+            {/* <span className='rating'>({rating})</span> */}
         </div>
     )
 }

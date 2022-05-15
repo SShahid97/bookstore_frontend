@@ -3,9 +3,10 @@ import styled from 'styled-components';
 // import {motion} from 'framer-motion';
 import {Link, useParams, useNavigate} from 'react-router-dom';
 import Loader from '../components/Loader';
-import {User_Service} from '../services/Service';
+import {Item_Service} from '../services/Service';
 import Filters from '../components/Filters';
 import {BsSliders} from "react-icons/bs";
+import Rating from "../components/Rating";
 
 function Books() {
    let params = useParams();
@@ -36,7 +37,7 @@ function Books() {
     },[params.cat]);
 
     const getSearched = async (searchKey)=>{
-        const response = await User_Service.getSearched(searchKey);
+        const response = await Item_Service.getSearched(searchKey);
         console.log(response.status);
         if(response.status === 200){
             const fetchedData = await response.json();
@@ -69,7 +70,7 @@ function Books() {
     }
 
     const getBooksByCategory = async (category)=>{
-       const response = await User_Service.getBooksByCategory(category);
+       const response = await Item_Service.getBooksByCategory(category);
        if(response.status === 200){ 
             const fetchedBooks = await response.json();
             fetchedBooks.forEach((book)=>{
@@ -198,21 +199,31 @@ function Books() {
     
                       <Link to={"/book/"+book._id}>
                           
-                       <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
-                        <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
-                            <p>{book.book_name}</p>
-                            {(book.discount===0)  && (
-                                <>
-                                <span>&#8377;</span><span>{book.price}</span>
-                                </>
-                            )}
-                            {(book.discount>0) && (
-                                <>
-                                    <span>&#8377; {book.newPrice}</span>
-                                    <span className='old-price'>&#8377;{book.price}</span>
-                                </>
-                            )}
-                        </div>
+                       <div className='book-item'>
+                        <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
+                            <div className='book-details'>
+                                <p>{book.book_name}</p>
+                                <p className="author">by {book.book_author}</p>
+                                <p>
+                                    {(book.discount===0)  && (
+                                        <>
+                                        <span>&#8377;</span><span>{book.price}</span>
+                                        </>
+                                    )}
+                                    {(book.discount>0) && (
+                                        <>
+                                            <span>&#8377; {book.newPrice}</span>
+                                            <span className='old-price'>&#8377;{book.price}</span>
+                                        </>
+                                    )}
+                                </p>                               
+                                {book.rating>0 && (
+                                    <>
+                                        <Rating rating={book.rating}/> 
+                                    </>
+                                )} 
+                            </div>
+                       </div>
                       </Link> 
                   </Card>
               );
@@ -232,6 +243,9 @@ const Main = styled.div`
     padding:5px;
     display:grid;
     grid-template-rows: 2rem 4fr;
+    @media (max-width:650px){
+        margin-top: -15px;
+    }
     .no-results-found{
         width: 50%;
         margin: auto auto;
@@ -247,7 +261,7 @@ const Top = styled.div`
 
     .results-found{
         @media (max-width:650px){
-            padding-top: 10px;
+            /* padding-top: 10px; */
         }
     }
     .sort-by{
@@ -270,7 +284,21 @@ const Grid = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(11rem,1fr));
     grid-gap:1rem;
-
+    @media (max-width:650px){
+        grid-template-columns: repeat(auto-fit,minmax(19rem,1fr));
+        margin-left: -25px;
+    }
+    .rating-div{
+        display: flex;
+        justify-content: space-between;
+        width: 70%;
+        transform: scale(1.1);
+        margin-left: 5px;
+        margin-top: 5px;
+    }
+    .rating-div span{
+        color:#ffcb0e;
+    }
 `;
 
 const SliderrIcon = styled.div`
@@ -326,18 +354,9 @@ const SliderrIcon = styled.div`
 const Wrapper = styled.div`
      display: grid;
      grid-template-columns: 1fr 4fr;
-     /* .slider-icon{
-         display:none;
-     }
-     .slider-icon:hover{
-         cursor: pointer;
-         background: #d4dbe1e3;
-     } */
-       
      @media (max-width:850px) {
         grid-template-columns: 2rem 4fr;
     }
-    /* flex-direction: row; */
 `;
 
 
@@ -388,6 +407,42 @@ const Card = styled.div`
     border-radius:5px;
     overflow:hidden;
     position:relative;
+    @media (max-width:650px){
+        padding: 5px;
+        min-height: 0;
+    }
+    .author{
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin: 5px 0px
+    }
+    .book-item{
+        @media (max-width:650px){
+            display: flex;
+        }
+    }
+    img{
+        height: 245px;;
+        border-radius:5px;
+        left:0;
+        width:100%;
+        @media (max-width:650px){
+            height: 150px;
+            width: 40%;
+             border-radius:3px;
+        }
+    }
+    .book-details{
+        margin-left:0.3rem;
+        margin-top:0.5rem;
+        @media (max-width:650px){
+            width: 60%;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+    }
     .discount{
         position: absolute;
         top: 0px;
@@ -409,12 +464,7 @@ const Card = styled.div`
         box-shadow: 1px 3px 3px 1px #00000050;
         opacity: 0.9;
     }
-    img{
-        height: 245px;;
-        border-radius:5px;
-        left:0;
-        width:100%;
-    }
+    
     span{
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
         font-size:medium;

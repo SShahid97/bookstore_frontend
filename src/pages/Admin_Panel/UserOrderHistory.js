@@ -13,7 +13,8 @@ function UserOrderHistory() {
   let navigate = useNavigate();
   useEffect(()=>{
       setShowLoader(true);
-      console.log(params.id);
+      window.scrollTo(0,0);
+      // console.log(params.id);
       let curr_user = JSON.parse(localStorage.getItem('user'));
       getOrderHistory(curr_user.token, params.id);
   },[]);
@@ -23,7 +24,7 @@ function UserOrderHistory() {
       if(response.status === 200){
         setShowLoader(false);
         const returnedHistory = await response.json();
-        console.log(returnedHistory);
+        // console.log(returnedHistory);
         setUsersOrderHistoy(returnedHistory);
       }else if (response.status === 204){
         setShowLoader(false);
@@ -51,24 +52,6 @@ function UserOrderHistory() {
 
 const UsersOrderHistory = styled.div`
     height: 100%;
-    /* .back-arrow-span{
-        border-radius: 50%;
-        background: gainsboro;
-        color: #5a5a5a;
-        padding: 5px 8px;
-        cursor: pointer;
-        margin-left: 6px;
-    }
-    .back-arrow-span:hover{
-        background: #8f8f8f;
-        color: white;
-    }
-    .back-arrow-span:active{
-        background: #b1b1b1;;
-    }
-    .back-arrow{
-        padding-top: 2px;
-        transform: scale(1.1);
-    } */
+   
 `;
 export default UserOrderHistory

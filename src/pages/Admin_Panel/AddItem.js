@@ -1,18 +1,12 @@
 import React, {useState,useEffect} from 'react';
 import styled from "styled-components";
-import { User_Service } from '../../services/Service';
+import { Item_Service } from '../../services/Service';
 import {FaUpload} from "react-icons/fa";
 import "./styles.css";
 // import {Service} from "../../services/Service";
 
 let Admin = {};
 function AddItem() {
-    const dicountArray = [{name:"Select discount",value:0},{name:"0%",value: 0},{name:"10%",value: 0.1},
-    {name:"15%",value: 0.15}, {name:"20%",value:0.2}, 
-    {name:"25%",value:0.25},{name:"30%",value: 0.3}, {name:"35%",value:0.35}, {name:"40%",value:0.4}, 
-    {name:"45%",value:0.45},{name:"50%",value: 0.5}, {name:"55%",value:0.55}, {name:"60%",value:0.6}, 
-    {name:"65%",value:0.65}, {name:"70%",value:0.7}, {name:"75%",value:0.75}, {name:"80%",value:0.8}, 
-    {name:"90%",value:0.9}]
     const [formInput, setformInput] = useState({ });
     const [discount, setDiscount] = useState(0);
     // const [admin, setAdmin] = useState({});
@@ -49,6 +43,7 @@ function AddItem() {
          
     },[imagePrevFile]);  
 
+
     const handleformInput = (event) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -62,26 +57,23 @@ function AddItem() {
         formInput.discount = discount;  
         formInput.book_image = imageName;
         console.log(formInput)
-            try{
-                const data = await User_Service.addBookItem(Admin.token, formInput);
-                alert("Item Added Successfully");
-                // after form submission reset all values
-                setformInput({});
-                setPreviewImageURL(null);
-                setImagePrevFile(null);
-                setDiscount(0);
-                console.log(data)
-            }catch(err){
-                console.log("There was some error: ",err)
-            }
-            // if(response.status === 201){
-            //     const data = await response.json();
-            //     console.log(data)
-            // }
-            // if (response.status === 400) {
-            //     console.log("There was some error: ",response.statusText)
-            // }
-        
+        const response = await Item_Service.addBookItem(Admin.token, formInput);
+         if(response.status === 201){
+            const data = await response.json();
+            alert("Item Added Successfully");
+            // after form submission reset all values
+            setformInput({});
+            setPreviewImageURL(null);
+            setImagePrevFile(null);
+            setDiscount(0);
+            console.log(data);
+        }else if(response.status === 422){
+            const error = await response.json();
+            alert(error.message);
+        }else if(response.status === 400){
+            const error = await response.json();
+            console.log(error.message);
+        }
     }
     const handleDiscount = (e)=>{
         console.log(Number(e.target.value));
@@ -114,7 +106,6 @@ function AddItem() {
             const data = response.json();
             console.log(data);
             setImageNotUploaded(false);
-            
             // alert("Image Uploaded Successfully");
         }else{
             alert("Image not uploaded");
@@ -134,14 +125,12 @@ function AddItem() {
                 </button>
                 <input type="file" id="getFile" accept='image/*' style={{display:'none'}} name="photo" onChange={handleImageUpload}/>
                 <div className='image-preview'>
-                    
                         {previewImageURL ? 
                             <img className='previewImg' src={previewImageURL}  alt="Preview"/>:
                             (<div className='image-preview-text'>
                              <p >Image Preview</p>
                              </div>)
                         }  
-                    
                 </div>
             </form>
         </div>
@@ -201,9 +190,10 @@ function AddItem() {
                                     value={discount || ""} 
                                     onChange={handleDiscount}
                                     >
-                                {/* <option value="select" >Select discount</option> */}
-                                {dicountArray.map((dis,index)=>{
-                                    return <option key={index} value={dis.value}>{dis.name}</option>
+                                <option value="" disabled={true} >Select discount</option>
+                                {[...Array(101)].map((dis,index)=>{
+                                    
+                                    return <option key={index} value={index/100}>{index}%</option>
                                 })}
                             </select><br/>
                         </div>

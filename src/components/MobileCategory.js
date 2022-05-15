@@ -24,6 +24,7 @@ function MobileCategory({setmobileView}) {
         // console.log('search', location.search);
     },[indecies3]);
 
+    //for unsetting the previous state of navbar if navigated to other page
     mobileMenuService.onUpdateMobileMenuIndicies().subscribe(indecies => {
         setIndecies(indecies);
         setIndecies2(indecies);
@@ -46,8 +47,6 @@ function MobileCategory({setmobileView}) {
         // setActivateLink(false);
         setToggleSubMenuOne(!toggleSubMenuOne);
         setIndecies(index)
-        
-        
     }
     const handleSubMenu = (e,index)=>{
         e.stopPropagation();
@@ -56,45 +55,36 @@ function MobileCategory({setmobileView}) {
         setIndecies3(null);
         let ind = indecies3;
         console.log("indecies3: ", ind)
-        // setActivateLink(false);
         setToggleSubMenuTwo(!toggleSubMenuTwo);
+    }
+    const handleHomeLink =(e)=>{
+        e.stopPropagation();
+        setmobileView(false);
     }
     let i = 0;
   return (
     <List className='admin-mobile-sidenav'>
+        <SLink style={{borderBottom: '1px solid navajowhite'}} to={"/"} onClick={(e)=>handleHomeLink(e)} >
+            <h3 style={{marginLeft:'12px'}} >Home</h3>
+        </SLink> 
     {General_Categories.map((item, ind) => {
         ++i;
         return (
             <MainLinks key={ind} onClick={(e)=>handleMainLink(e,ind)}>
-                {/* <span style={{display:"inline-flex", width:'95%'}}> */}
                     <h3 className={indecies===ind?"activate":""}>{item.name}</h3>
-                    {/* <span className='angle-down'>
-                    {toggleSubMenuOne ? <FaAngleUp/> : <FaAngleDown/>}
-                    </span> */}
-                {/* </span> */}
-                {/* {toggleSubMenuOne &&  */}
                     <DropdownOne className={indecies===ind ? "droplinks" : 'hide'}>
                         {General_Categories[ind].categories.map((drop_1, index) => {
                             return (
                                 <DropLinks key={index}  onClick={(e)=>handleSubMenu(e,index)} >
-                                    {/* <span style={{display:"inline-flex",width:'95%'}}>  */}
                                     <h4 className={indecies2===index?"activate":""}>{drop_1.name}</h4> 
-                                        {/* <span className='angle-right'>
-                                            {toggleSubMenuTwo ? <FaAngleUp/> : <FaAngleDown/>}
-                                        </span> */}
-                                    {/* </span> */}
                                     {indecies2===index && 
                                     <DropdownTwo key={index} className={ indecies2===index?'droplinks':'hide'}>
-                                        {General_Categories[ind].categories[index].sub_categories.map((drop_link, inde) => {
-                                            
-                                            return (
-                                               
+                                        {General_Categories[ind].categories[index].sub_categories.map((drop_link, inde) => {                                           
+                                            return (                                              
                                                 <SLink  key={inde} to={drop_link.link} onClick={(e)=>handleSubLink(e,inde)} >
                                                     <h4 className={indecies3 === inde ?"activate":""}>{drop_link.name}</h4>
-                                                </SLink>
-                                               
-                                            );
-                                            
+                                                </SLink>                                             
+                                            );                                            
                                         })}
                                     </DropdownTwo>
                                      } 
@@ -102,7 +92,6 @@ function MobileCategory({setmobileView}) {
                             );
                         })}
                     </DropdownOne>
-                {/* }  */}
             </MainLinks>
         )
     })}
@@ -111,7 +100,6 @@ function MobileCategory({setmobileView}) {
 }
 
 const List = styled.div`
-      /* height: inherit; */
       height: -webkit-fill-available;
       height:100%;
       color:white;
@@ -133,7 +121,6 @@ const List = styled.div`
 `;
 const MainLinks = styled.span`
         .activate{
-            /* color:orange; */
             background:linear-gradient(to right, #f27121, #e94057);
         }
         .hide{
@@ -172,22 +159,14 @@ const MainLinks = styled.span`
     border-bottom: 1px solid navajowhite;
 `;
 const DropLinks = styled.div`
-    /* &:active{
-        background:linear-gradient(to right, #f27121, #e94057);
-        h4{
-            color:white;
-        }
-    } */
         .hide{
             display: none;;
          }
         .droplinks_2{
             display: block;
         }
-        /* border-bottom: 1px solid white; */
         color:white !important;
         display: block;
-        /* flex-direction: column; */
         align-items: left;
         padding: 2px;
         h4{
@@ -208,9 +187,7 @@ const DropdownOne = styled.div`
         list-style: none;
         position: relative;
         margin-left: 5px;
-        /* border-radius: 5px; */
         background: grey;
-        /* padding:0.5rem; */
         overflow: hidden; 
         display: none;
 `;
@@ -221,28 +198,17 @@ const DropdownTwo = styled.div`
         list-style: none;
         position: relative;
         margin-left: 15px;
-        /* border-radius: 5px; */
         background: grey;
-        /* padding:0.5rem; */
         overflow: hidden; 
         display: none;
         border-bottom: 1px solid navajowhite;
 `;
 const SLink = styled(NavLink)`
-    /* &:active{
-        background:linear-gradient(to right, #f27121, #e94057);
-        h4{
-            color:white;
-        }
-    }  */
-        /* border-bottom: 1px solid white; */
         color:white !important;
-        /* height: 30px; */
         display: flex;
         flex-direction: column;
         align-items: left;
         padding: 3px;
-        /* border-radius: 5px ; */
         h4{
             font-weight: 600;
         }

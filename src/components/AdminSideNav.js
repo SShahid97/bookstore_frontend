@@ -1,18 +1,25 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom';
+import React,{useEffect} from 'react'
+import { NavLink,useNavigate } from 'react-router-dom';
 import styled from "styled-components";
 import {
   FaUserFriends,
   FaFileImport,
   FaSearchDollar,
   FaRegEye,
-  FaEdit,
   FaChalkboardTeacher
   } from "react-icons/fa";
-
 import {MdLibraryAdd} from "react-icons/md"
 
 function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
+  let navigate = useNavigate();
+  let curr_user=JSON.parse(localStorage.getItem("user"));
+  useEffect(()=>{
+    if(!curr_user ){
+      navigate("/");
+    }else if(curr_user.role !== "admin"){
+      navigate("/");
+    }
+  },[])
   const handleCloseNav = ()=>{
     setToggleArrowMenu(false)
   }
@@ -39,12 +46,12 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
         </SLink>
 
         <h4 className='headings'>Manage Stock</h4>
-        <SLink to={'manage-users/add-stock-details'}  >
+        <SLink to={'manage-books/add-stock'}  >
         <span className='icons'> < MdLibraryAdd/> </span> <h4>Add Stock Details</h4>
         </SLink>
-        <SLink to={'manage-users/view-stock-details'} >
+        {/* <SLink to={'manage-books/view-all-items/view-edit-stock/:code'} >
         <span className='icons'> < FaEdit/> </span><h4>Edit Stock Details</h4>
-        </SLink>
+        </SLink> */}
 
       </List>
     </NavOuter>

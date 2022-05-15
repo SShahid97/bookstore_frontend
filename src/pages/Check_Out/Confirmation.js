@@ -188,14 +188,14 @@ const Wrapper = styled.div`
     margin-top: 5px;
     padding:10px;
     @media (max-width:650px){
-        width:80%;
+        width:90%;
     }
 `;
 const OrderConfirmation = styled.div`
-    padding:20px;
+    padding:10px;
     text-align: center;
     .check{
-        font-size: 6rem;
+        font-size: 6rem;  
         color:green;
     }
 `;

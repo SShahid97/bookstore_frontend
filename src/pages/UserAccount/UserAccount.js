@@ -1,23 +1,33 @@
 import React, { useEffect, useState } from 'react';
+import {useNavigate} from "react-router-dom";
 import styled from "styled-components";
-import OrderHistory from '../../components/OrderHistory';
-import {Address_Service, Order_Service} from "../../services/Service";
+import {Address_Service, Auth_Service, Order_Service} from "../../services/Service";
 import Loader from "../../components/Loader";
 import {mobileMenuService} from "../../services/LocalService";
+// import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function UserAccount() {
   const [user, setUser]= useState({});
   const [userAddress, setUserAddress] = useState({});
-  const [orderHistory, setOrderHistory] = useState([]);
+  const [addEditBtn, setAddEditBtn] = useState("");
   const [showLoader, setShowLoader] = useState(false);
+  const [currentPassword,setcurrentPassword] = useState('');
+  const [showChangeAddress, setShowChangeAddress] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [passwordCorrect, setPasswordCorrect] = useState();
+  const [passwordNotCorrect, setPasswordNotCorrect] = useState("");
+  let navigate = useNavigate();
+ 
 
     useEffect(()=>{
         setShowLoader(true);
         mobileMenuService.setMobileMenuIndicies(null);
+        
         let curr_user = JSON.parse(localStorage.getItem('user'));
-        setUser(curr_user);
-        getUserAddress(curr_user.token, curr_user._id);
-        getOrderHistory(curr_user.token, curr_user._id);
+        if(curr_user){
+          setUser(curr_user);
+          getUserAddress(curr_user.token, curr_user._id);
+        }
     },[]);
 
     const getUserAddress = async(token,userId)=>{
@@ -25,34 +35,72 @@ function UserAccount() {
       if(response.status === 200){
         setShowLoader(false);
         const returnedAddress = await response.json();
-        // console.log(returnedAddress);
         setUserAddress(returnedAddress);
+        setAddEditBtn("Change Address");
+        // console.log(returnedAddress);
       }else if (response.status === 204){
         setShowLoader(false);
         setUserAddress(null);
+        setAddEditBtn("Add Address");
       }else if (response.status === 400){
         console.log("Bad Request");
       }
 
     }
-    const getOrderHistory = async (token, userId)=>{
-      const response = await Order_Service.getOrderHistory(token,userId);
-      if(response.status === 200){
-        setShowLoader(false);
-        const returnedHistory = await response.json();
-        console.log(returnedHistory);
-        setOrderHistory(returnedHistory);
-      }else if (response.status === 204){
-        setShowLoader(false);
-        setOrderHistory(null);
-      }else if (response.status === 400){
-        console.log("Bad Request");
-      }
+    // const getOrderHistory = async (token, userId)=>{
+    //   const response = await Order_Service.getOrderHistory(token,userId);
+    //   if(response.status === 200){
+    //     setShowLoader(false);
+    //     const returnedHistory = await response.json();
+    //     // console.log(returnedHistory);
+    //   }else if (response.status === 204){
+    //     setShowLoader(false);
+    //   }else if (response.status === 400){
+    //     console.log("Bad Request");
+    //   }
+    // }
+    const handleChangePassword = ()=>{
+      setShowChangePassword(!showChangePassword);
     }
+    const handleChangeAddress = ()=>{
+      setShowChangeAddress(true);
+    }
+    const handlecurrentPassword = (e)=>{
+      setPasswordNotCorrect("");
+      setcurrentPassword(e.target.value);
+    }
+   const handleCheckPrevPass = async(e)=>{
+     e.preventDefault();
+     let userInfoObj = {
+       token:user.token,
+       email:user.email,
+       password:currentPassword
+     } 
+    //  console.log(userInfoObj);
+     const response = await Auth_Service.verifycurrentPassword(userInfoObj);
+     if(response.status === 200){
+      const successReply = await response.json(); 
+      console.log(successReply.message);
+      setPasswordCorrect(true);
+      navigate("/user/change-password");
+     }else if(response.status === 401) {
+      const failureReply = await response.json(); 
+      console.log(failureReply.message);
+      // setPasswordCorrect(false);
+      setPasswordNotCorrect(failureReply.message);
+     }else if(response.status === 400){
+       console.log("There was some error");
+     }
+
+   }
+   const handleAddAddress = ()=>{
+     
+   }
   return (
     <> 
     {showLoader && (<Loader/>)}
     {!showLoader && (
+      <>
     <AccountOuter>
       <p className='account-heading'>Hello <strong>{user.name}</strong>, Welcome to your Account Dashboard.</p>
       <hr/>
@@ -62,6 +110,29 @@ function UserAccount() {
               <div className='details'>
                 <p><strong>Name: </strong> {user.name}</p>
                 <p><strong>email: </strong> {user.email}</p>
+                <button className="user-btns change-password-btn" onClick={handleChangePassword} >Change Password</button>
+                    {showChangePassword && (
+                      <form  onSubmit={handleCheckPrevPass}>
+                      <label ><strong>Enter Current Password:</strong></label><br/>
+                      <input
+                        className='form-control'
+                        placeholder='Current Password'
+                        type="password"
+                        name="current-password"
+                        value={currentPassword || ""}
+                        required
+                        onChange={handlecurrentPassword}
+                        // onBlur={handlePasswordError}
+                      /><br/>
+                      <button type='submit' className='previous-password-btn'>Submit</button>
+                     </form> 
+                    )}
+                    {passwordNotCorrect !=="" && (
+                      <div className='pass-error'>
+                          <p>{passwordNotCorrect}</p>
+                      </div>
+                    )}
+                                          
               </div>
           </Card>
             <Card>
@@ -75,6 +146,7 @@ function UserAccount() {
                     <p><strong>Contact: </strong> {userAddress.contact}</p>
                     <p><strong>Pincode: </strong> {userAddress.pincode}</p>
                     <p><strong>Address: </strong> {userAddress.address}</p>
+                    <button className="user-btns add-edit-btn" onClick={handleChangeAddress} >{addEditBtn}</button>
                   </div>
                 </>
               )}
@@ -82,23 +154,15 @@ function UserAccount() {
                 <div>
                   <h4 className='card-headings'>User Address</h4>
                   <h4 style={{marginTop:'1rem', fontWeight:'500'}}>No Address Saved Yet.</h4>
+                  <button className="user-btns add-edit-btn" onClick={handleAddAddress} >{addEditBtn}</button>
                 </div>
               )}
             </Card>
-            {/* {!orderHistory && (
-              <Card>
-                <h4 className='card-headings'>Order History</h4>
-                <h4 style={{padding:'20px', fontWeight:'500'}}>You have no order history.</h4>
-              </Card>
-            )} */}
       </AccountInner>
-      <br/>
-      
-      {/* {orderHistory && (
-        <OrderHistory orderHistory={orderHistory}/>
-      )} */}
     </AccountOuter>
-    )}</>
+    </>
+    )}
+    </>
   )
 }
 
@@ -153,7 +217,7 @@ const AccountInner = styled.div`
 const Card = styled.div`
     color: black;
     background: white;
-    height: auto;
+    height: fit-content;
     width: 40%;
     padding-bottom: 20px;
     border-radius:3px;
@@ -162,7 +226,47 @@ const Card = styled.div`
     margin-right:10px;
     box-shadow: 5px 4px 5px grey;
     border: 1px solid grey;
-    
+    .user-btns{
+      margin-top:10px;
+      padding:5px 10px;
+      border-radius: 3px;
+      background: blue;
+      color:white;
+      border:none;
+      opacity: 0.9;
+      cursor:pointer;
+      &:hover{
+        opacity: 1;
+      }
+    }
+    form{
+      width: 90%;
+      padding: 10px;
+    }
+    .pass-error{
+      margin: auto;
+      color: #b91111c4;
+      font-size: 14px;
+      padding: 4px 2px;
+      border: 1px solid #b91111c4;
+      border-radius: 3px;
+      text-align: center;
+      width: 70%;
+      font-weight: 500;
+    }
+    .previous-password-btn{
+        width:30%;
+        background-color: blue;
+        color:white;
+        font-weight: 600;
+        padding:5px 10px;
+        border:none;
+        border-radius:3px;
+        cursor:pointer;
+    }
+    .form-control{
+      width:70% !important;
+    }
     .details{
       text-align: left;
       margin-top: 0.8rem;
@@ -188,5 +292,6 @@ const Card = styled.div`
     }
     
 `;
+
 
 export default UserAccount
