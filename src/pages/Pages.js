@@ -30,6 +30,7 @@ import Faqs from './Faqs';
 import AddStock from './Admin_Panel/AddStock';
 import ViewEditStock from './Admin_Panel/ViewEditStock';
 import ChangePassword from './UserAccount/ChangePassword';
+import AddEditAddress from './UserAccount/AddEditAddress';
 
 function Pages() {
   return (
@@ -46,6 +47,7 @@ function Pages() {
         <Route path="/user/orders" element={<UserOrders/>} />
         <Route path="/user/wishlist" element={<UserWishlist/>} />
         <Route path="/user/change-password" element={<ChangePassword/>} />
+        <Route path="/user/user-address/:type" element={<AddEditAddress/>} />
         <Route path="/cart/:id" element={<Cart/>} />
         <Route path="/checkout/:name" element={<Checkout/>} />
         <Route path="/contact-us" element={<ContactUs/>}/>

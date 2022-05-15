@@ -149,6 +149,21 @@ export const Address_Service = {
             return err;
         }
 
+    },
+    updateAddress: async(token, AddressId,formData)=>{
+        try{
+            const response = await fetch(`${address_url}/${AddressId}`,{
+                method:'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'auth-token':token
+                },
+                body: JSON.stringify(formData)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
     }
 
 }

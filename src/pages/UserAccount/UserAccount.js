@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {useNavigate} from "react-router-dom";
 import styled from "styled-components";
-import {Address_Service, Auth_Service, Order_Service} from "../../services/Service";
+import {Address_Service, Auth_Service} from "../../services/Service";
 import Loader from "../../components/Loader";
 import {mobileMenuService} from "../../services/LocalService";
 // import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -9,16 +9,12 @@ import {mobileMenuService} from "../../services/LocalService";
 function UserAccount() {
   const [user, setUser]= useState({});
   const [userAddress, setUserAddress] = useState({});
-  const [addEditBtn, setAddEditBtn] = useState("");
   const [showLoader, setShowLoader] = useState(false);
   const [currentPassword,setcurrentPassword] = useState('');
-  const [showChangeAddress, setShowChangeAddress] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [passwordCorrect, setPasswordCorrect] = useState();
   const [passwordNotCorrect, setPasswordNotCorrect] = useState("");
   let navigate = useNavigate();
  
-
     useEffect(()=>{
         setShowLoader(true);
         mobileMenuService.setMobileMenuIndicies(null);
@@ -36,12 +32,10 @@ function UserAccount() {
         setShowLoader(false);
         const returnedAddress = await response.json();
         setUserAddress(returnedAddress);
-        setAddEditBtn("Change Address");
         // console.log(returnedAddress);
       }else if (response.status === 204){
         setShowLoader(false);
         setUserAddress(null);
-        setAddEditBtn("Add Address");
       }else if (response.status === 400){
         console.log("Bad Request");
       }
@@ -62,9 +56,7 @@ function UserAccount() {
     const handleChangePassword = ()=>{
       setShowChangePassword(!showChangePassword);
     }
-    const handleChangeAddress = ()=>{
-      setShowChangeAddress(true);
-    }
+    
     const handlecurrentPassword = (e)=>{
       setPasswordNotCorrect("");
       setcurrentPassword(e.target.value);
@@ -81,7 +73,7 @@ function UserAccount() {
      if(response.status === 200){
       const successReply = await response.json(); 
       console.log(successReply.message);
-      setPasswordCorrect(true);
+      // setPasswordCorrect(true);
       navigate("/user/change-password");
      }else if(response.status === 401) {
       const failureReply = await response.json(); 
@@ -94,8 +86,14 @@ function UserAccount() {
 
    }
    const handleAddAddress = ()=>{
-     
+    // setShowAddAddress(true);
+    let type = "add";
+    navigate("/user/user-address/"+type);
    }
+   const handleChangeAddress = ()=>{
+    let type = "edit";
+    navigate("/user/user-address/"+type);
+  }
   return (
     <> 
     {showLoader && (<Loader/>)}
@@ -146,7 +144,7 @@ function UserAccount() {
                     <p><strong>Contact: </strong> {userAddress.contact}</p>
                     <p><strong>Pincode: </strong> {userAddress.pincode}</p>
                     <p><strong>Address: </strong> {userAddress.address}</p>
-                    <button className="user-btns add-edit-btn" onClick={handleChangeAddress} >{addEditBtn}</button>
+                    <button className="user-btns add-edit-btn" onClick={handleChangeAddress}>Change Address</button>
                   </div>
                 </>
               )}
@@ -154,7 +152,7 @@ function UserAccount() {
                 <div>
                   <h4 className='card-headings'>User Address</h4>
                   <h4 style={{marginTop:'1rem', fontWeight:'500'}}>No Address Saved Yet.</h4>
-                  <button className="user-btns add-edit-btn" onClick={handleAddAddress} >{addEditBtn}</button>
+                  <button className="user-btns add-edit-btn" onClick={handleAddAddress} >Add Address</button>
                 </div>
               )}
             </Card>

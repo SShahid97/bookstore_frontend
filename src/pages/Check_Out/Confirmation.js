@@ -69,7 +69,7 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
             country: info.country,
             state: info.state,
             city:info.city,
-            pincode:info.postalCode,
+            pincode:info.pincode,
             address: info.address
         }
         // console.log(address);

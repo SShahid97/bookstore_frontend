@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash,FaArrowLeft } from "react-icons/fa";
 import styled from "styled-components";
 import {logOutService, mobileMenuService} from "../../services/LocalService";
 import { Auth_Service } from '../../services/Service';
@@ -87,7 +87,7 @@ function ChangePassword() {
             setMessageSuccess(updatedPassword.message);
             setTimeout(()=>{
                 setMessageSuccess("");
-            },4000)
+            },5000)
             setConfirmNewPassword("");
             setNewPassword(""); 
             setResponseNotReturned(false);
@@ -99,11 +99,11 @@ function ChangePassword() {
             setConfirmNewPassword("");
             setNewPassword("");  
             setErrorMsg("passward not updated");
-        }  
-            
-            
+        }     
     }
-  
+    const handleBack = ()=>{
+      navigate(-1);
+    } 
     const eyeStyle = {
       position:'absolute', 
       marginLeft:'-30px', 
@@ -111,14 +111,19 @@ function ChangePassword() {
       fontSize:'1.1rem',
       color:'#686464'
     }
+
   return (
     <ChangePasswordOuter>
+    <span className='back-arrow-span' title="back" onClick={handleBack}>
+            <FaArrowLeft className='back-arrow'/>
+    </span>
+    <ChangePasswordInner>
          {messageSuccess !== "" && (
             <PopUp messageSuccess={messageSuccess}/> 
         )}
         {showLoader && (< Loader/>)} 
         <h4>Change Password</h4>
-        <p className='logout-msg'>*Once you change your password you will be logged out, you will need to login with the new password!</p>
+        <p className='logout-msg'>*Next time you will need to login with the new password!</p>
           <form className={responseNotReturned?"stockformDim":""}  onSubmit={onPasswordChange}>
             {errorMsg !=="" && (
              <p className='error-msg'>
@@ -174,10 +179,21 @@ function ChangePassword() {
               </div>
           </form>  
           {/* 627be03216b7c7109836bee9 */}
+      </ChangePasswordInner>
       </ChangePasswordOuter>
   )
 }
 const ChangePasswordOuter = styled.div`
+  .back-arrow-span{
+    margin-left: 170px;
+    position: relative;
+    @media (max-width:650px){
+      display:none;
+    }
+  }
+`;
+
+const ChangePasswordInner = styled.div`
     width: 40%;
     height: auto;
     margin: 0 auto;
@@ -240,6 +256,9 @@ const ChangePasswordOuter = styled.div`
         padding: 5px 2px;
         border: 1px solid #b91111c4;
         border-radius: 3px;
+        @media (max-width:650px){
+          width: 100%;
+        }
     }
     .UpdateBtn{
         width:50%;
@@ -250,6 +269,10 @@ const ChangePasswordOuter = styled.div`
         border:none;
         border-radius:3px;
         cursor:pointer;
+        @media (max-width:650px){
+          width: 65%;
+          margin-top: 5px;
+        }
     }
     .disableUpdateBtn{
       opacity: 0.7;
@@ -258,6 +281,11 @@ const ChangePasswordOuter = styled.div`
       background-color: blue;
       color:white;
       font-weight: 600;
+      border-radius:3px;
+      @media (max-width:650px){
+          width: 65%;
+          margin-top: 5px;
+        }
     }
     .lds-spinner{
         transform: translate(220px,140px);

@@ -77,7 +77,7 @@ function Billing() {
             country:country,
             state:state,
             city:city,
-            postalCode:postalCode,
+            pincode:postalCode,
             address:address
         }
         localStorage.setItem("customerInfo", JSON.stringify(formObject));
