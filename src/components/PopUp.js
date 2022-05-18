@@ -19,9 +19,9 @@ padding:15px;
 color:yellow;
 z-index:1500;
 transform: translate(505px, -33px);
-animation: fadeOut ease 4s;
--webkit-animation: fadeOut ease 4s;
--moz-animation: fadeOut ease 4s;
+animation: fadeOut ease 6s;
+-webkit-animation: fadeOut ease 6s;
+-moz-animation: fadeOut ease 6s;
 
 @keyframes fadeOut {
     0% {
@@ -31,7 +31,7 @@ animation: fadeOut ease 4s;
         opacity:0.5;
     }
     100% {
-        opacity:0;
+        opacity:0.5;
     }
 }
 
@@ -43,7 +43,7 @@ animation: fadeOut ease 4s;
         opacity:0.5;
     }
     100% {
-        opacity:0;
+        opacity:0.5;
     }
 }
 
@@ -55,7 +55,7 @@ animation: fadeOut ease 4s;
         opacity:0.5;
     }
     100% {
-        opacity:0;
+        opacity:0.5;
     }
 }
 @media (max-width:650px){

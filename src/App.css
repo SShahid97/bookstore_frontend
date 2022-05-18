@@ -113,7 +113,7 @@
   padding: 5px 8px;
   cursor: pointer;
   margin-left: 6px;
-  position: fixed;
+  position: relative;
 }
 .back-arrow-span:hover{
   background: #8f8f8f;
@@ -125,6 +125,35 @@
 .back-arrow{
   padding-top: 2px;
   transform: scale(1.1);
+}
+
+@media print {
+  .main-navbar{
+    display: none;
+  }
+  .main-footer{
+    display:none;
+  }
+  .invoice-bill{
+    width: 90%; 
+    max-width: 1048px; 
+  }
+  @page {
+    margin-top: 0;
+    margin-bottom: 0;
+  } 
+  body {
+    padding-top: 72px;
+    padding-bottom: 72px ;
+  }
+  /* for avoiding the 2nd page the below code worked for me */
+  html, body {
+    height:100vh; 
+    margin: 0 !important; 
+    padding: 0 !important;
+    overflow: hidden;    
+  }
+
 }
 
 /* responsive css style  */

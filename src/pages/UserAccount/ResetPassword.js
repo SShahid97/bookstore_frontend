@@ -1,36 +1,34 @@
 import React, {useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaEye, FaEyeSlash,FaArrowLeft } from "react-icons/fa";
+import { useNavigate,useParams,Link } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styled from "styled-components";
-import {mobileMenuService} from "../../services/LocalService";
+// import { mobileMenuService} from "../../services/LocalService";
 import { Auth_Service } from '../../services/Service';
 import Loader from "../../components/Loader";
 import PopUp from "../../components/PopUp";
 
-function ChangePassword() {
-    const [user, setUser]= useState({});
+function ResetPassword() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword,setConfirmNewPassword ] = useState('');
     const [isMatched, setIsMatched] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const [passwordError, setPasswordError]= useState("");
     const [isInvalid, setIsInvalid] = useState(false);
-    const [messageSuccess, setMessageSuccess] = useState("");
+    const [registeredSuccess, setRegisteredSuccess] = useState(false);
     const [errorMsg, setErrorMsg]= useState("");
-    const [showLoader, setShowLoader] = useState(false);
     const [responseNotReturned, setResponseNotReturned] = useState(false);
-    let navigate = useNavigate();
+    const [showLoader, setShowLoader] = useState(false);
+    const [messageSuccess, setMessageSuccess] = useState("");
+    let params = useParams();
     useEffect(()=>{
-        mobileMenuService.setMobileMenuIndicies(null);
-        let curr_user = JSON.parse(localStorage.getItem('user'));
-        if(curr_user){
-            setUser(curr_user);
-        }else{
-            navigate("/login");
-        }
+      console.log(params.id);
+      setMessageSuccess("Email verification successful!");
+      setTimeout(()=>{
+        setMessageSuccess("");
+      },6000)
+
     },[])
-    
-      const handleConfirmNewPassword=(e)=>{
+    const handleConfirmNewPassword=(e)=>{
         setConfirmNewPassword(e.target.value);
         setIsMatched(true);
         setIsInvalid(false);
@@ -74,57 +72,66 @@ function ChangePassword() {
                 confirm_Password.type='password';
            }
       }
-    const onPasswordChange = async(e)=>{
+
+      const onPasswordReset = async(e)=>{
         e.preventDefault();
         setResponseNotReturned(true);
         setShowLoader(true);
-        let passObj= {
-            password:newPassword
+        let passwordObj = {
+          password:newPassword
         }
-        const response = await Auth_Service.changePassword(user._id, passObj);
+        console.log("New password: ",newPassword);
+        console.log("Id: ", params.id);
+        const response = await Auth_Service.changePassword(params.id, passwordObj);
+        console.log(response);
         if(response.status === 200){
             const updatedPassword = await response.json();
-            setMessageSuccess(updatedPassword.message);
-            setTimeout(()=>{
-                setMessageSuccess("");
-            },5000)
+            console.log(updatedPassword);
+            setRegisteredSuccess(true);
             setConfirmNewPassword("");
             setNewPassword(""); 
             setResponseNotReturned(false);
             setShowLoader(false);
    
         }else{ 
+          console.log("error!");
+            setRegisteredSuccess(false);
             setResponseNotReturned(false);
             setShowLoader(false); 
             setConfirmNewPassword("");
             setNewPassword("");  
-            setErrorMsg("passward not updated");
+            setErrorMsg("password reset unsuccessful");
         }     
-    }
-    const handleBack = ()=>{
-      navigate(-1);
-    } 
-    const eyeStyle = {
-      position:'absolute', 
-      marginLeft:'-30px', 
-      marginTop:'10px', 
-      fontSize:'1.1rem',
-      color:'#686464'
-    }
-
+      }
+      const eyeStyle = {
+        position:'absolute', 
+        marginLeft:'-30px', 
+        marginTop:'10px', 
+        fontSize:'1.1rem',
+        color:'#686464'
+      }
   return (
-    <ChangePasswordOuter>
-    <span className='back-arrow-span' title="back" onClick={handleBack}>
-            <FaArrowLeft className='back-arrow'/>
-    </span>
-    <ChangePasswordInner>
-         {messageSuccess !== "" && (
+    <ResetPasswordOuter>
+      {messageSuccess !== "" && (
             <PopUp messageSuccess={messageSuccess}/> 
-        )}
-        {showLoader && (< Loader/>)} 
-        <h4>Change Password</h4>
-        <p className='logout-msg'>*Next time you will need to login with the new password!</p>
-          <form className={responseNotReturned?"stockformDim":""}  onSubmit={onPasswordChange}>
+         )}
+       {registeredSuccess && (
+                <div className='password-reset-success'>
+                    <p>Password Reset Successful! 
+                        <Link className='login-link' to={"/login"}>
+                            Click here to login
+                        </Link>
+                    </p>
+                </div>
+            )}
+    <ResetPasswordInner>
+         {/* {messageSuccess !== "" && (
+            <PopUp messageSuccess={messageSuccess}/> 
+        )} */}
+       
+            {showLoader && (< Loader/>)} 
+        <h4>Reset Password</h4>
+          <form className={responseNotReturned?"stockformDim":""}  onSubmit={onPasswordReset}>
             {errorMsg !=="" && (
              <p className='error-msg'>
                 {errorMsg} 
@@ -175,15 +182,22 @@ function ChangePassword() {
                    
                 )}
               <div className='update-details-div'>
-                <button type='submit' className={isInvalid?"disableUpdateBtn":"UpdateBtn"}  disabled={isInvalid}>Change Password</button>
+                <button type='submit' className={isInvalid?"disableUpdateBtn":"UpdateBtn"}  disabled={isInvalid}>Reset Password</button>
               </div>
           </form>  
           {/* 627be03216b7c7109836bee9 */}
-      </ChangePasswordInner>
-      </ChangePasswordOuter>
+      </ResetPasswordInner>
+      </ResetPasswordOuter>
   )
 }
-const ChangePasswordOuter = styled.div`
+
+const ResetPasswordOuter = styled.div`
+  width:100%;
+  height:100%;
+  padding-top: 3rem;
+  @media (max-width:650px){
+    padding-top:1rem;
+  }
   .back-arrow-span{
     margin-left: 170px;
     position: relative;
@@ -191,9 +205,30 @@ const ChangePasswordOuter = styled.div`
       display:none;
     }
   }
+  .password-reset-success{
+  width: 40%;
+  text-align: center;
+  margin: auto;
+  color: rgb(8, 112, 8);
+  margin-bottom: 8px;
+  font-size: 16px;
+  padding: 5px 2px;
+  border: 1px solid green;
+  border-radius: 3px;
+  box-shadow: inset 0 0 20px rgba(4, 117, 4, 0.322);
+  @media (max-width:650px){
+      width: 100%;
+  }
+  .login-link{
+    padding-left:10px;
+    color:blue;
+    font-size: small;
+    text-decoration: underline;
+  }
+}
 `;
 
-const ChangePasswordInner = styled.div`
+const ResetPasswordInner = styled.div`
     width: 40%;
     height: auto;
     margin: 0 auto;
@@ -310,4 +345,4 @@ const ChangePasswordInner = styled.div`
     }
 `;
 
-export default ChangePassword
+export default ResetPassword

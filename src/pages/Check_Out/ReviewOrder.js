@@ -17,7 +17,7 @@ function ReviewOrder() {
         let customerInfo = JSON.parse(localStorage.getItem("customerInfo"));
         if (customerInfo)
             setCusInfo(customerInfo);
-        console.log(customerInfo);
+        // console.log(customerInfo);
     }, []);
 
     const getCartItems = async()=>{
@@ -25,7 +25,7 @@ function ReviewOrder() {
         const response = await Cart_Service.getCartItems(user._id, user.token);
         if(response.status === 200){
             const cartResponse = await response.json();
-            console.log(cartResponse);
+            // console.log(cartResponse);
             setCartItems(cartResponse);
             let tAmount=0;
             cartResponse.forEach((item)=>{
@@ -53,7 +53,7 @@ function ReviewOrder() {
                 <h3 style={{ marginBottom: '5px' }}>Order Information</h3>
                 <div className='order-info'>
                     <div className='cart-items-heading'>
-                        <div className='width-15 image-heading'>
+                        <div className='width-25 image-heading'>
                             Book
                         </div>
                         <div className='width-30 name-heading'>
@@ -299,11 +299,12 @@ const ReviewOrderInner = styled.div`
     }
     .final-total{
         display: flex;
-        align-items: flex-end;
-        @media (max-width:650px){
+        margin: 0 auto;
+        flex-direction: column;
+        /* @media (max-width:650px){
             flex-direction: column;
             align-items: center;
-        }
+        } */
     }
     .discount-badge{
         position: absolute;

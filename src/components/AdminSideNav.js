@@ -6,7 +6,8 @@ import {
   FaFileImport,
   FaSearchDollar,
   FaRegEye,
-  FaChalkboardTeacher
+  FaChalkboardTeacher,
+  FaChartLine
   } from "react-icons/fa";
 import {MdLibraryAdd} from "react-icons/md"
 
@@ -41,13 +42,16 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
         <SLink to={'manage-users/view-all-users'}  >
         <span className='icons'> < FaUserFriends/> </span><h4>View All Users</h4>
         </SLink>
-        <SLink to={'manage-users/search-order'} >
-        <span className='icons'> < FaSearchDollar/> </span><h4>Search Order</h4>
+        <SLink to={'manage-users/search-order'} style={{padding: '2px'}}>
+        <span className='icons'> < FaSearchDollar/> </span><h4>Search Order / Genearte Invoice</h4>
         </SLink>
 
         <h4 className='headings'>Manage Stock</h4>
         <SLink to={'manage-books/add-stock'}  >
         <span className='icons'> < MdLibraryAdd/> </span> <h4>Add Stock Details</h4>
+        </SLink>
+        <SLink to={"manage-books/statistics"} className='dropdown-item'>         
+          <span className='icons'> <FaChartLine /></span><h4>Statistics and Data Visualization</h4>
         </SLink>
         {/* <SLink to={'manage-books/view-all-items/view-edit-stock/:code'} >
         <span className='icons'> < FaEdit/> </span><h4>Edit Stock Details</h4>

@@ -150,7 +150,7 @@ export const Mathematics = {
                 {name:"Algebra", link:"/books/js_book"},
                 {name:"Graph Theory", link:"/books/html_book"},
                 {name:"Group Theory", link:"/books/css_book"}, 
-                {name:"Discrete Mathematics", link:"/books/mysql_book"},
+                {name:"Discrete Mathematics", link:"/books/discrete_maths_book"},
                 {name:"Number Thoery", link:"/books/php_book"}, 
                 {name:"Calculus", link:"/books/php_book"}, 
                 {name:"Probability & Statics", link:"/books/php_book"} 

@@ -3,8 +3,9 @@ import {useNavigate} from "react-router-dom";
 import styled from "styled-components";
 import {Address_Service, Auth_Service} from "../../services/Service";
 import Loader from "../../components/Loader";
+import PopUp from '../../components/PopUp';
 import {mobileMenuService} from "../../services/LocalService";
-// import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEdit, FaAngleDown, FaAngleUp  } from "react-icons/fa";
 
 function UserAccount() {
   const [user, setUser]= useState({});
@@ -12,7 +13,13 @@ function UserAccount() {
   const [showLoader, setShowLoader] = useState(false);
   const [currentPassword,setcurrentPassword] = useState('');
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [editName, setEditName] = useState(false);
   const [passwordNotCorrect, setPasswordNotCorrect] = useState("");
+  const [userName, setUserName] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [isInvalid, setIsInvalid] = useState(false);
+  const [responseNotReturned, setResponseNotReturned] = useState(false);
+  const [messageSuccess, setMessageSuccess] = useState("");
   let navigate = useNavigate();
  
     useEffect(()=>{
@@ -22,6 +29,7 @@ function UserAccount() {
         let curr_user = JSON.parse(localStorage.getItem('user'));
         if(curr_user){
           setUser(curr_user);
+          setUserName(curr_user.name);
           getUserAddress(curr_user.token, curr_user._id);
         }
     },[]);
@@ -85,6 +93,29 @@ function UserAccount() {
      }
 
    }
+   const handleEditName = ()=>{
+     setEditName(!editName);
+   }
+   const handleUserName = (e)=>{
+     const value = e.target.value;
+     const re = /^[ A-Za-z ]+$/;   //only alphabets are allowed
+     if (value === "" || re.test(value)){
+       setUserName(value);     
+       setNameError("");
+     }
+     
+   } 
+   const handleNameError = (e)=>{
+      const value= e.target.value;
+      // console.log(value.length);
+      if(value.length < 3){
+          setIsInvalid(true);
+          setNameError("Name must be at least 3 characters");
+      }else{
+          setIsInvalid(false);
+          setNameError("");
+      }
+    }
    const handleAddAddress = ()=>{
     // setShowAddAddress(true);
     let type = "add";
@@ -94,8 +125,38 @@ function UserAccount() {
     let type = "edit";
     navigate("/user/user-address/"+type);
   }
+  const onNameChange = async(e)=>{
+    e.preventDefault();
+    console.log(userName);
+    let userObj = {
+      name:userName
+    }
+    const response = await Auth_Service.updateUserName(user.token, user._id,userObj);
+    if(response.status === 200){
+      const updatedName = await response.json();
+      console.log(updatedName);
+      setMessageSuccess(updatedName.message);
+      setTimeout(()=>{
+        setMessageSuccess("");
+      },5000)
+      setResponseNotReturned(false);
+      setEditName(false);
+      let updatedUser = {...user};
+      updatedUser.name = userName;
+      setUser(updatedUser);
+      console.log(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }else{
+      setResponseNotReturned(false);
+      console.log("Name not changed");
+    }
+
+  }
   return (
     <> 
+     {messageSuccess !== "" && (
+        <PopUp messageSuccess={messageSuccess}/> 
+     )}
     {showLoader && (<Loader/>)}
     {!showLoader && (
       <>
@@ -104,13 +165,37 @@ function UserAccount() {
       <hr/>
       <AccountInner>
           <Card>
-              <h4 className='card-headings'>User Info</h4>
+              <h4 className='card-headings'>Your Account Info</h4>
               <div className='details'>
-                <p><strong>Name: </strong> {user.name}</p>
+                <p><strong>Name: </strong> {user.name} <FaEdit onClick={handleEditName}/></p>
+                 {editName && (
+                    <form className={responseNotReturned?"stockformDim":""}  onSubmit={onNameChange}>
+                         <input
+                          className="form-control"
+                          type="text"
+                          name="name"
+                          min={3}
+                          value={userName || ""}
+                          required
+                          onChange={handleUserName}
+                          onBlur={handleNameError}
+                          /><br/>
+                          {nameError !=="" && (
+                            <div className='name-error'>
+                              <p>{nameError}!</p>
+                            </div>  
+                          )}
+                          <button type="submit" disabled={isInvalid} className={isInvalid?"update-name-btn disableNameBtn":"update-name-btn"}>Update</button>
+                    </form>
+                 )}
                 <p><strong>email: </strong> {user.email}</p>
-                <button className="user-btns change-password-btn" onClick={handleChangePassword} >Change Password</button>
+                <button className="user-btns change-password-btn" onClick={handleChangePassword}>
+                  Change Password
+                 {!showChangePassword && (<FaAngleDown/>)} 
+                 {showChangePassword && (<FaAngleUp/>)}
+                </button>
                     {showChangePassword && (
-                      <form  onSubmit={handleCheckPrevPass}>
+                      <form onSubmit={handleCheckPrevPass}>
                       <label ><strong>Enter Current Password:</strong></label><br/>
                       <input
                         className='form-control'
@@ -136,7 +221,7 @@ function UserAccount() {
             <Card>
               {userAddress && (
                 <>
-                  <h4 className='card-headings'>User Address</h4>
+                  <h4 className='card-headings'>Your Address</h4>
                   <div className='details'>
                     <p><strong>Country: </strong> {userAddress.country}</p>
                     <p><strong>State: </strong> {userAddress.state}</p>
@@ -150,7 +235,7 @@ function UserAccount() {
               )}
               {!userAddress && (
                 <div>
-                  <h4 className='card-headings'>User Address</h4>
+                  <h4 className='card-headings'>Your Address</h4>
                   <h4 style={{marginTop:'1rem', fontWeight:'500'}}>No Address Saved Yet.</h4>
                   <button className="user-btns add-edit-btn" onClick={handleAddAddress} >Add Address</button>
                 </div>
@@ -200,6 +285,19 @@ const AccountInner = styled.div`
     width:95%;
     margin:0 auto;
     margin-top:1rem;
+    svg{
+      margin-left: 15px;
+      color: white;
+      cursor: pointer;
+      padding: 1px 3px;
+      transform: scale(1.7);
+      background: blue;
+      border-radius: 50%;
+      &:active{
+        background:#3434ed;
+      }
+    }
+
     @media (max-width:1080px){
         justify-content: flex-start;
     }
@@ -240,17 +338,46 @@ const Card = styled.div`
     form{
       width: 90%;
       padding: 10px;
+      border: 1px solid #b5b3b3;
+      border-radius: 3px;
+      margin-top: 5px;
+      box-shadow: 2px 2px 2px grey;
     }
     .pass-error{
       margin: auto;
       color: #b91111c4;
       font-size: 14px;
-      padding: 4px 2px;
       border: 1px solid #b91111c4;
       border-radius: 3px;
       text-align: center;
       width: 70%;
       font-weight: 500;
+    }
+    .name-error{
+        margin:auto;
+        color:#b91111c4;
+        width: 100%;
+        margin-bottom: 8px;
+        font-size: 14px;
+        border: 1px solid #b91111c4;
+        border-radius: 3px;
+        @media (max-width:650px){
+            width: 100%;
+        }
+    }
+    .update-name-btn {
+      width: 30%;
+      background-color: blue;
+      color: white;
+      font-weight: 600;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .disableNameBtn{
+      opacity: 0.7;
+      cursor:none;
     }
     .previous-password-btn{
         width:30%;
@@ -269,6 +396,9 @@ const Card = styled.div`
       text-align: left;
       margin-top: 0.8rem;
       padding-left: 10px;
+    }
+    .details p{
+      padding:5px;
     }
     .card-headings{
       /* border-bottom: 2px solid black; */

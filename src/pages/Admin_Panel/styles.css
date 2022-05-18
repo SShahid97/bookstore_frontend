@@ -100,9 +100,9 @@
     font-size: xxx-large;
 }
 
-  tr:nth-child(even) td {
+  /* tr:nth-child(even) td {
     background-color: cyan;
-  }
+  } */
 
 
   .back-arrow-span{

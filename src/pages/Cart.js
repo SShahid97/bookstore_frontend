@@ -248,6 +248,7 @@ function Cart() {
                                     </div>
                                     <div className='width-15 book_price'>
                                       <span className='price-sub'>Price:</span> &#8377;{item.price-item.price*item.book.discount}
+                                     {item.book.discount > 0 && <span className='old-price'> &#8377;{item.price}</span>}
                                     </div>
                                     <div className='width-15 book_amount'>
                                      <span className='price-sub'>Subtotal:</span> &#8377;{item.quantity*(item.price-item.price*item.book.discount)}
@@ -373,6 +374,15 @@ const CartCard = styled.div`
     .width-25{
         width:25%;
     }
+    .old-price{
+        text-decoration: line-through;
+        opacity: 0.8;
+        color: #b10505;
+        font-size: 0.9rem;
+        @media (max-width:650px){
+            font-size: 0.8rem;
+        }
+    }
     .amt-total{
         font-size: 1.1rem;
         margin-top: 5px;
@@ -473,6 +483,7 @@ const CartCard = styled.div`
         margin-top: 10px;
         @media (max-width:650px){
             width:100%;
+            margin-top:0px;
         }
     }
     .price-sub{

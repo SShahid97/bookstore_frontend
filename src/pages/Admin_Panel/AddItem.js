@@ -1,7 +1,9 @@
 import React, {useState,useEffect} from 'react';
 import styled from "styled-components";
-import { Item_Service } from '../../services/Service';
-import {FaUpload} from "react-icons/fa";
+import { Item_Service, Upload_Service } from '../../services/Service';
+// import {FaUpload} from "react-icons/fa";
+import PopUp from '../../components/PopUp';
+import PopupFailure from "../../components/PopupFailure";
 import "./styles.css";
 // import {Service} from "../../services/Service";
 
@@ -16,8 +18,13 @@ function AddItem() {
     const [previewImageURL, setPreviewImageURL] = useState(null);
     const [imageChoosen, setImageChoosen] = useState(false);
     const [imageNotUploaded, setImageNotUploaded] = useState(true);
+    const [messageSuccess, setMessageSuccess] = useState("");
+    const [messageFailure, setMessageFailure] = useState("");
+    const [invalidInput, setInvalidInput] = useState(false);
+    const [duplicateEntryError, setDuplicateEntryError] = useState("");
     useEffect(()=>{
         let curr_user = JSON.parse(localStorage.getItem('user'));
+        localStorage.removeItem("OrderId")
         if(curr_user){
             if (curr_user && curr_user.role === "admin") {
                 // setAdmin(curr_user);
@@ -45,6 +52,7 @@ function AddItem() {
 
 
     const handleformInput = (event) => {
+        setDuplicateEntryError("");
         const name = event.target.name;
         const value = event.target.value;
         setformInput(values => ({ ...values, [name]: name === "price" ? Number(value) : value }))
@@ -60,20 +68,29 @@ function AddItem() {
         const response = await Item_Service.addBookItem(Admin.token, formInput);
          if(response.status === 201){
             const data = await response.json();
-            alert("Item Added Successfully");
+            sumbitImageUpload();
+            setMessageSuccess("Item Added Successfully");
+            setTimeout(()=>{
+                setMessageSuccess("");
+            },5000)
             // after form submission reset all values
             setformInput({});
             setPreviewImageURL(null);
             setImagePrevFile(null);
             setDiscount(0);
             console.log(data);
-        }else if(response.status === 422){
+            setDuplicateEntryError("");
+        }else if(response.status === 422){  //if duplicate unique field entered
             const error = await response.json();
-            alert(error.message);
+            setDuplicateEntryError(error.message);
+            // alert(error.message);
+            return;
         }else if(response.status === 400){
             const error = await response.json();
             console.log(error.message);
+            return;
         }
+        
     }
     const handleDiscount = (e)=>{
         console.log(Number(e.target.value));
@@ -82,48 +99,56 @@ function AddItem() {
 
     const handleImageUpload = (e)=>{
         const file = e.target.files[0];
-        setImageChoosen(true);
         setImageFile(file);
         setImagePrevFile(file);
-        // const ext = file.type.split("/")[1];
-        // file.name = `image-${Date.now()}.${ext}`;
-        // console.log(file.name, ext);
+        setImageChoosen(true);
+        console.log(file);
     }
 
-    const sumbitImageUpload = async (e)=>{
-        e.preventDefault();
+    const sumbitImageUpload = async ()=>{
+        // e.preventDefault();
         const formData = new FormData();
         formData.append('photo', imageFile);
-  
-        const response = await fetch("http://localhost:5001/api/upload", {
-            method: 'POST',
-            headers:{
-                'auth-token': Admin.token  
-            },
-            body:formData
-        });
+        const response = await Upload_Service.uploadImage(Admin.token,formData);
         if (response.status === 200){
-            const data = response.json();
+            const data = await response.json();
             console.log(data);
+            console.log("Image Uploaded");
             setImageNotUploaded(false);
             // alert("Image Uploaded Successfully");
         }else{
-            alert("Image not uploaded");
+            setImageNotUploaded(true);
+            setMessageFailure("Image not uploaded, try again later.");
+            setTimeout(()=>{
+                setMessageFailure("");
+            },5000);
+            return false;
         }
     }
-    // const handleChooseImage = ()=>{
-    //     const clikcc = 
-    // }
-    
+    const handleKeys = (e) => {
+        if (e.which === 32) {
+          // console.log('Space Detected');
+          setInvalidInput(true);
+          return false;
+        } else {
+          setInvalidInput(false);
+        }
+    }
   return (
     <AddItemFormDiv >
+        {messageFailure !== "" && (
+            <PopupFailure messageFailure={messageFailure}/> 
+         )}
+        {messageSuccess !== "" && (
+            <PopUp messageSuccess={messageSuccess}/> 
+        )}
         <div className='image-upload-form'>
-            <form onSubmit={sumbitImageUpload}>
+            {/* <form onSubmit={sumbitImageUpload}> */}
                 <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>Choose Image</button>
-                <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
-                    <FaUpload/>
-                </button>
                 <input type="file" id="getFile" accept='image/*' style={{display:'none'}} name="photo" onChange={handleImageUpload}/>
+                {/* <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
+                    <FaUpload/>
+                </button> */}
                 <div className='image-preview'>
                         {previewImageURL ? 
                             <img className='previewImg' src={previewImageURL}  alt="Preview"/>:
@@ -132,18 +157,29 @@ function AddItem() {
                              </div>)
                         }  
                 </div>
-            </form>
+            {/* </form> */}
         </div>
         <div className='details-form'>
             <form className="addItemform" onSubmit={addBookItem}>
+                {duplicateEntryError !== "" && (
+                    <div className='error-msg'>
+                    <p>{duplicateEntryError}</p>
+                    </div>
+                )}
                 <input
                     placeholder="Book Code"
                     type="text"
                     name="book_code"
                     value={formInput.book_code || ""}
                     required
+                    onKeyDown={handleKeys}
                     onChange={handleformInput}
                 />
+                {invalidInput && (
+                    <div className='error-msg'>
+                    <p>White Spaces are not allowed</p>
+                    </div>
+                )}
 
                 <input
                     placeholder="Book Name"
@@ -193,7 +229,7 @@ function AddItem() {
                                 <option value="" disabled={true} >Select discount</option>
                                 {[...Array(101)].map((dis,index)=>{
                                     
-                                    return <option key={index} value={index/100}>{index}%</option>
+                                    return <option key={index} value={ index/100}>{index}%</option>
                                 })}
                             </select><br/>
                         </div>
@@ -215,7 +251,7 @@ function AddItem() {
                     required
                     onChange={handleformInput}
                 />
-                <input className={imageNotUploaded?"disable-btn":"addItemBtn"} disabled={imageNotUploaded}  type="submit" value="Add Item" /><br/>                
+                <input className={(!imageChoosen || invalidInput )?"disable-btn":"addItemBtn"} disabled={!imageChoosen || invalidInput}  type="submit" value="Add Item" /><br/>                
             </form>
         </div>
     </AddItemFormDiv>
@@ -235,7 +271,16 @@ const AddItemFormDiv = styled.div`
         cursor: auto;
         color:white;
     }
-   
+    .error-msg{
+        color:#ed1111f2;
+        width: 85%;
+        margin-bottom: 8px;
+        font-size: 15px;
+        padding: 5px 5px;
+        border: 1px solid #ed1111f2;
+        border-radius: 3px; 
+        text-align: center;
+    }
     .image-upload-form{
         width: 40%;
         text-align: -webkit-center;
@@ -275,7 +320,7 @@ const AddItemFormDiv = styled.div`
     }
     .choose-image-btn{
         display:inline-block;
-        width:60%;
+        width:75%;
         background-color: #3caf4d;
         color:white;
         font-size: 15px;

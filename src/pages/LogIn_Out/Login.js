@@ -163,7 +163,7 @@ function Login() {
         )}
         
         <input className="loginBtn" type="submit" value="Login" /><br/>
-        <span className="forgot"><Link to={"#"}>forgot password?</Link></span><br/><br/>
+        <span className="forgot"><Link to={"/user/verify-email"}>forgot password?</Link></span><br/><br/>
         <div className="notReg">
             <p className="notregtext">Don't have an account?</p> 
             <Link className="login" to={"/register"}>Create One</Link>

@@ -32,7 +32,7 @@ function Home() {
 
     return (
     <div className={user?"userOnHome":"userNotOnHome"}>
-      { (
+      {!isAdmin && (
          <>
           {user && (<UserDetails user={user}/>) }
           <Courosal/>      

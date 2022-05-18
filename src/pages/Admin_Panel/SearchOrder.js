@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { FaSearch, FaTimes } from 'react-icons/fa';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Order_Service } from '../../services/Service';
 import Loader from "../../components/Loader";
 
@@ -18,16 +18,25 @@ function SearchOrder() {
   const [deliveryStatus, setDeliveryStatus] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [editOrderDetails, setEditOrderDetails] = useState(false);
-  // useEffect(() => {
-
-  // }, [])
+  let navigate = useNavigate();
   let curr_user = JSON.parse(localStorage.getItem('user'));
+  useEffect(() => {
+    let order_id = JSON.parse(localStorage.getItem("OrderId"));
+    if(order_id){
+      getOrder(curr_user,order_id);
+    }
+    // return ( ()=>{ localStorage.removeItem("OrderId")} )
+  }, []);
+  
+
   const submitHandler = async (e) => {
     e.preventDefault();
     setShowLoader(true);
     // console.log(orderId.length);
     let value = orderId;
     value = value.trim();
+    // storing in localstorage for remeberance
+    localStorage.setItem("OrderId",JSON.stringify(value));
     if (value.includes(" ")) {
       // console.log("space found");
       setInvalidInput(true);
@@ -54,13 +63,6 @@ function SearchOrder() {
       else if (response.status === 200) {
         const returnedOrder = await response.json();
         console.log(returnedOrder);
-        returnedOrder.forEach((item)=>{
-          const dateFormat = new Date(item.date);
-          const dateOnly = dateFormat.toDateString();  //e,g Wed May 11 2022
-          const timeOnly = dateFormat.toLocaleTimeString();  // e,g 3:30:03 PM
-          item.date = dateOnly;
-          item.time = timeOnly;
-        });
         setOrderPlaced(returnedOrder);
         setShowLoader(false);
         setNotFoundMsg(false);
@@ -125,9 +127,14 @@ function SearchOrder() {
    
   }
   const handleEditOrder = ()=>{
-    setEditOrderDetails(true);
+    setEditOrderDetails(!editOrderDetails);
     setDeliveryStatus(orderPlaced.delivery_status);
     setPaymentStatus(orderPlaced.payment_status)
+  }
+
+  const handleGenerateInvoice = ()=>{
+    // setShowInvoice(true);
+    navigate("invoice/"+orderId);
   }
   return (
     <SearchedOrders>
@@ -158,14 +165,16 @@ function SearchOrder() {
       <hr/>
       {showLoader && (< Loader/>)}
       {isOrderPlaced && (
+        <>
         <OrderedItem onClick={handleEditOrder}>
+          {orderPlaced.user_name && <h4 style={{marginLeft:'5px'}}>Order Placed by {orderPlaced.user_name}</h4>}
           {!showLoader && (      
           <div className='orders' key={orderPlaced._id} >
             <div className='dateOrderPlacedAt'>
               <h4 className='order-heading'>Date</h4>
-                {orderPlaced.date}
-                &nbsp;&nbsp;<span style={{fontSize:'12px',color: 'darkblue'}}>{orderPlaced.time}</span>
-              {/* {orderPlaced.date.split("T")[0]} */}
+                {/* {orderPlaced.date} */}
+                {/* &nbsp;&nbsp;<span style={{fontSize:'12px',color: 'darkblue'}}>{orderPlaced.time}</span> */}
+              {orderPlaced.date.split("T")[0]}
             </div>
             <div className='orderID'>
               <h4 className='order-heading'>Order ID</h4>
@@ -200,7 +209,12 @@ function SearchOrder() {
             </div>
           </div>
           )}
+         
         </OrderedItem>
+         <div className='generate-invoice'>
+          <button onClick={handleGenerateInvoice}>Generate Invoice</button>
+        </div>
+        </>
       )}
       {notFoundMsg && (
         <h3 className='not-found'>{notFoundMsg}</h3>
@@ -248,6 +262,24 @@ const SearchedOrders = styled.div`
       margin-top: 15px;
       margin-bottom: 15px;
   }
+  .generate-invoice{
+      display: flex;
+      justify-content: flex-end;
+      margin-top:10px;
+    }
+    .generate-invoice button{
+      background-color: blue;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 3px;
+      color: white;
+      cursor: pointer;
+      width: 20%;
+      font-size: 1rem;
+      @media (max-width:650px){
+        width:50%;
+      }
+    }
 `;
 
 const FormStyle = styled.form`
@@ -290,7 +322,7 @@ const FormStyle = styled.form`
             width:70%; 
         }
         @media (max-width: 650px){
-            width:95%; 
+            width:100%; 
             margin:0 auto;
         }
     }
@@ -321,11 +353,11 @@ const FormStyle = styled.form`
         @media (max-width: 650px){
             font-size:0.9rem;
             padding: 0.3rem 2rem;
-            width: 70%;
+            width: 85%;
             /* margin:0 auto; */
         }   
     }
-    button{
+    button{   //search button
       padding: 5px;
       color: white;
       background-color: blue;
@@ -334,7 +366,11 @@ const FormStyle = styled.form`
       border: none;
       cursor: pointer;
       margin-left: 10px;
-      box-shadow: 2px 2px 2px grey;;
+      box-shadow: 2px 2px 2px grey;
+      @media (max-width:650px){
+        margin-left: 15px;
+        width:40px;
+      }
     }
     button>svg{
       transform: scale(1.3);
@@ -363,7 +399,7 @@ const OrderedItem = styled.div`
       padding:5px;
       display:flex;
       flex-wrap: wrap;
-      margin-top: 15px;
+      margin-top: 10px;
       min-width:20vw;
     }
     .order-heading{
@@ -419,7 +455,7 @@ const OrderedItem = styled.div`
       width:62%;
     }
 
-   
+    
     @media (max-width:850px){
       .orderID{
         width:40%;
@@ -433,18 +469,20 @@ const OrderedItem = styled.div`
     }
     @media (max-width:650px){
       flex-direction: row;
-      width:98%;
+      width:100%;
       .orderItems{
-        width:98%;
+        width:100%;
       }
       .dateOrderPlacedAt{
-        width:35%;
+        width:34%;
         margin-right:2px;
         flex-wrap: wrap;
       }
       .orderID{
-        width:55%;
+        width:65%;
         flex-wrap: wrap;
+        font-size: 0.9rem;
+        margin-right: 0px !important;
       }
       .order-heading{  
         padding: 3px;

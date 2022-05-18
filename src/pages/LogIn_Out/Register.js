@@ -17,8 +17,8 @@ function Register() {
     const [passwordError, setPasswordError]= useState("");
     const [emailErrorDot, setEmailErrorDot] = useState("");
     const [emailErrorRate, setEmailErrorRate] = useState("");
-    const [nameError, setNameError] = useState("");
     const [isInvalid, setIsInvalid] = useState(false);
+    const [nameError, setNameError] = useState("");
     const [emailAlreadyExists, setEmailAlreadyExists] = useState(false);
     const [registeredSuccess, setRegisteredSuccess] = useState();
 
@@ -27,7 +27,7 @@ function Register() {
     },[])
     const handleChange = (event) => {
         if(event.target.name === "name"){
-            const re = /^[ A-Za-z ]+$/;
+            const re = /^[ A-Za-z ]+$/;   //only alphabets are allowed
             if (event.target.value === ""||re.test(event.target.value)){
                 setEmailAlreadyExists(false);
                 const name = event.target.name;

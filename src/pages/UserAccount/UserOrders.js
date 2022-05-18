@@ -70,7 +70,7 @@ function UserOrders() {
                             <p><span>Book Name: </span>{order.book.book_name}</p>
                             <p><span>Book Author: </span>{order.book.book_author}</p>
                             <p><span>Quantity: </span>{order.quantity}</p>
-                            <p><span>Price: </span>&#8377;{order.price}</p>
+                            <p><span>Price: </span>&#8377;{order.price} {order.discount>0 && <>&nbsp;&nbsp;(discount included)</>}</p> 
                             <p><span>Discount: </span>{order.discount*100}%</p>
                         </div>  
                       </div>

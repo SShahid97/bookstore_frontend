@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import "./styles.css";
 import {useNavigate, useParams} from 'react-router-dom';
-import { Item_Service } from '../../services/Service';
+import { Item_Service, Upload_Service } from '../../services/Service';
 import styled from "styled-components";
 import {FaUpload,FaArrowLeft} from "react-icons/fa";
+import PopUp from '../../components/PopUp';
+import PopupFailure from "../../components/PopupFailure";
+import Loader from "../../components/Loader";
 
 let Admin = {};
 function EditItem() {
@@ -16,12 +19,18 @@ function EditItem() {
   const [imageChoosen, setImageChoosen] = useState(false);
   const [Item, setItem] = useState({});
   const [bookImage, setBookImage] = useState([]);
+  const [messageSuccess, setMessageSuccess] = useState("");
+  const [messageFailure, setMessageFailure] = useState("");
+  const [invalidInput, setInvalidInput] = useState(false);
+  const [duplicateEntryError, setDuplicateEntryError] = useState("");
+  const [showLoader, setShowLoader] = useState(false);
 
 
   const navigate = useNavigate()
   let params = useParams();
   
   useEffect(() => {
+    setShowLoader(true);
     getBookItem(params.id);
     let curr_user = JSON.parse(localStorage.getItem('user'));
     if (curr_user) {
@@ -53,14 +62,17 @@ function EditItem() {
   const getBookItem = async (id)=>{
     const response = await Item_Service.getBookDetails(id);
     if(response.status === 200){
+      setShowLoader(false);
       const itemDetails = await response.json();
       setDiscount(itemDetails.discount);
       let itmImageName = [{id:itemDetails._id ,image: itemDetails.book_image, name:itemDetails.book_name}];
       setBookImage(itmImageName);
       setItem(itemDetails);
     }else if(response.status === 204){
+      setShowLoader(false);
       console.log("No Content")
     }else if(response.status === 400){
+      setShowLoader(false);
       console.log("Bad Request")
     }
   }
@@ -83,10 +95,20 @@ function EditItem() {
     if(response.status === 200){
       const updatedItem = await response.json();
       console.log(updatedItem);
-      alert("Item Updated Successfully");
-    }else{
-      alert("There was some error while updating the Item.");
-    }
+      sumbitImageUpload();
+      setMessageSuccess("Item Updated Successfully");
+      setTimeout(()=>{
+        setMessageSuccess("");
+       },5000)
+    }else if(response.status === 422){  //if duplicate unique field entered
+      const error = await response.json();
+      setDuplicateEntryError(error.message);
+      return;
+  }else if(response.status === 400){
+      const error = await response.json();
+      console.log(error.message);
+      return;
+  }
 
   }
   
@@ -106,54 +128,69 @@ function EditItem() {
     setImageChoosen(true);
     setImageFile(file);
     setImagePrevFile(file);
+    formInput.book_image = file.name;
     // const ext = file.type.split("/")[1];
     // file.name = `image-${Date.now()}.${ext}`;
     // console.log(file.name, ext);
 }
 
-const sumbitImageUpload = async (e)=>{
-    e.preventDefault();
+const sumbitImageUpload = async ()=>{
     const formData = new FormData();
     formData.append('photo', imageFile);
 
-    const response = await fetch("http://localhost:5001/api/upload", {
-        method: 'POST',
-        headers:{
-            'auth-token': Admin.token  
-        },
-        body:formData
-    });
+    const response = await Upload_Service.uploadImage(Admin.token, formData);
     if (response.status === 200){
-        const data = response.json();
+        const data = await response.json();
         console.log(data);
-        console.log(response);
-        
+        console.log("Image uploaded")
         // for storing in database 
-        formInput.book_image = imageFile.name;
-        // console.log(formInput);
-        // alert("Image Uploaded Successfully");
+        // formInput.book_image = imageFile.name;
+       
     }else{
-        alert("Image not uploaded");
+      setMessageFailure("Image not uploaded, try again later.");
+      setTimeout(()=>{
+          setMessageFailure("");
+      },5000);
+      return false;
     }
   }
+ //for Bookcode
+  const handleKeys = (e) => {
+    if (e.which === 32) {
+      // console.log('Space Detected');
+      setInvalidInput(true);
+      return false;
+    } else {
+      setInvalidInput(false);
+    }
+}
   const handleBack = ()=>{
     navigate(-1);
   } 
   return (
+    <>
+    {showLoader && (<Loader/>)}
+    {!showLoader && ( 
     <EditOuter>
     <span className='back-arrow-span' title="back" onClick={handleBack}>
             <FaArrowLeft className='back-arrow'/>
     </span>
+    {messageFailure !== "" && (
+      <PopupFailure messageFailure={messageFailure}/> 
+    )}
+    {messageSuccess !== "" && (
+      <PopUp messageSuccess={messageSuccess}/> 
+    )}
     <EditItemFormDiv>
       
       {/* <h3 className="heading">EDIT ITEM</h3> */}
       <div className='image-upload-form'>
             <form onSubmit={sumbitImageUpload}>
                 <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>Change Image</button>
-                <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
-                    <FaUpload/>
-                </button>
                 <input type="file" id="getFile" accept='image/*' style={{display:'none'}} name="photo" onChange={handleImageUpload}/>
+                {/* <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
+                    <FaUpload/>
+                </button> */}
                 <div className='image-preview'>
                         {/* <img  src={previewImageURL}  alt="Preview"/> */}
                     {!previewImageURL &&  bookImage.map((item)=>{   
@@ -170,15 +207,25 @@ const sumbitImageUpload = async (e)=>{
       </div>
       <div className='details-form'>
             <form className="editItemform" onSubmit={onFormSubmit}>
+                {duplicateEntryError !== "" && (
+                    <div className='error-msg'>
+                    <p>{duplicateEntryError}</p>
+                    </div>
+                )}
                 <input
                     placeholder="Book Code"
                     type="text"
                     name="book_code"
                     value={Item.book_code || ""}
                     required
+                    onKeyDown={handleKeys}
                     onChange={handleformInput}
                 />
-
+                 {invalidInput && (
+                    <div className='error-msg'>
+                    <p>White Spaces are not allowed</p>
+                    </div>
+                )}
                 <input
                     placeholder="Book Name"
                     type="text"
@@ -247,23 +294,25 @@ const sumbitImageUpload = async (e)=>{
                     required
                     onChange={handleformInput}
                 />
-                <input className="updateItemBtn"  type="submit" value="Update Item" /><br/>
-                
-                {/* <Link  to ={"/admin-panel"} > */}
-                  <button className="cancelBtn" type="button" onClick={handleCancel} >Cancel</button><br/>
-                {/* </Link> */}
-
-                
+                <div className='edit_btns'>
+                  <input className="updateItemBtn"  type="submit" value="Update Item" /><br/>
+                </div>
             </form>                
         </div>  
             
       </EditItemFormDiv>
       </EditOuter>
+      )}</>
   )
 }
 
 const EditOuter = styled.div`
   height:100%;
+  .back-arrow-span{
+    @media (max-width:650px){
+      display: none;
+    }
+  }
 `;
 
 const EditItemFormDiv = styled.div`
@@ -276,11 +325,28 @@ const EditItemFormDiv = styled.div`
     text-align: left;
     padding-top:1rem;
     padding-bottom: 1rem;
-    
+    .edit_btns{
+      display:flex;
+      justify-content: flex-start;
+    }
+ 
+    .updateItemBtn{
+      background-color: blue;
+      color: white;
+      width: 85% !important;
+      @media (max-width:650px){
+        margin: auto;
+      }
+    }
+    .updateItemBtn:hover{
+      cursor: pointer;
+      background-color: rgba(12, 12, 194, 0.671);
+      color: white;
+    }
     .disable-btn{
         opacity: 0.5;
         background-color: blue;
-        cursor: not-allowed;
+        cursor: none;
         color:white;
     }
    
@@ -323,7 +389,7 @@ const EditItemFormDiv = styled.div`
     }
     .choose-image-btn{
         display:inline-block;
-        width:60%;
+        width:75%;
         background-color: #3caf4d;
         color:white;
         font-size: 15px;
@@ -338,38 +404,7 @@ const EditItemFormDiv = styled.div`
         background-color: #22a736;
         color: white;
     }
-    .upload-btn{
-        margin-top:5px;
-        margin-left: 5px;
-        display:inline-block;
-        width:13%;
-        background-color: blue;
-        color:white;
-        font-size: 15px;
-        padding: 6px 3px;
-        border: 1px solid #9e9e9e73;
-        border-radius: 3px;
-        outline:none;
-    }
-    .disable-upload-btn{
-        opacity: 0.5;
-        cursor: not-allowed;
-        margin-top:5px;
-        margin-left: 5px;
-        display:inline-block;
-        width:13%;
-        background-color: blue;
-        color:white;
-        font-size: 15px;
-        padding: 6px 3px;
-        border: 1px solid #9e9e9e73;
-        border-radius: 3px;
-        outline:none;
-    }
-    .upload-btn:hover{
-        cursor: pointer;
-        background-color: rgb(12 12 194 / 90%);
-    }
+    
     .price-discount-fields{
         display: flex;
         width:85%;
@@ -381,44 +416,22 @@ const EditItemFormDiv = styled.div`
         width:100%;
     }
 
-    .updateItemBtn{
-      /* width:85% !important; */
-      background-color: blue;
-      color:white;
-      width:100% !important;
-      margin-left: -220px;
+    
+  .error-msg{
+        color:#ed1111f2;
+        width: 85%;
+        margin-bottom: 8px;
+        font-size: 15px;
+        padding: 5px 5px;
+        border: 1px solid #ed1111f2;
+        border-radius: 3px; 
+        text-align: center;
     }
-    .updateItemBtn:hover{
-      cursor: pointer;
-      background-color: rgba(12, 12, 194, 0.671);
-      color: white;
-    }
-    .cancelBtn{
-      /* width:85% !important; */
-      background-color:rgb(218, 21, 21);
-      color:white;
-      text-align: center;
-      margin: 0 auto;
-      padding: 8px 5px;
-      border-radius: 3px;
-      border:none;
-      font-size:15px;
-      margin-left: -220px;
-      width:100% !important;
-  }
-
   .cancelBtn:hover{
     cursor: pointer;
     background-color:rgba(218, 21, 21, 0.781);
   }
-  @media (max-width:1105px) { 
-    .updateItemBtn{
-      margin-left:-170px;
-    }
-    .cancelBtn{
-      margin-left: -170px;
-    }
-  }
+
   @media (max-width:800px){
     flex-direction: column;
     text-align: center;
@@ -429,14 +442,6 @@ const EditItemFormDiv = styled.div`
     }
     .details-form{
         width:95%;
-    }
-    .updateItemBtn{
-      margin-left:0px;
-      width:85% !important;
-    }
-    .cancelBtn{
-      margin-left: 0px;
-      width:85% !important;
     }
 
     .price-discount-fields{

@@ -14,7 +14,25 @@ const address_url = `${localdomain}/api/address`;
 const pincode_url = `${localdomain}/api/pincode`;
 const stock_url = `${localdomain}/api/stock`;
 const wishlist_url = `${localdomain}/api/wishlist`;
+const upload_url = `${localdomain}/api/upload`;
 
+export const Upload_Service = {
+    uploadImage : async (token, formData)=>{
+        try{
+            const response = await fetch(`${upload_url}`, {
+                method: 'POST',
+                headers:{
+                    'auth-token': token  
+                },
+                body:formData
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+        
+    }
+}
 export const Wishlist_Service = {
     addWishlistItem: async (token, formData)=>{
         try{
@@ -438,10 +456,39 @@ export const Cart_Service ={
 
 // User Service
 export const Auth_Service = {
+    updateUserName: async (token, userId, formData)=>{
+        try{
+            const response = await fetch(`${auth_url}/${userId}`,{
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'auth-token': token
+                },
+                body:JSON.stringify(formData)
+            })
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    getUser: async (token,userId)=>{
+        try{
+            const response = await fetch(`${auth_url}/${userId}`,{
+                headers:{
+                    'Content-Type': 'application/json',
+                    'auth-token': token
+                }
+            }); 
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
     getUsers: async (token)=>{
         try{
             const response = await fetch(`${auth_url}`,{
                 headers:{
+                    'Content-Type': 'application/json',
                     'auth-token': token
                 }
             }); 
@@ -509,19 +556,35 @@ export const Auth_Service = {
             return err;
         }
     },
-    changePassword: async (userId,token, passwordObj)=>{
+    changePassword: async (userId,passwordObj)=>{
         try{
             const response = await fetch(`${auth_url}/${userId}`, {
                 method: 'PATCH',
                 headers: {
-                'Content-Type': 'application/json',
-                'auth-token': token
-            },
-            body: JSON.stringify(passwordObj)
+                    'Content-Type':'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(passwordObj)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    verifyEmail: async(userInfo)=>{
+        try{
+            const response = await fetch(`${auth_url}/verifyemail`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json',
+                    'Accept': 'application/json',
+                },
+                body:JSON.stringify(userInfo)
             });
             return response;
         }catch(err){
             return err;
         }
     }
+  
 }

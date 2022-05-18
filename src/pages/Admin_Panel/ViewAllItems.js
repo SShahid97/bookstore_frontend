@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import {Item_Service} from "../../services/Service";
 import Loader from '../../components/Loader';
+import PopUp from '../../components/PopUp';
 import {FaSearch,FaTimes} from "react-icons/fa";
+
 import {
     Compter_Science, 
     Business_Management,
@@ -34,12 +36,14 @@ function ViewAllItems() {
     const [showClose, setShowClose] = useState(false);
     const [noResultsFound,setNoResultsFound] = useState(false);
     const [bookFound,setBookFound] = useState(false);
+    const [messageSuccess, setMessageSuccess] = useState("");
 
     // let navigate = useNavigate();
     // let params = useParams();
     // const [categoryName, setCategoryName] = useState("");
 
     useEffect(()=>{
+        window.scrollTo(0,0);
           let curr_user = JSON.parse(localStorage.getItem('user'));
           if (curr_user && curr_user.role === "admin") {
             Admin = curr_user;
@@ -97,7 +101,10 @@ function ViewAllItems() {
             console.log(response);
             if(response.status === 200){
                 const data = await response.json();
-                alert(data.message);
+                setMessageSuccess(data.message);
+                setTimeout(()=>{
+                  setMessageSuccess("");
+                },5000)
                 getAllBooks();
             }else if(response.status === 204){  
                 console.log("No content");   
@@ -186,7 +193,7 @@ function ViewAllItems() {
         const searchkey = evt.target.value;
         setSearchedValue(searchkey);
         setShowClose(true);
-        console.log(searchkey);
+        // console.log(searchkey);
         let general_cat = JSON.parse(localStorage.getItem('general'));
         if(!general_cat){
             setShowLoader(false);
@@ -207,7 +214,8 @@ function ViewAllItems() {
             let booksReturned=books.filter((book)=>{
                 return (book.book_name.toLowerCase().includes(searchkey)
                      || book.book_author.toLowerCase().includes(searchkey)
-                     || book.book_description.toLowerCase().includes(searchkey));
+                     || book.book_description.toLowerCase().includes(searchkey)
+                     || book.book_code.toLowerCase().includes(searchkey));
             });
             if(booksReturned.length>0){
                 setBookFound(true);
@@ -237,6 +245,9 @@ function ViewAllItems() {
     // }
   return (
     <ViewItemsOuter>
+        {messageSuccess !== "" && (
+            <PopUp messageSuccess={messageSuccess}/> 
+        )}
       <FormStyle >
         <div className='form-div'>
         <FaSearch></FaSearch>

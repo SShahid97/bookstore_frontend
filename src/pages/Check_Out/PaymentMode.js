@@ -2,6 +2,7 @@ import React,{useState,useEffect} from 'react'
 import {useNavigate} from "react-router-dom"; 
 import Confirmation from './Confirmation';
 import styled from "styled-components";
+import PopupFailure from '../../components/PopupFailure';
 function PaymentMode() {
     const navigate = useNavigate();
     const [currentRadioValue, setCurrentRadioValue] = useState();
@@ -9,8 +10,10 @@ function PaymentMode() {
     const [confirmed, setConfirmed] = useState(false);
     const [paymentStatus, setPaymentStatus] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("");
+    const [messageFailure, setMessageFailure] = useState("");
     // const [user,setUser] = useState({});
     useEffect(()=>{
+        window.scrollTo(0,0);
         // let curr_user = JSON.parse(localStorage.getItem("user"));
         // setUser(curr_user);
         // if(confirmed){
@@ -24,25 +27,45 @@ function PaymentMode() {
     }
 
     const handleConfirm=()=>{
+        console.log(currentRadioValue);
+        if(currentRadioValue === undefined){
+            // alert("Please select any payment method");
+            setMessageFailure("Please select any payment method");
+            setTimeout(()=>{
+                setMessageFailure("");
+            },5000)
+            return;
+        }
         if(currentRadioValue === "cod"){
             setSubmitOrderDetails(true);
-            setPaymentStatus("not paid");
+            setPaymentStatus("Not paid");
             setPaymentMethod(currentRadioValue.toUpperCase());
         }
-        // else if(currentRadioValue === "payolnine"){
-            
-        // }
+        else if(currentRadioValue === "payonline"){
+            setMessageFailure("Online Payment temporarily suspended!! try other options");
+            setTimeout(()=>{
+                setMessageFailure("");
+            },5000)
+            return;
+        }
     }
     
     const handleRadioChange = (e) => {
         console.log(e.target.value)
         setCurrentRadioValue(e.target.value);
         if( e.target.value === "payonline"){
-            alert("Online Payment temporarily suspended!! try other options");
+            setMessageFailure("Online Payment temporarily suspended!! try other options");
+            setTimeout(()=>{
+                setMessageFailure("");
+            },5000)
+            return;
         }
     };
   return (
-      <>
+      <PaymentScreenOuter>
+        {messageFailure !== "" && (
+            <PopupFailure messageFailure={messageFailure}/> 
+         )}
         {!submitOrderDetails && (
         <PaymentMethodScreen >
         <h3 className='payment-heading'>Select Payment Method</h3>
@@ -53,7 +76,8 @@ function PaymentMode() {
                  type="radio"
                  value="payonline"
                  onChange={handleRadioChange}
-                 checked={currentRadioValue === 'payonline'} />
+                 checked={currentRadioValue === 'payonline'} 
+                 />
                  <label className="pay-online-label" htmlFor="exampleRadios1">
                     Pay Online
                 </label>
@@ -81,11 +105,16 @@ function PaymentMode() {
       {submitOrderDetails && (
           <Confirmation paymentStatus={paymentStatus} paymentMethod={paymentMethod} setConfirmed={setConfirmed}/>
       )}
-      </>
+      </PaymentScreenOuter>
     
   )
 }
 
+const PaymentScreenOuter = styled.div`
+    .popup-failure{
+        transform: translate(1007px, -9px);
+    }
+`;
 const PaymentMethodScreen = styled.div`
     
     box-shadow: 3px 6px 7px 4px grey;

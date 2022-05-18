@@ -1,9 +1,21 @@
-import React from 'react'
+import React , {useState, useEffect} from 'react'
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
-function footer() {
+function Footer() {
+  const [isAdmin, setIsAdmin]=useState(false);
+  useEffect(()=>{
+    let curr_user = JSON.parse(localStorage.getItem("user"));
+    if (curr_user){
+      if(curr_user.role === "admin"){
+        setIsAdmin(true);
+      }else{
+        setIsAdmin(false);
+      }
+    }
+  },[isAdmin])
   return (
-    <Footer>
+    <FooterOuter className="main-footer">
+      {!isAdmin && ( 
       <div className='header-head'> 
         <ul>
           <h3>More</h3>
@@ -18,15 +30,16 @@ function footer() {
           <li><Link to = '/books/html_book'>Discrete Maths</Link></li>
         </ul>
       </div>
+      )}
       <div className='header-foot'>
         <h4> &copy;All Rights Reserved: 2022 </h4>
       </div>
-    </Footer>
+    </FooterOuter>
   )
 }
 
 
-const Footer = styled.footer`
+const FooterOuter = styled.footer`
     bottom:0;
     color: white;
     background-color: grey;
@@ -58,4 +71,4 @@ const Footer = styled.footer`
     text-align: center;
   }
 `;
-export default footer
+export default Footer

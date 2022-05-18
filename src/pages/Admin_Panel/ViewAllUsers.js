@@ -4,18 +4,22 @@ import { Auth_Service } from "../../services/Service";
 import {Link} from "react-router-dom";
 import Loader from "../../components/Loader";
 import {FaTrash} from "react-icons/fa";
+import PopUp from '../../components/PopUp';
 
 let curr_user = JSON.parse(localStorage.getItem('user'));
 function ViewAllUsers() {
   let i=1;
+  localStorage.removeItem("OrderId")
   const [users, setUsers] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
+  const [messageSuccess, setMessageSuccess] = useState("");
   useEffect(() => {
     window.scrollTo(0,0);
     setShowLoader(true);
     if (curr_user && curr_user.role === "admin") {
       // setAdmin(curr_user);
       getAllUsers(curr_user.token);
+      console.log("hello")
     }
   }, [])
 
@@ -46,6 +50,10 @@ function ViewAllUsers() {
     if(confirmation){
       const response = await Auth_Service.deleteUser(curr_user.token, userId);
       if(response.status === 200){
+        setMessageSuccess("User Deleted Successfully");
+        setTimeout(()=>{
+          setMessageSuccess("");
+        },5000)
         alert("User Deleted Successfully");
         getAllUsers(curr_user.token);
       }else{
@@ -57,6 +65,9 @@ function ViewAllUsers() {
   }
   return (
     <>
+    {messageSuccess !== "" && (
+        <PopUp messageSuccess={messageSuccess}/> 
+    )}
     {showLoader && (<Loader/>)}
     {!showLoader && (
     <UsersOuter  className='user-outer' style={{}}>

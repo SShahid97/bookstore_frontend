@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate} from "react-router-dom";
 import {Address_Service} from "../../services/Service";
+import Loader from '../../components/Loader';
 import "./styles.css";
 
 function Billing() {
@@ -14,10 +15,12 @@ function Billing() {
     const [city, setCity]=useState('');
     const [postalCode, setPostalCode]=useState('');
     const [address, setAddress]=useState('');
-    // const [registeredUserAddress, setRegisteredUserAddress] = useState({});
+    const [existingAddress, setExistingAddress] = useState({});
+    const [showLoader, setShowLoader] = useState(false);
     const navigate = useNavigate();
 
     useEffect(()=>{
+        setShowLoader(true);
         let curr_user = JSON.parse(localStorage.getItem("user"));
         // console.log(curr_user)
         getUserAddressIfAny(curr_user.token,curr_user._id);
@@ -38,6 +41,8 @@ function Billing() {
             setCountry(addressReturned.country);
             setState(addressReturned.state);
             setCity(addressReturned.city);
+            setShowLoader(false);
+            setExistingAddress(addressReturned);
             // setAddressExits(true);
         }else if (response.status === 204){
             // setAddressExits(false);
@@ -73,6 +78,7 @@ function Billing() {
         let formObject = {
             fullName:fullName,
             email:email,
+            _id:existingAddress._id,
             contact:contact,
             country:country,
             state:state,
@@ -81,12 +87,10 @@ function Billing() {
             address:address
         }
         localStorage.setItem("customerInfo", JSON.stringify(formObject));
-        console.log(formObject);
+        console.log("local: ",formObject);
         navigate("/checkout/revieworder");
         // setIsBilling(false);
         // setIsOrderPlaced(true);
-        
-        // localStorage.setItem("customerInfo", JSON.stringify(formObject));
     }
 
     const handleCancel = ()=>{
@@ -94,6 +98,9 @@ function Billing() {
     }
 
     return (
+        <>
+        {showLoader && (<Loader/>)}
+        {!showLoader && ( 
         <div className="outer-div" >
             <div className="inner-div">
             <h3 className='billing-heading'>Shipping Address</h3>
@@ -182,6 +189,8 @@ function Billing() {
             {/* </div> */}
             </div>
         </div>
+        )}
+        </>
     )
 }
 

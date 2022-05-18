@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from "styled-components";
 import {Stock_Service} from "../../services/Service"; 
 import Loader from "../../components/Loader";
@@ -13,12 +13,18 @@ function AddStock() {
     const [responseNotReturned, setResponseNotReturned ] = useState();
     const [showLoader, setShowLoader] = useState(false);
     const [messageSuccess, setMessageSuccess] = useState("");
+    const [invalidInput, setInvalidInput] = useState(false);
     let curr_user = JSON.parse(localStorage.getItem('user'));
-    if(curr_user && curr_user.role === "admin"){
-        Admin = curr_user;
-    }else{
-        Admin=null;
-    }
+    
+    useEffect(()=>{
+        window.scrollTo(0,0);
+        if(curr_user && curr_user.role === "admin"){
+            Admin = curr_user;
+        }else{
+            Admin=null;
+        }
+        localStorage.removeItem("OrderId")
+    },[])
     const handleBookCode = (e)=>{
         const value = e.target.value;
         setBookCode(value);
@@ -41,31 +47,40 @@ function AddStock() {
             total_count:totalCount,
             count_in_stock:countInStock
         }
-        console.log(stockObj);
+        // console.log(stockObj);
         const response = await Stock_Service.addStockDetails(Admin.token,stockObj);
         if(response.status === 201){
             const addedStock = await response.json();
-            console.log(addedStock);
+            // console.log(addedStock);
             setMessageSuccess("Stock Details Added");
             setTimeout(()=>{
                 setMessageSuccess("");
-            },3000)
+            },5000)
             setResponseNotReturned(false);
             setShowLoader(false);
         }else if(response.status === 422){
             const error = await response.json();
             setErrorMsg(error.message);
-            console.log(error.message);
+            // console.log(error.message);
             setResponseNotReturned(false);
             setShowLoader(false);
         }else if(response.status === 400){
             const error = await response.json();
             setErrorMsg(error.message);
-            console.log(error.message);
+            // console.log(error.message);
             setResponseNotReturned(false);
             setShowLoader(false);
         }
     }
+    const handleKeys = (e) => {
+        if (e.which === 32) {
+          // console.log('Space Detected');
+          setInvalidInput(true);
+          return false;
+        } else {
+          setInvalidInput(false);
+        }
+      }
   return (
       <AddStockDiv >
         {messageSuccess !== "" && (
@@ -86,8 +101,14 @@ function AddStock() {
                     name="book_code"
                     value={bookCode || ""}
                     required
+                    onKeyDown={handleKeys}
                     onChange={handleBookCode}
                 />
+                {invalidInput && (
+                    <div className='error-msg'>
+                    <p>White Spaces are not allowed</p>
+                    </div>
+                )}
                 <label htmlFor="total_count"><strong>Total Count<span >*</span>:</strong></label><br/>
                 <input className='form-control'
                     placeholder="Total Count"
@@ -108,7 +129,7 @@ function AddStock() {
                     onChange={handleCountInStock}
                 />
                 <div className="add-stock-div">
-                    <button  className='add-stock-btn' type="submit" >ADD STOCK </button>
+                    <button  className='add-stock-btn' type="submit" disabled={invalidInput} >ADD STOCK </button>
                 </div>
             </form>
     </AddStockDiv>

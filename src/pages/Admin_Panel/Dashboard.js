@@ -11,6 +11,7 @@ function Dashboard() {
     const [admin, setAdmin]= useState({});
     useEffect(()=>{
         let Admin = JSON.parse(localStorage.getItem('user'));
+        localStorage.removeItem("OrderId")
         setAdmin(Admin);
     },[])
   return (

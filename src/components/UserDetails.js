@@ -28,7 +28,7 @@ function UserDetails({user}) {
 
 const UserOuter = styled.div`
     padding:10px;
-    margin-bottom:2rem;
+    margin-bottom:1.4rem;
     margin-left: -6px;
     margin-right: 4px;
     background: gainsboro;

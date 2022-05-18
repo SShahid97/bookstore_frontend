@@ -31,6 +31,10 @@ import AddStock from './Admin_Panel/AddStock';
 import ViewEditStock from './Admin_Panel/ViewEditStock';
 import ChangePassword from './UserAccount/ChangePassword';
 import AddEditAddress from './UserAccount/AddEditAddress';
+import Invoice from './Admin_Panel/Invoice';
+import VerifyEmail from './UserAccount/VerifyEmail';
+import ResetPassword from './UserAccount/ResetPassword';
+import Statistics from './Admin_Panel/Statistics';
 
 function Pages() {
   return (
@@ -47,6 +51,8 @@ function Pages() {
         <Route path="/user/orders" element={<UserOrders/>} />
         <Route path="/user/wishlist" element={<UserWishlist/>} />
         <Route path="/user/change-password" element={<ChangePassword/>} />
+        <Route path="/user/verify-email" element={<VerifyEmail/>} />
+        <Route path="/user/reset-password/:id" element={<ResetPassword/>} />
         <Route path="/user/user-address/:type" element={<AddEditAddress/>} />
         <Route path="/cart/:id" element={<Cart/>} />
         <Route path="/checkout/:name" element={<Checkout/>} />
@@ -60,14 +66,16 @@ function Pages() {
             <Route path="manage-books/view-all-items" element={<ViewAllItems />} />
             {/* <Route path="manage-books/view-all-items/:cat" element={<ViewAllItems />} /> */}
             <Route path="manage-books/view-all-items/edit-item/:id" element={<EditItem />} />
+            <Route path="manage-books/view-all-items/view-edit-stock/:code" element={<ViewEditStock />} />
             <Route path="manage-books/add-item" element={<AddItem />} />
             <Route path="manage-users/view-all-users" element={<ViewAllUsers />} /><></>
             <Route path="manage-users/view-all-users/user-address/:id" element={<UserAddress />} />
             <Route path="manage-users/view-all-users/user-orderhistory/:id" element={<UserOrderHistory />} />
             <Route path="manage-users/search-user" element={<SearchUser />} />
             <Route path="manage-users/search-order" element={<SearchOrder />} />
+            <Route path="manage-users/search-order/invoice/:id" element={<Invoice />} />
             <Route path="manage-books/add-stock" element={<AddStock />} />
-            <Route path="manage-books/view-all-items/view-edit-stock/:code" element={<ViewEditStock />} />
+            <Route path="manage-books/statistics" element={<Statistics />} />
             <Route path="*" element={<PageNotFound />} />
         </Route>
 

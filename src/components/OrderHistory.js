@@ -10,33 +10,23 @@ function OrderHistory({orderHistory}) {
     <OrdersInner>
     {orderHistory && (
        <>
-        <div className='orders-heading' >
-            <div className='SNO'>
-                <h4 className='order-heading'>S.No.</h4>
-            </div>
-            <div className='dateOrderPlacedAt'>
-              <h4 className='order-heading'>Date</h4>
-            </div>
-            <div className='orderID'>
-              <h4 className='order-heading'>Order ID</h4>
-            </div>
-            <div className='orderItems'>
-              <h4 className='order-heading'>Order Info</h4>
-            </div>
-        </div>
         {orderHistory.map((orderInfo,index)=>{
         return (
           <div className='orders' key={orderInfo._id} >
             <div className='SNO'>
+              <h4 className='order-heading'>S.No.</h4>
                 {++index}
             </div>
             <div className='dateOrderPlacedAt'>
+            <h4 className='order-heading'>Date</h4>
               {orderInfo.date.split("T")[0]}
             </div>
             <div className='orderID'>
+            <h4 className='order-heading'>Order ID</h4>
               {orderInfo._id}
             </div>
             <div className='orderItems'>
+            <h4 className='order-heading'>Order Info</h4>
               {
                 orderInfo.order.map((order)=>{
                   return (
@@ -85,6 +75,14 @@ const Orders = styled.div`
     min-width:20vw;
     box-shadow: 5px 4px 5px grey;
     border:1px solid grey;
+
+    @media (max-width:650px){
+      height:100%;
+      width:100%;
+      box-shadow: unset;
+      border:unset;
+
+    }
     /* margin-top:10px; */
     .order-main-heading{
       text-align: center;
@@ -118,38 +116,60 @@ const OrdersInner = styled.div`
     }
     .book-details{
       width:75%;
+      @media (max-width:650px){
+        font-size: 0.9rem;
+      }
     }
     .book-image{
       width: 25%;
       height: 130px;
       padding: 5px;
+      @media (max-width:650px){
+        padding:2px;
+      }
     }
     .book-image img {
       height: 100%;
       width: 95%;
+      @media (max-width:650px){
+        width: 100%;
+      }
     }
     .orders{
       width:100%;
       padding:8px;
       display:flex;
-      flex-wrap: nowrap;
-      border-bottom: 1px solid grey;
+      flex-wrap: wrap;
+      border-bottom: 2px solid grey;
+      @media (max-width:650px){
+        box-shadow: 5px 4px 5px grey;
+        border: 1px solid grey;
+        margin-bottom: 15px;
+      }
+    }
+    .orders h4{
+      @media (max-width:650px){
+        font-size:0.9rem;
+      }
     }
     .orders-heading{
       width:100%;
       padding:8px;
       display:flex;
-      flex-wrap:nowrap;
+      flex-wrap:wrap;
     }
     .SNO{
       width:5%;
       margin-right:0.3rem;
       flex-wrap: nowrap;
+      @media (max-width:650px){
+        width: 20%;
+      }
     }
     .dateOrderPlacedAt{
       width:10%;
       margin-right:1rem;
-      flex-wrap:nowrap;
+      flex-wrap:wrap;
     }
     .orderID{
       width:25%;
@@ -175,14 +195,15 @@ const OrdersInner = styled.div`
     }
     @media (max-width:650px){
       flex-direction: row;
-      width:98%;
+      width:100%;
+      height: 100%;
       .orderItems{
-        width:98%;
+        width:100%;
       }
       .dateOrderPlacedAt{
         width:35%;
         margin-right:1rem;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
       }
       .orderID{
         width:55%;

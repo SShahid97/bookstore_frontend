@@ -21,7 +21,8 @@ function AddEditAddress() {
     const [messageSuccess, setMessageSuccess] = useState("");
     const [addressExits, setAddressExits]=useState(false);
     const [responseNotReturned, setResponseNotReturned] = useState(false);
-    const [alreadySavedAddress, setAlreadySavedAddress] = useState(false);
+    const [alreadySavedAddress, setAlreadySavedAddress] = useState({});
+    const [notTouched, setNotTouched] = useState(true);
     const [showLoader, setShowLoader] = useState(false);
     let params = useParams();
     let navigate = useNavigate();
@@ -63,21 +64,27 @@ function AddEditAddress() {
     }
     const handleContact = (e) => {
         setContact(e.target.value);
+        setNotTouched(false);
     }
     const handlePostalCode = (e) => {
         setPostalCode(e.target.value);
+        setNotTouched(false);
     }
     const handleAddress = (e) => {
         setAddress(e.target.value);
+        setNotTouched(false);
     }
     const handleState = (e)=>{
         setState(e.target.value);
+        setNotTouched(false);
     }
     const handleCountry = (e)=>{
         setCountry(e.target.value);
+        setNotTouched(false);
     }
     const handleCity = (e) =>{
         setCity(e.target.value);
+        setNotTouched(false);
     }
     const handleSubmitAddress = async(e)=>{
         e.preventDefault();
@@ -123,7 +130,6 @@ function AddEditAddress() {
                 pincode:postalCode,
                 address:address
             }
-            console.log(addressObj);
             //change existing address
             const response =await Address_Service.updateAddress(curr_user.token,alreadySavedAddress._id,addressUpdatedObj);
             if(response.status===200){
@@ -135,6 +141,7 @@ function AddEditAddress() {
                 },4000);
                 setShowLoader(false);         
                 setResponseNotReturned(false);
+                setNotTouched(true);
             }else if(response.status===204){
                 setResponseNotReturned(false);
                 setShowLoader(false); 
@@ -221,7 +228,7 @@ function AddEditAddress() {
                               required/><br/>
                     <br/>
                     <div className='btns-div' >  
-                        <input type="submit"  name="next" className="save-btn" value={saveUpdate}/>
+                        <input type="submit"  name="next"  disabled={notTouched} className={notTouched?"disableSaveBtn save-btn":"save-btn"} value={saveUpdate}/>
                     </div>
                     
                 </form>
@@ -292,7 +299,9 @@ const EditAddAddressInner = styled.div`
         outline:none;
     }
 
-
+    .disableSaveBtn{
+      opacity: 0.7;
+    }
     .save-btn{
         background-color: blue;
         padding: 8px 12px;

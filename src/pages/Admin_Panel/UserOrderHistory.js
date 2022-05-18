@@ -52,6 +52,14 @@ function UserOrderHistory() {
 
 const UsersOrderHistory = styled.div`
     height: 100%;
+    @media (max-width:650px){
+      height: unset;
+    }
+    .back-arrow-span{
+      @media (max-width:650px){
+        display:none;
+      }
+    }
    
 `;
 export default UserOrderHistory

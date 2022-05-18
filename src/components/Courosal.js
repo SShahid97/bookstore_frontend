@@ -91,11 +91,11 @@ const Card = styled.div`
     /* min-height:20rem; */
     overflow:hidden;
     position:relative;
-    height:20rem;
+    height:100%;
     /* responsive for mobiles */
-    @media (max-width:610px) {
+    /* @media (max-width:610px) {
         height:10rem;
-    }
+    } */
     img{
         /* height: 245px;; */
         left:0;

@@ -59,6 +59,7 @@ function Navbar() {
         setUserName(name);
         checkUser(user);
       }
+      
       userService.onUser().subscribe(curr_user => {
         if (curr_user) {
           setUser(curr_user);
@@ -157,6 +158,7 @@ function Navbar() {
       localStorage.removeItem("category")
       localStorage.removeItem("sub_category");
       localStorage.removeItem("area_code_details");
+      localStorage.removeItem("OrderId")
 
       // window.location.reload();
       navigate("/");
@@ -192,7 +194,7 @@ function Navbar() {
     //   setIsMenu(!isMenu);
     // }
     return (
-    <div>
+    <div className='main-navbar'>
        {/* Nav Bar */}
        <Nav>
           {!isAdmin && (
@@ -505,6 +507,12 @@ const Nav = styled.div`
   .cart-icon{
     &:hover{
       background: linear-gradient(to right, #f27121, #e94057);
+      @media (max-width:650px){
+        background:none !important;
+        .cart-bage{
+          background-color: orangered !important;
+        }
+      }
       .cart-bage{
         background-color: #959595;
       }
@@ -562,6 +570,9 @@ const Nav = styled.div`
   .user-icon{
     &:hover{
       background: linear-gradient(to right, #f27121, #e94057);
+      @media (max-width:650px){
+        background: none;
+      }
     }
     display: flex;
     margin: auto auto;
@@ -587,7 +598,7 @@ const Nav = styled.div`
     }
   }
   .activeIcon{
-    background: linear-gradient(to right, #f27121, #e94057);
+    background: linear-gradient(to right, #f27121, #e94057) !important;;
   }
   /* .user-icon:hover{
     display: flex;
