@@ -24,7 +24,7 @@ function EditItem() {
   const [invalidInput, setInvalidInput] = useState(false);
   const [duplicateEntryError, setDuplicateEntryError] = useState("");
   const [showLoader, setShowLoader] = useState(false);
-
+  const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
 
   const navigate = useNavigate()
   let params = useParams();
@@ -197,7 +197,12 @@ const sumbitImageUpload = async ()=>{
                        return ( 
                         <img key={item.id} className='previewImg' src={require(`../../../public/assets/images/${item.image}`)} alt={item.name}/>
                        )
-                    })} 
+                    })}
+                    {/* {(!previewImageURL && !bookImage.image) &&  bookDummyImage.map((item,index)=>{   
+                       return ( 
+                        <img key={index} className='previewImg' src={require(`../../../public/assets/images/${bookDummyImage}`)} alt={"Image Not Available"}/>
+                       )
+                    })}  */}
                         {
                           previewImageURL && ( <img className='previewImg' src={previewImageURL}  alt="Preview"/>)    
                         }  

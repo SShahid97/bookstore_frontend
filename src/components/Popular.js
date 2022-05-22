@@ -8,6 +8,7 @@ import Rating from "./Rating";
  
 function Popular (){
     const [popular, setPopular] = useState([]);
+    const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
     const ref = useRef();
 
     useEffect(()=>{
@@ -21,7 +22,7 @@ function Popular (){
             const fetchedBooks = await response.json();
             fetchedBooks.forEach((book)=>{
                 if(book.discount>0){
-                    book.discountPercent = book.discount*100 + "%";
+                    book.discountPercent = Math.floor(book.discount*100) + "%";
                     book.newPrice = book.price - (book.price* book.discount);
                 }
                 if(book.discount===0){
@@ -79,7 +80,9 @@ function Popular (){
                         )}
                        <Link to={"/book/"+book._id}> 
                             {/* <p>{book.book_name}</p>  */}
-                            <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} /> 
+                            {book.book_image &&  <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />}
+
+                            {!book.book_image && <img src={require(`../../public/assets/images/${bookDummyImage}`)} alt={book.book_name} />}
                             <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
                                 <p>{book.book_name}</p>
                                 {(book.discount===0)  && (

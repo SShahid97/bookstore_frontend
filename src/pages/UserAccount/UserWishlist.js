@@ -1,15 +1,18 @@
 import React, {useEffect, useState} from 'react'
 import styled from "styled-components";
-import {Wishlist_Service,Stock_Service} from "../../services/Service";
+import {Wishlist_Service} from "../../services/Service";
 import Loader from "../../components/Loader";
 import { useNavigate, Link } from 'react-router-dom';
 import {FaTrash} from "react-icons/fa";
 import {mobileMenuService} from "../../services/LocalService";
+import PopUp from "../../components/PopUp";
 
 let curr_user = {};
 function UserWishlist() {
   const [userWishlistItems, setUserWishlistItems ] = useState([]);
+  const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
   const [showLoader, setShowLoader] = useState(false);
+  const [messageSuccess, setMessageSuccess] = useState("");
   let navigate = useNavigate();
   curr_user = JSON.parse(localStorage.getItem('user'));
 
@@ -28,7 +31,7 @@ function UserWishlist() {
     if(response.status === 200){
       setShowLoader(false); 
       const returnedWishlist = await response.json();
-      console.log(returnedWishlist);
+      // console.log(returnedWishlist);
       // Date.parse("2019-01-01T12:30:00.000Z")
       returnedWishlist.forEach((item)=>{
         const dateFormat = new Date(item.date);
@@ -51,8 +54,10 @@ function UserWishlist() {
       const response = await Wishlist_Service.deleteWishlistItem(token,itemId);
       if(response.status === 200){
         const deleteItem = await response.json();
-        console.log(deleteItem.message);
-        alert(deleteItem.message);
+        setMessageSuccess(deleteItem.message);
+        setTimeout(()=>{
+            setMessageSuccess("");
+        },5000);
         getUserWishlist(token, curr_user._id);
       }else{
         alert("Item not deleted there was some error!");
@@ -68,6 +73,9 @@ function UserWishlist() {
     
     {!showLoader && (
       <WishlistOuter>
+        {messageSuccess !== "" && (
+                <PopUp messageSuccess={messageSuccess}/> 
+            )}
         <h3 className='wishlist-main-heading'>Your Wishlist</h3>
         <WishlistInner>
         {userWishlistItems && userWishlistItems.map((item,index)=>{
@@ -82,7 +90,8 @@ function UserWishlist() {
               <div className="individual-book">
                   <div className='book-details'>
                     <div className='book-image'>
-                      <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
+                    {item.book.book_image && <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />}
+                    {!item.book.book_image && <img src={require(`../../../public/assets/images/${bookDummyImage}`)} alt={item.book.book_name} />}
                     </div>
                     <div className='book-description'>
                       <p><span>Book Name: </span>{item.book.book_name}</p>
@@ -160,7 +169,7 @@ const WishlistOuter = styled.div`
 
 const WishlistInner = styled.div`
   max-height:90vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   margin-bottom: 1rem;
   @media (max-width:650px){
     font-size: 0.9rem;

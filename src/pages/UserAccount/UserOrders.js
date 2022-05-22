@@ -9,6 +9,7 @@ import {mobileMenuService} from "../../services/LocalService";
 function UserOrders() {
   const [orderHistory, setOrderHistory] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
+  const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
   let navigate = useNavigate();
   useEffect(()=>{
     setShowLoader(true);
@@ -64,7 +65,8 @@ function UserOrders() {
                     <div key={order._id} className="individual-book">
                       <div className='book-details'>
                         <div className='book-image'>
-                          <img src={require(`../../../public/assets/images/${order.book.book_image}`)} alt={order.book.book_name} />
+                         {order.book.book_image && <img src={require(`../../../public/assets/images/${order.book.book_image}`)} alt={order.book.book_name} />}
+                         {!order.book.book_image && <img src={require(`../../../public/assets/images/${bookDummyImage}`)} alt={order.book.book_name} />}
                         </div>
                         <div className='book-description'>
                             <p><span>Book Name: </span>{order.book.book_name}</p>
@@ -141,7 +143,7 @@ const OrderHistOuter = styled.div`
 
 const OrderHistInner = styled.div`
   max-height:90vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   margin-bottom: 1rem;
   @media (max-width:650px){
     font-size: 0.9rem;

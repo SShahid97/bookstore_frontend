@@ -1,6 +1,7 @@
 import React , {useState, useEffect} from 'react'
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
+import {userService} from "../services/LocalService";
 function Footer() {
   const [isAdmin, setIsAdmin]=useState(false);
   useEffect(()=>{
@@ -12,7 +13,20 @@ function Footer() {
         setIsAdmin(false);
       }
     }
-  },[isAdmin])
+  },[isAdmin]);
+
+  userService.onUser().subscribe(user => {
+    console.log(user);
+    if(user ){
+      if (user.role==="admin") {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    }
+    
+  });
+
   return (
     <FooterOuter className="main-footer">
       {!isAdmin && ( 
@@ -25,9 +39,9 @@ function Footer() {
         </ul>
         <ul>
           <h3>Popular</h3>
-          <li><Link to = '/books/js_book'>JavaScript</Link></li>
-          <li><Link to = '/books/cn_book'>Computer Networks</Link></li>
-          <li><Link to = '/books/html_book'>Discrete Maths</Link></li>
+          <li><Link to = '/books/history_book'>General & World History</Link></li>
+          <li><Link to = '/books/js_book'>Web Development</Link></li>
+          <li><Link to = '/books/maths_book'>Mathematics</Link></li>
         </ul>
       </div>
       )}

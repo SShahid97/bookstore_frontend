@@ -10,11 +10,14 @@ import {
     Mathematics,
     Other
 } from "../services/MainMenuCategories";
+import {motion} from "framer-motion";
 
 
 function Category() {
     const General_Categories = [Compter_Science, Business_Management, Science, Mathematics, Other];
     const [isHidden, setIsHidden] = useState(false);
+    const [opacity, setOpacity] = useState(false);
+    const [opacity2, setOpacity2] = useState(false);
     useEffect(() => {
     }, [])
 
@@ -23,6 +26,7 @@ function Category() {
     }
     const handleMainLink = () => {
         setIsHidden(false);
+        setOpacity(true);
     }
     let i = 0;
     return (
@@ -30,14 +34,23 @@ function Category() {
             {General_Categories.map((item, ind) => {
                 ++i;
                 return (
-                    <MainLinks key={ind} onMouseEnter={handleMainLink}>
+                    <MainLinks key={ind} onMouseEnter={handleMainLink} onMouseLeave={()=>{setOpacity(false)}}>
                         <h4>{item.name}</h4><span className='angle-down'><FaAngleDown /></span>
-                        <DropdownOne className={isHidden ? 'hide' : 'droplinks'}>
+                        <DropdownOne 
+                        animate={{ opacity:opacity?1:0 }}
+                        transition={{ ease: "easeOut", duration: 0.8 }}
+                        className={isHidden ? 'hide' : 'droplinks'}>
                             {General_Categories[ind].categories.map((drop_1, index) => {
                                 return (
-                                    <DropLinks key={index}>
+                                    <DropLinks 
+                                    onMouseOver={()=>{setOpacity2(true)}}  
+                                    onMouseLeave={()=>{setOpacity2(false)}}
+                                    key={index}>
                                         <h4>{drop_1.name}</h4> <span className='angle-right'><FaAngleRight /></span>
-                                        <DropdownTwo key={index} className={`droplinks_0 sub_${index} subb_${i}`}>
+                                        <DropdownTwo
+                                        animate={{ opacity:opacity2?1:0 }}
+                                        transition={{ ease: "easeOut", duration: 0.8 }}
+                                         key={index} className={`droplinks_0 sub_${index} subb_${i}`}>
                                             {General_Categories[ind].categories[index].sub_categories.map((drop_link, inde) => {
                                                 return (
                                                     <SLink key={inde} to={drop_link.link} onClick={handleSubLink} >
@@ -220,7 +233,7 @@ const DropLinks = styled.div`
             margin-left:3px;
         }
 `;
-const DropdownOne = styled.div`
+const DropdownOne = styled(motion.div)`
         text-align: left;
         color:white !important;
         z-index: 900;
@@ -236,7 +249,7 @@ const DropdownOne = styled.div`
         display: none;
 `;
 
-const DropdownTwo = styled.div`
+const DropdownTwo = styled(motion.div)`
         text-align: left;
         color:white !important;
         z-index: 900;

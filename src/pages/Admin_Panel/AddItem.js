@@ -5,12 +5,29 @@ import { Item_Service, Upload_Service } from '../../services/Service';
 import PopUp from '../../components/PopUp';
 import PopupFailure from "../../components/PopupFailure";
 import "./styles.css";
+
+import {
+    Compter_Science, 
+    Business_Management,
+    Science,
+    Mathematics,
+    Literature,
+    Social_Sciences,
+    History
+} from "../../services/BookCategories";
 // import {Service} from "../../services/Service";
 
 let Admin = {};
 function AddItem() {
+    let generalCategory = [Compter_Science,Business_Management,Science,Mathematics];
+
     const [formInput, setformInput] = useState({ });
     const [discount, setDiscount] = useState(0);
+    // const [general, setGeneral] = useState("");
+    // const [category, setCategory] = useState("");
+    // const [subCategory, setSubCategory] = useState("");
+    // const [categoryIndex, setCategoryIndex] = useState(null);
+    // const [subCategoryIndex, setSubCategoryIndex] = useState(null);
     // const [admin, setAdmin] = useState({});
     const [imageFile, setImageFile]= useState(null);
     const [imageName, setImageName]= useState("");
@@ -58,7 +75,27 @@ function AddItem() {
         setformInput(values => ({ ...values, [name]: name === "price" ? Number(value) : value }))
     }   
 
-    
+    // const handleGeneral = (e)=>{
+    //     let value= e.target.value;
+    //     let generalIndex = value.split("/")[1];
+    //     value = value.split("/")[0];
+    //     setGeneral(e.target.value);
+    //     console.log(value);
+    //     console.log(generalIndex);
+    //     setCategoryIndex(generalIndex);
+    // }
+    // const handleCategory = (e)=>{
+    //     let value= e.target.value;
+    //     let categoryIndex = value.split("/")[1];
+    //     value = value.split("/")[0];
+    //     setCategory(e.target.value);
+    //     console.log(value);
+    //     console.log(categoryIndex);
+    //     setSubCategoryIndex(categoryIndex);
+    // }
+    // const handleSubCategory = (e)=>{
+    //     setSubCategory(e.target.value);
+    // }
     const addBookItem = async (event) => {
         event.preventDefault();
         // adds discount field
@@ -235,7 +272,35 @@ function AddItem() {
                         </div>
                    
                     </div>
-
+                 {/* <div  style={{width:'50%'}}>
+                    <div className='discount-div'>
+                        <select style={{ padding: '7px 5px'}}
+                            className="form-control"
+                            name="general"
+                            value={general || ""} 
+                            onChange={handleGeneral}
+                        >
+                        {generalCategory.map((general,index)=>{          
+                            return <option key={index} disabled={index===0}  value={general.name+"/"+index}>{general.name}</option>
+                        })}
+                      </select><br/>
+                    </div>
+                 </div>    
+                 <div  style={{width:'50%'}}>
+                    <div className='discount-div'>
+                        <select style={{ padding: '7px 5px'}}
+                            className="form-control"
+                            name="category"
+                            value={category || ""} 
+                            onChange={handleCategory}
+                        >
+                        <option value="" disabled={true} >Select Category</option>
+                        { generalCategory[categoryIndex] && generalCategory[categoryIndex].categories.map((category,index)=>{          
+                            return <option key={index} disabled={index===0}  value={category.name+"/"+index}>{category.name}</option>
+                        })}
+                      </select><br/>
+                    </div>
+                 </div>              */}
                 <input
                     placeholder='Category'
                     type="text"

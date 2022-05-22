@@ -6,20 +6,21 @@ import Loader from "../../components/Loader";
 import {FaTrash} from "react-icons/fa";
 import PopUp from '../../components/PopUp';
 
-let curr_user = JSON.parse(localStorage.getItem('user'));
+
 function ViewAllUsers() {
   let i=1;
   localStorage.removeItem("OrderId")
   const [users, setUsers] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
   const [messageSuccess, setMessageSuccess] = useState("");
+  let curr_user = JSON.parse(localStorage.getItem('user'));
   useEffect(() => {
-    window.scrollTo(0,0);
+    // window.scrollTo(0,0);
     setShowLoader(true);
     if (curr_user && curr_user.role === "admin") {
+      console.log("hello")
       // setAdmin(curr_user);
       getAllUsers(curr_user.token);
-      console.log("hello")
     }
   }, [])
 
@@ -116,8 +117,9 @@ function ViewAllUsers() {
 const UsersOuter = styled.div`
   border:1px solid grey;
   border-radius:3px;
-  min-height: 70vh; 
+  min-height: 80vh; 
   overflow-x:auto;
+  overflow-y:auto;
   
   .delete-user{
     color:#e33535;

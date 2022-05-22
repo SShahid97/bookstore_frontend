@@ -12,6 +12,7 @@ function Books() {
    let params = useParams();
    const [books, setBooks]=useState([]);
    const [tempBooks, setTempBooks]= useState([]);
+   const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
    const [sortByValue, setSortByValue] = useState('');
    const [openSideNav,setOpenSideNav] = useState(false);
 //    const [searchKeyword, setSearchKeyword] = useState("");
@@ -41,6 +42,7 @@ function Books() {
         console.log(response.status);
         if(response.status === 200){
             const fetchedData = await response.json();
+
             fetchedData.forEach((book)=>{
                 if(book.discount>0){
                     book.discountPercent = book.discount*100 + "%";
@@ -73,9 +75,10 @@ function Books() {
        const response = await Item_Service.getBooksByCategory(category);
        if(response.status === 200){ 
             const fetchedBooks = await response.json();
+            console.log("fetchedBooks: ",fetchedBooks);
             fetchedBooks.forEach((book)=>{
                 if(book.discount>0){
-                    book.discountPercent = book.discount*100 + "%";
+                    book.discountPercent = Math.floor(book.discount*100) + "%";
                     book.newPrice = book.price - (book.price* book.discount);
                 }
                 if(book.discount===0){
@@ -129,7 +132,7 @@ function Books() {
            <>
             <SideNav>
            <div>
-               <Filters books={books} setTempBooks={setTempBooks} />
+               <Filters books={books} setTempBooks={setTempBooks} tempBooks={tempBooks} />
                <hr/>
                <div>
                    {/* <h4>Language</h4> */}
@@ -200,8 +203,13 @@ function Books() {
                       <Link to={"/book/"+book._id}>
                           
                        <div className='book-item'>
-                        <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
-                            <div className='book-details'>
+                       {
+                        book.book_image &&  <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
+                        }
+                        {
+                            !book.book_image && <img src={require(`../../public/assets/images/${bookDummyImage}`)} alt={book.book_name}/>
+                        }    
+                           <div className='book-details'>
                                 <p>{book.book_name}</p>
                                 <p className="author">by {book.book_author}</p>
                                 <p>
@@ -212,7 +220,7 @@ function Books() {
                                     )}
                                     {(book.discount>0) && (
                                         <>
-                                            <span>&#8377; {book.newPrice}</span>
+                                            <span>&#8377; {Math.round(book.newPrice)}</span>
                                             <span className='old-price'>&#8377;{book.price}</span>
                                         </>
                                     )}

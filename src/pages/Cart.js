@@ -20,6 +20,7 @@ function Cart() {
     const [showLoader, setShowLoader] = useState(false); 
     const [deliveryCharges, setDeliveryCharges] = useState(50); 
     const [messageSuccess, setMessageSuccess] = useState("");
+    const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
     useEffect(()=>{
         setShowLoader(true);
         mobileMenuService.setMobileMenuIndicies(null);
@@ -34,15 +35,15 @@ function Cart() {
         // console.log(userId);
         navigate("/checkout/billing");
     }
-    const handleQuantity = (e, index)=>{
-        e.preventDefault();
-        const newQtyArr = [...quantity];
-        newQtyArr[index] = e.target.value;
-        setQuantity(newQtyArr)    
-    }
+    // const handleQuantity = (e, index)=>{
+    //     e.preventDefault();
+    //     const newQtyArr = [...quantity];
+    //     newQtyArr[index] = e.target.value;
+    //     setQuantity(newQtyArr)    
+    // }
     
     const handleDecrement = (index) =>{
-        console.log(index,"minus")
+        // console.log(index,"minus")
         if(quantity[index]>1){
             const newQtyArr = [...quantity];
             newQtyArr[index] = newQtyArr[index]-1;
@@ -72,7 +73,7 @@ function Cart() {
                 setMessageSuccess("Quantity updated");
                 setTimeout(()=>{
                     setMessageSuccess("");
-                },4000);
+                },5000);
             }
         }catch(err){
             setMessageSuccess("");
@@ -164,7 +165,7 @@ function Cart() {
                 setMessageSuccess(data.message);
                 setTimeout(()=>{
                     setMessageSuccess("");
-                },4000);
+                },5000);
                 getCartItems();
             }catch(err){
                 console.log("There was some error: ",err)
@@ -221,7 +222,8 @@ function Cart() {
                                     {(item.book.discount>0) && (
                                         <span className='discount-badge' >{item.book.discount*100}%</span>
                                     )}
-                                    <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
+                                   {item.book.book_image &&  <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />}
+                                   {!item.book.book_image &&  <img src={require(`../../public/assets/images/${bookDummyImage}`)} alt={item.book.book_name} />}
                                 </div>
                                 </div>
                                 <div className='details-mobile'>

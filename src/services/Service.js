@@ -2,7 +2,7 @@
 // All database calls are made from this service file
 const localdomain = "http://localhost:5001"; 
 // for ngrok
-// const localdomain = "https://5d95-2409-4054-409-ebbf-e4f1-21a2-1449-abb3.in.ngrok.io"; 
+// const localdomain = "https://a0fb-2409-4054-509-3705-3884-a9c6-1f78-560c.in.ngrok.io"; 
 
 
 const books_url = `${localdomain}/api/books`;
@@ -43,6 +43,19 @@ export const Wishlist_Service = {
                     'auth-token': token
                 },
                 body:JSON.stringify(formData)
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
+    checkIfItemAlreadyAdded: async (token, formData)=>{
+        try {
+            const response = await fetch(`${wishlist_url}/added?book_id=${formData.book_id}&user_id=${formData.user_id}`,{
+                headers:{
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                },
             });
             return response;
         }catch(err){
@@ -186,6 +199,19 @@ export const Address_Service = {
 
 }
 export const Order_Service = {
+    getAllOrders: async (token)=>{
+        try{
+            const response = await fetch(order_url,{
+                headers:{
+                    'Content-Type':'application/json',
+                    'auth-token': token
+                }
+            });
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
     addOrder: async (token, formData)=>{
         try{
             const response = await fetch(order_url, {

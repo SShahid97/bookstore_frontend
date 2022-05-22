@@ -18,7 +18,7 @@ function AboutUs(){
                         user interface for maintaining their books inventory, like adding new books, editing existing books, or 
                         removing books. They also get some advanced features of customization. Also, they can keep track of customers
                         order history for future use.
-                            Our e-bookstore is a single-page web application, developed using <b>MERN</b> stack, which will make it 
+                            Our e-bookstore is a single-page web application, developed using <b>MERN</b> stack, which makes it 
                         quite fast, giving a nice user experience, as compared to multipage web applications.
                     </p>
                 </div>

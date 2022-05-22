@@ -154,6 +154,9 @@ const VerifyEmailInner = styled.div`
         width: 70%;
         margin: auto;
         padding: 15px;
+        @media (max-width:650px){
+            width:90%;
+        }
     }
     .email-submit-btn{
         width:40%;

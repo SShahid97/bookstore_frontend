@@ -5,9 +5,12 @@ import "@splidejs/splide/dist/css/splide.min.css";
 import { Link } from 'react-router-dom';
 import {Item_Service} from '../services/Service';
 import Rating from "./Rating";
+// import {motion} from "framer-motion";
 
 function Latest(props) {
     const [latest, setLatest] = useState([]);
+    const [move, setMove]=useState(false);
+    const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
     const ref = useRef();
     
     useEffect(() => {
@@ -24,7 +27,7 @@ function Latest(props) {
             const fetchedBooks = await response.json();
             fetchedBooks.forEach((book)=>{
                 if(book.discount>0){
-                    book.discountPercent = book.discount*100 + "%";
+                    book.discountPercent = Math.floor(book.discount*100) + "%";
                     book.newPrice = book.price - (book.price* book.discount);
                 }
                 if(book.discount===0){
@@ -80,14 +83,20 @@ function Latest(props) {
                 {latest.map((book) => {
                     return (
                         <SplideSlide key={book._id} >
-                            <Card >
+                            <Card 
+                            >
                                 {(book.discount>0) && (
                                     <span className='discount' >{book.discountPercent}</span>
                                 )}
                                 <Link to={"/book/" + book._id}>
-                                    <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
+                                   {book.book_image &&  <img src={require(`../../public/assets/images/${book.book_image}`)} alt={book.book_name} />}
+
+                                   {!book.book_image && <img src={require(`../../public/assets/images/${bookDummyImage}`)} alt={book.book_name} />}
+                                    
                                     <div className='details' style={{ marginLeft: '0.3rem', marginTop: '0.5rem',marginRight: '0.3rem' }}>
-                                        {book.book_name.length<=30? <p>{book.book_name}</p>:<p> {book.book_name.slice(0,30)}...</p> }
+                                        {/* {book.book_name.length<=30?  */}
+                                        <p>{book.book_name}</p>
+                                         {/* :<p> {book.book_name.slice(0,30)}...</p>  */}
                                         {(book.discount===0)  && (
                                             <>
                                                 <span>&#8377;</span><span>{book.price}</span>
@@ -95,7 +104,7 @@ function Latest(props) {
                                         )}
                                         {(book.discount>0) && (
                                             <>
-                                            <span>&#8377; {book.newPrice}</span>
+                                            <span>&#8377; {Math.round(book.newPrice)}</span>
                                             <span className='old-price'>&#8377;{book.price}</span>
                                             </>
                                         )}

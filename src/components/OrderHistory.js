@@ -1,8 +1,9 @@
-import React from 'react';
+import React,{useState} from 'react';
 import styled from "styled-components";
 
 
 function OrderHistory({orderHistory}) {
+  const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
   return (
 
     <Orders >
@@ -39,13 +40,16 @@ function OrderHistory({orderHistory}) {
                         <p><span>Discount:</span>{order.discount*100}%</p>
                       </div>
                       <div className='book-image'>
-                        <img src={require(`../../public/assets/images/${order.book.book_image}`)} alt={order.book.book_name} />
+                       {order.book.book_image && <img src={require(`../../public/assets/images/${order.book.book_image}`)} alt={order.book.book_name} />}
+                       {!order.book.book_image && <img src={require(`../../public/assets/images/${bookDummyImage}`)} alt={order.book.book_name} />}
                       </div>
                     </div>
                   ) 
                 })
               }
               <p className='total-amt'>Total Amount: &#8377;{orderInfo.total_amount}</p>
+              <p className='total-amt'>Payment Status: {orderInfo.payment_status}</p>
+              <p className='total-amt'>Delivery Status: {orderInfo.delivery_status}</p>
             </div>
         </div>
        )

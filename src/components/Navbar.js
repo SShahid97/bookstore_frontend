@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 import Search from './Search';
 import Category from './Category';
 import MobileCategory from './MobileCategory';
-// import MenuOnScroll from './MenuOnScroll';
-import { useNavigate,useLocation,Link,NavLink } from 'react-router-dom';
+import { useNavigate,Link,NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import {userService, cartService, logOutService,mobileMenuService} from "../services/LocalService";
-// import {Service} from '../services/Service';
+import {userService, cartService, logOutService} from "../services/LocalService";
+import {motion} from "framer-motion";
 
 import {SiElasticsearch} from 'react-icons/si';
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -17,7 +16,6 @@ import {
   FaSignInAlt,
   FaSignOutAlt, 
   FaUser,
-  FaChalkboardTeacher,
   FaShoppingCart,
   FaUserShield,
   FaSearch,
@@ -37,6 +35,8 @@ function Navbar() {
     const [cartItemsLength, setCartItemsLength]= useState(0);
     const [showMobSearch, setShowMobSearch] = useState(false);
     const navigate = useNavigate();
+    // For animation
+    const [rotate, setRotate] = useState(false);
     // const location = useLocation();
     
     // const [adminMobileView, setAdminMobileView] = useState(false);
@@ -46,7 +46,7 @@ function Navbar() {
     // const [isMenu, setIsMenu] = useState(false);
 
     useEffect(()=>{
-      window.addEventListener('scroll', handleScroll, { passive: true });
+      // window.addEventListener('scroll', handleScroll, { passive: true });
 
     
       // getCartItems();
@@ -63,16 +63,25 @@ function Navbar() {
       userService.onUser().subscribe(curr_user => {
         if (curr_user) {
           setUser(curr_user);
-          let name = curr_user.name.split(" ")[0];
-          // console.log(name.substring(0,4));
-          name = name.substring(0,5);
-          setUserName(name);
+          if(curr_user.name!== undefined){
+            let name = curr_user.name.split(" ")[0];
+            // console.log(name.substring(0,4));
+            name = name.substring(0,5);
+            setUserName(name);
+          }
           checkUser(curr_user)
         } else {
           // setIsUser(false);
         }
       });
-      
+
+      // if(!isLoggedOut){              //if logged in
+      //   setTimeout(()=>{
+      //       console.log("sucessfully logged out");
+      //       logout();
+      //   },300000);    //timer for 24 hours 86400000
+      //  } 
+
       // on refresh
       // let cartLen = JSON.parse(localStorage.getItem('noOfCartItems'));
       // if(cartLen){
@@ -82,8 +91,8 @@ function Navbar() {
       // // return unsubscribe method to execute when component unmounts
       // return subscription.unsubscribe;   
       return () => {
-        window.removeEventListener('scroll', handleScroll);
-    };
+        // window.removeEventListener('scroll', handleScroll);
+      };
     },[userName]);
 
     cartService.onUpdateCartItems().subscribe(cartItemsLen => {
@@ -93,7 +102,7 @@ function Navbar() {
       }
     });
     
-    const handleScroll = () => {
+    // const handleScroll = () => {
       // const position = window.pageYOffset;
       // setScrollPosition(position);
 
@@ -104,7 +113,7 @@ function Navbar() {
       //   setIsMenu(false);
       //   setHideMenuItems(false);
       // }
-    };
+    // };
     
 
     function checkUser(curr_user){
@@ -134,22 +143,18 @@ function Navbar() {
       }
     }
 
-  //  const LoginTimedOut = setTimeout(()=>{
-  //     if(!isLoggedOut){
-  //       console.log("sucessfully logged out");
-  //       logout();
-  //     }
-  //  },86400000);    //timer for 24 hours
-
+  
     // isUser,isAdmin
 
     function logout(){
+
       setIsUser(false);
       setIsAdmin(false);
       setisLoggedOut(true);
       setCartItemsLength(0);
       setUserName("");
       setUser("");
+      // userService.sendUser({});
       logOutService.setLogOut(null);  
       localStorage.removeItem("user");
       localStorage.removeItem("cart");
@@ -200,7 +205,11 @@ function Navbar() {
           {!isAdmin && (
             <Logo to={"/"} >
             <SiElasticsearch className='logo-icon' />
-              <span className='logo-text'>BookStore</span> 
+              <motion.span 
+              animate={{rotate:rotate?360:0}}
+              transition={{type:"tween", duration:1}}
+              onMouseOver={()=>{setRotate (!rotate)}}
+              className='logo-text'>BookStore</motion.span> 
             </Logo>
           )}
         
@@ -295,7 +304,10 @@ function Navbar() {
           ))} 
         {/* Admin Screen ends here */}
           {(!isAdmin && toggleDropdown) && (
-            <ul className='dropdown' onClick={()=>setToggleDropDown(!toggleDropdown)}> 
+            <motion.ul  
+               animate={{x: 0}}
+               initial={{x:30}}
+               className='dropdown' onClick={()=>setToggleDropDown(!toggleDropdown)}> 
                 {isUser && (
                   <>
                     <NavLinks to={"/user/account"} className='dropdown-item'>         
@@ -308,9 +320,9 @@ function Navbar() {
                       <FaHeart/><p className="sign_reg_icons" ><strong>Wishlist</strong></p>
                     </NavLinks>
                     <li className='dropdown-item' onClick={logout}> 
-                    <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>
-                  </li>
-                </>
+                      <FaSignOutAlt /><p className="sign_reg_icons" ><strong>Logout</strong></p>
+                    </li>
+                  </>
                 )}
 
               {(isLoggedOut) && (
@@ -323,7 +335,7 @@ function Navbar() {
                 </NavLinks>
                 </>
               )}
-          </ul>
+          </motion.ul>
           )}
 
         

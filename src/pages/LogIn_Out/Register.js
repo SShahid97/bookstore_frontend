@@ -26,6 +26,11 @@ function Register() {
         mobileMenuService.setMobileMenuIndicies(null);
     },[])
     const handleChange = (event) => {
+        setEmailErrorDot("");
+        setEmailErrorRate("");
+        setNameError("");
+        setPasswordError("");
+        setIsMatched(true);
         if(event.target.name === "name"){
             const re = /^[ A-Za-z ]+$/;   //only alphabets are allowed
             if (event.target.value === ""||re.test(event.target.value)){
@@ -85,6 +90,8 @@ function Register() {
     }
 
     const handleConfirmPass=(e)=>{
+        setIsMatched(true);
+        setIsInvalid(false);
         setConfirmPass(e.target.value);
     }
     const handleNameError = (e)=>{

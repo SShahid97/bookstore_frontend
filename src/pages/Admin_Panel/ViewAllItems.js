@@ -37,6 +37,7 @@ function ViewAllItems() {
     const [noResultsFound,setNoResultsFound] = useState(false);
     const [bookFound,setBookFound] = useState(false);
     const [messageSuccess, setMessageSuccess] = useState("");
+    const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
 
     // let navigate = useNavigate();
     // let params = useParams();
@@ -365,7 +366,8 @@ function ViewAllItems() {
                return (
                 <Card key={book._id}>
                     <div className='imgDiv'> 
-                        <img src={require(`../../../public/assets/images/${book.book_image}`)} alt={book.book_name} />
+                       {book.book_image && <img src={require(`../../../public/assets/images/${book.book_image}`)} alt={book.book_name} />}
+                       {!book.book_image && <img src={require(`../../../public/assets/images/${bookDummyImage}`)} alt={book.book_name} />}
                     </div>
 
                     {/* <div className="outer"> */}

@@ -10,6 +10,7 @@ import {
     Mathematics,
     Other
 } from "../services/MainMenuCategories";
+import {motion} from "framer-motion";
 
 function MobileCategory({setmobileView}) {
     const General_Categories = [Compter_Science, Business_Management, Science, Mathematics, Other];
@@ -63,8 +64,12 @@ function MobileCategory({setmobileView}) {
     }
     let i = 0;
   return (
-    <List className='admin-mobile-sidenav'>
-        <SLink style={{borderBottom: '1px solid navajowhite'}} to={"/"} onClick={(e)=>handleHomeLink(e)} >
+    <List 
+        animate={{ opacity:setmobileView?1:0 }}
+        transition={{ ease: "easeOut", duration: 2 }}
+    className='admin-mobile-sidenav'>
+        <SLink 
+        style={{borderBottom: '1px solid navajowhite'}} to={"/"} onClick={(e)=>handleHomeLink(e)} >
             <h3 style={{marginLeft:'12px'}} >Home</h3>
         </SLink> 
     {General_Categories.map((item, ind) => {
@@ -99,7 +104,7 @@ function MobileCategory({setmobileView}) {
   )
 }
 
-const List = styled.div`
+const List = styled(motion.div)`
       height: -webkit-fill-available;
       height:100%;
       color:white;
@@ -113,7 +118,7 @@ const List = styled.div`
       top: 42px;
       width: 75%;
       z-index: 1200;
-      overflow-y: scroll;
+      overflow-y: auto;
       font-size: 0.9rem;
       @media (max-width:650px){
         top: 48px;

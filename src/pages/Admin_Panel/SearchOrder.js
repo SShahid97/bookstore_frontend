@@ -5,6 +5,7 @@ import { FaSearch, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Order_Service } from '../../services/Service';
 import Loader from "../../components/Loader";
+import PopUp from "../../components/PopUp";
 
 // let Admin = {};
 function SearchOrder() {
@@ -18,6 +19,8 @@ function SearchOrder() {
   const [deliveryStatus, setDeliveryStatus] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [editOrderDetails, setEditOrderDetails] = useState(false);
+  const [messageSuccess, setMessageSuccess] = useState("");
+  const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
   let navigate = useNavigate();
   let curr_user = JSON.parse(localStorage.getItem('user'));
   useEffect(() => {
@@ -118,7 +121,11 @@ function SearchOrder() {
     const response = await Order_Service.updateOrder(curr_user.token,orderPlaced._id,detailsObj);
     if(response.status === 200){
       // const updatedOrder = await response.json();
-      alert("Order Updated");
+      // alert("Order Updated");
+      setMessageSuccess("Order Updated");
+      setTimeout(()=>{
+          setMessageSuccess("");
+      },5000)
       getOrder(curr_user,orderId);
       setEditOrderDetails(false);
     }else{
@@ -138,6 +145,9 @@ function SearchOrder() {
   }
   return (
     <SearchedOrders>
+       {messageSuccess !== "" && (
+            <PopUp messageSuccess={messageSuccess}/> 
+        )}
       <FormStyle onSubmit={submitHandler}>
         <div className='form-div'>
           <FaSearch></FaSearch>
@@ -197,7 +207,8 @@ function SearchOrder() {
                       </div>
                       
                       <div className='book-image'>
-                        <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
+                       {item.book.book_image && <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />}
+                       {!item.book.book_image && <img src={require(`../../../public/assets/images/${bookDummyImage}`)} alt={item.book.book_name} />}
                       </div>
                     </div>
                   )

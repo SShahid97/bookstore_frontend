@@ -14,6 +14,7 @@ import Rating from "../components/Rating";
 import "./styles.css";
 import Loader from '../components/Loader';
 import PopUp from "../components/PopUp";
+import {motion} from "framer-motion";
 import {FaCartArrowDown,FaArrowLeft,FaHeart,FaStar,FaRegStar,FaMinus, FaPlus } from "react-icons/fa";
 // import {FaUserCircle, FaStar,FaStarHalfAlt,FaRegStar} from "react-icons/fa";
 
@@ -36,7 +37,8 @@ function Book() {
     const [itemAddedToCartMsg, setItemAddedToCartMsg] = useState("");
     const [messageSuccess, setMessageSuccess] = useState("");
     const [itemAddedToWishlistMsg, setItemAddedToWishlistMsg] = useState("");
-    const [returnedPincode,setReturnedPincode] = useState("")
+    const [returnedPincode,setReturnedPincode] = useState("");
+    const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
 
     let params = useParams();
     let navigate = useNavigate();
@@ -48,6 +50,7 @@ function Book() {
     const [reviewAlreadySubmitted, setReviewAlreadySubmitted] = useState(false);
     const [showLoader, setShowLoader] = useState(false);
     const [notFound, setNotFound] = useState("");
+    const [move, setMove]= useState(false);
 
 
     // const [showCart, setShowCart] = useState([]);
@@ -112,12 +115,14 @@ function Book() {
         const response = await Item_Service.getBookDetails(bookId);
         if(response.status === 200){
             const bookDetails = await response.json();
+            console.log(bookDetails);
             if(bookDetails.discount>0){
-                bookDetails.discountPercent = bookDetails.discount*100 + "%";
+                bookDetails.discountPercent = Math.floor(bookDetails.discount*100) + "%";
                 bookDetails.newPrice = bookDetails.price - (bookDetails.price* bookDetails.discount);
             }
             setDetails(bookDetails);
             let itmImageName = [{id:bookDetails._id ,image: bookDetails.book_image, name:bookDetails.book_name}];
+            console.log(itmImageName);
             setBookImage(itmImageName);
             setNotFound("");
             getStockDetails(bookDetails.book_code);
@@ -199,21 +204,29 @@ function Book() {
                 user_id:user._id,
                 book_id:bookId
             }
-            const response = await Wishlist_Service.addWishlistItem(user.token,wishlistItemObj);
-            if(response.status === 201){
-                const addedItem = await response.json();
-                console.log(addedItem);
-                // setItemAddedToWishlistMsg("Item Added to Wishlist!");
-                // setTimeout(()=>{
-                //     setItemAddedToWishlistMsg("");
-                // },6000);
-                setMessageSuccess("Item Added to Wishlist");
+            // Cheak if item is already added to wishlist
+            const response = await Wishlist_Service.checkIfItemAlreadyAdded(user.token,wishlistItemObj);
+            if(response.status === 204){  //item is not in list
+                const res = await Wishlist_Service.addWishlistItem(user.token,wishlistItemObj);
+                if(res.status === 201){
+                    const addedItem = await res.json();
+                    console.log(addedItem);
+                    setMessageSuccess("Item Added to Wishlist");
+                    setTimeout(()=>{
+                        setMessageSuccess("");
+                    },5000);
+                }else{
+                    alert("There was some error!");
+                }
+            }else if(response.status === 200){
+                setMessageSuccess("Item is Already Added to Wishlist");
                 setTimeout(()=>{
                     setMessageSuccess("");
-                },4000);
+                },5000);
             }else{
-                alert("There was some error!");
+                alert("There was some error while adding item to wishlist! try again later");
             }
+            
         }
     }
     const handleAddToCart = async(id, price)=>{
@@ -245,15 +258,21 @@ function Book() {
             cartArray = cart;
             cartArray.forEach(element => {
                 // console.log("Book Id:", element.book_id);
-                if( element.book_id === id){
+                if(element.book._id === id || element.book_id === id ){
+                    console.log("helo")
                     flag=true;
-                    // alert("This Item is already added to cart");
-                    navigate("/cart/"+user._id);
+                    // navigate("/cart/"+user._id);
+                    setMessageSuccess("Item is Already Added to Cart");
+                    setTimeout(()=>{
+                        setMessageSuccess("");
+                        // setMove(false);
+                    },5000);
                     return;
                 }
             });
             // when item is not already added
             if(flag === false){
+                console.log("hulo")
                 cartArray.push(cartItemObj);
                 localStorage.setItem("cart",JSON.stringify(cartArray));
                 updateCartItems(cartArray.length);
@@ -266,6 +285,7 @@ function Book() {
             const response = await Cart_Service.addToCart(token,cartObj);
             if(response.status === 201){
                 const data = await response.json();
+                // setMove(true);
                 // alert("Item Added to Cart Successfully");
                 // setItemAddedToCartMsg("Item Added to cart!");
                 // setTimeout(()=>{
@@ -274,7 +294,9 @@ function Book() {
                 setMessageSuccess("Item Added to Cart");
                 setTimeout(()=>{
                     setMessageSuccess("");
-                },4000);
+                    // setMove(false);
+                },5000);
+
                 let cart = JSON.parse(localStorage.getItem("cart"));
                 updateCartItems(cart.length)
                 setQuantity(1);
@@ -405,16 +427,30 @@ function Book() {
                )}
             <DetailWrapper>
                 <DetailWrapperInner>
-                <BookImg>
+                <BookImg
+                //  animate={
+                //      { 
+                //          opacity:move?0.7:1,scale:move?0:1,y:move?-170:0,rotate:move?360:360,x:move?980:0}
+                 
+                //      }
+                //  transition={{type:"tween", duration: 1 }}
+
+                >
                     {(bookDetails.discount>0) && (
                         <span className='discount-badge' >{bookDetails.discountPercent}</span>
                     )}
 
-                    {bookImage.map((item)=>{   
+                    {bookImage && bookImage.map((item)=>{   
                        return ( 
                         <img key={item.id} src={require(`../../public/assets/images/${item.image}`)} alt={item.name}/>
                        )
-                    })} 
+                    })}
+                    {/* {!bookImage.image && bookDummyImage.map((item, index)=>{   
+                       return ( 
+                        <img key={index} src={require(`../../public/assets/images/${bookDummyImage}`)} alt={bookDetails.book_name}/>
+                       )
+                    })} */}
+                       
                     {/* <img src={require("./css_0004_img.jpg")} alt={bookDetails.book_name}/> */}
                     {/* {imageName} */}
                 </BookImg>
@@ -437,15 +473,15 @@ function Book() {
                         )}
                         {(bookDetails.discount>0) && (
                             <div className='discounted-prices'>
-                                <span className='new-price' >&#8377; {bookDetails.newPrice}</span>
+                                <span className='new-price' >&#8377; {Math.round(bookDetails.newPrice)}</span>
                                 <span className='old-price'>&#8377;{bookDetails.price}</span>
-                                <span className='percent-off'>({bookDetails.discount*100}% off)</span>
+                                <span className='percent-off'>({Math.floor(bookDetails.discount*100)}% off)</span>
                             </div>
                         )}
                         <div className='availability'>
                             <span> <strong>Availability:</strong> </span>
                             <span className='stock-count'>{
-                               stockDetails.count_in_stock===0?<span style={{color:'#b10505'}}>Currently Out of Stock</span>:(
+                               (stockDetails.count_in_stock===0 || !stockDetails.count_in_stock)?<span style={{color:'#b10505'}}>Currently Out of Stock</span>:(
                                 stockDetails.count_in_stock<5?<span style={{color:'#c98e0',fontSize: '15px'}}>In Stock (only {stockDetails.count_in_stock} left, hurry up! )</span>:(
                                         <span style={{color:'green', fontSize: '15px'}}>In Stock </span>
                                     ) 
@@ -513,8 +549,20 @@ function Book() {
                                     <FaCartArrowDown className='wish-cart-btn'/> Add to Cart
                                 </Button>
                             )}
-                            <Button style={{background:'rgb(247 57 163)'}} onClick={() => handleAddToWishlist(bookDetails._id)}>
-                                <FaHeart className='wish-cart-btn' /> Add to Wishlist
+                            <Button 
+                            onMouseOver={()=>setMove(true)}
+                            onMouseOut={()=>setMove(false)}
+                            style={{background:'rgb(247 57 163)'}} onClick={() => handleAddToWishlist(bookDetails._id)}>
+                               <motion.span
+                               style={{position:'absolute'}}
+                               animate={
+                                     {scale:move?1.5:1,z:move?-50:0,color:move?"rgb(230 0 0)":"rgb(255 255 255)"}
+                                     }
+                                //  transition={{type:"tween", duration: 0.7 }}
+                                transition={{type:"spring",bounce:10,duration: 1 }}
+                                 
+                               
+                               > <FaHeart className='wish-cart-btn' /> </motion.span> <span style={{marginLeft:'1.2rem'}}>Add to Wishlist</span>
                             </Button>
                         </div>
                     </BuyCartBtns>  
@@ -1009,7 +1057,7 @@ const Quantity = styled.div`
     margin-top:5px;
     margin-bottom: 5px;
     input{
-        height: 2.27rem;
+        height: 2.26rem;
         width: 2.6rem;
         text-align: center;
         color: teal;

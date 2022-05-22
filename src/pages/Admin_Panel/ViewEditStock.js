@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
-import {useParams, useNavigate} from "react-router-dom";
+import {useParams, useNavigate, Link} from "react-router-dom";
 import {Stock_Service} from "../../services/Service"; 
 import Loader from "../../components/Loader";
 import PopUp from "../../components/PopUp";
+import {FaArrowLeft} from "react-icons/fa";
 let Admin ={};
 function ViewEditStock() {
     const [totalCount, setTotalCount]=useState("");
@@ -37,7 +38,7 @@ function ViewEditStock() {
             setStock(returnedData);
         }else if(response.status === 204){
             setStock(null);
-            console.log("No stock details found");
+            console.log("No stock details available");
         }else {
             console.log("There was some error");
         }
@@ -69,7 +70,7 @@ function ViewEditStock() {
             setMessageSuccess("Stock Details Updated");
             setTimeout(()=>{
                 setMessageSuccess("");
-            },3000)
+            },5000)
             setResponseNotReturned(false);
             setShowLoader(false);
         }else if(response.status === 422){
@@ -89,11 +90,19 @@ function ViewEditStock() {
     const handleCancel = ()=>{
         navigate(-1); 
     }
+    const handleBack = ()=>{
+        navigate(-1);
+    }
   return (
-      <EditStockDiv >
+    <EditStockOuter>
+        <span className='back-arrow-span' title="back" onClick={handleBack}>
+            <FaArrowLeft className='back-arrow'/>
+        </span>
         {messageSuccess !== "" && (
             <PopUp messageSuccess={messageSuccess}/> 
-        )} 
+        )}
+    {stock && (
+      <EditStockDiv > 
         {showLoader && (< Loader/>)}
           <h4>Edit Stock Details</h4>
             <form className={responseNotReturned?"stockformDim":""} onSubmit={handleUpdateStock}>
@@ -126,10 +135,28 @@ function ViewEditStock() {
                 </div>
             </form>
     </EditStockDiv>
+    )}
+    {!stock && (
+        <div style={{width:'80%', margin:'0 auto', textAlign:'center'}}>
+        <p style={{color:'red',padding:'10px', fontWeight:'600'}}>No stock details available</p>
+        <Link className='link-to-addstock' to={"/admin-panel/manage-books/add-stock"}>Click here to add stock details</Link>
+        </div>
+     )} 
+    </EditStockOuter>
   )
 }
+const EditStockOuter = styled.div`
+    width:70%;
+    margin:0 auto;
+    .link-to-addstock{
+        padding-left:10px;
+        color:blue;
+        font-size: small;
+        text-decoration: underline;
+    }
+`;
 const EditStockDiv = styled.div`
-    width:50%;
+    width:80%;
     margin:0 auto;
     border-left: 1px solid grey;
     margin-top: 1rem;

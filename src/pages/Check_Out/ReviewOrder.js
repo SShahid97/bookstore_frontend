@@ -11,6 +11,7 @@ function ReviewOrder() {
     const [cartItems, setCartItems] = useState([]);
     const [cusInfo, setCusInfo] = useState({});
     const [totalAmount, setTotalAmount] = useState(0);
+    const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
     // const [bookImage, setBookImage] = useState([]);
     useEffect(() => {
         getCartItems();
@@ -78,7 +79,9 @@ function ReviewOrder() {
                                     {(item.book.discount>0) && (
                                         <span className='discount-badge' >{item.book.discount*100}%</span>
                                     )}
-                                    <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />
+                                   {item.book.book_image && <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />}
+                                   {!item.book.book_image && <img src={require(`../../../public/assets/images/${bookDummyImage}`)} alt={item.book.book_name} />}
+
                                 </div>
                                 </div>
                                 <div className='details-mobile'>

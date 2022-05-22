@@ -35,7 +35,7 @@
 }
 
 .dropdown{
-  z-index: 1200;
+  z-index: 1000;
   list-style: none;
   position: absolute;
   top:51px;
@@ -87,6 +87,9 @@
 .discount-range{
   cursor: pointer;
   width:95%
+}
+.top-rated-books{
+  margin-bottom:1rem;
 }
 
 

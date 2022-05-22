@@ -42,7 +42,7 @@ function Search({setShowMobSearch}) {
             {/* {showMobSearch && (
              <FaArrowLeft onClick={hideSearchBox}/>
              )} */}
-            <input placeholder='Search by book name, author...'
+            <input placeholder='Search by book name...'
             className='search-bar'
             onChange = {handleSearch}
             type="text" value={input}/>
@@ -132,7 +132,7 @@ const FormStyle = styled.form`
         font-size:1.1rem;
         background:white;
         color:grey;
-        padding: 0.4rem 1rem;
+        padding: 0.4rem 0.7rem;
         padding-left: 1.6rem;
         border:none;
         outline:none;
