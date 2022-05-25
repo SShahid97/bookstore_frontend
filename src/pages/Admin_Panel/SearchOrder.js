@@ -200,7 +200,7 @@ function SearchOrder() {
                         <p><span>Book Name:</span>{item.book.book_name}</p>
                         <p><span>Book Author:</span>{item.book.book_author}</p>
                         <p><span>Quantity:</span> {item.quantity}</p>
-                        <p><span>Price: </span>&#8377;{item.price} 
+                        <p><span>Price: </span>&#8377;{item.price.toFixed(2)} 
                         {item.discount>0 && (<span> (with discount)</span>)}  </p>
                         <p><span>Discount:</span>{item.discount * 100}%</p>
                         
@@ -214,6 +214,7 @@ function SearchOrder() {
                   )
                 })
               }
+              <p className='total-amt'>Delivery Charges: &#8377;{orderPlaced.shipping_charges}</p>
               <p className='total-amt'>Total Amount: &#8377;{orderPlaced.total_amount}</p>
               <p className='total-amt'><span>Payment Status: </span>{orderPlaced.payment_status}</p>
               <p className='total-amt'><span>Delivery Status: </span>{orderPlaced.delivery_status}</p>

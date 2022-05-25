@@ -36,7 +36,9 @@ function OrderHistory({orderHistory}) {
                         <p><span>Book Name:</span>{order.book.book_name}</p>
                         <p><span>Book Author:</span>{order.book.book_author}</p>
                         <p><span>Quantity:</span> {order.quantity}</p>
-                        <p><span>Price: </span>&#8377;{order.price}</p>
+                        {/* Discounted Price */}
+                        <p><span>Price: </span>&#8377;{order.price.toFixed(2)}  
+                        {order.discount>0 && (<span> (with discount)</span>)}</p>
                         <p><span>Discount:</span>{order.discount*100}%</p>
                       </div>
                       <div className='book-image'>
@@ -47,6 +49,8 @@ function OrderHistory({orderHistory}) {
                   ) 
                 })
               }
+
+              <p className='total-amt'>Delivery Charges: &#8377;{orderInfo.shipping_charges}</p>
               <p className='total-amt'>Total Amount: &#8377;{orderInfo.total_amount}</p>
               <p className='total-amt'>Payment Status: {orderInfo.payment_status}</p>
               <p className='total-amt'>Delivery Status: {orderInfo.delivery_status}</p>

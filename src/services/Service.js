@@ -2,7 +2,7 @@
 // All database calls are made from this service file
 const localdomain = "http://localhost:5001"; 
 // for ngrok
-// const localdomain = "https://a0fb-2409-4054-509-3705-3884-a9c6-1f78-560c.in.ngrok.io"; 
+// const localdomain = "https://1c39-117-208-101-143.in.ngrok.io"; 
 
 
 const books_url = `${localdomain}/api/books`;
@@ -338,7 +338,7 @@ export const Item_Service = {
 
     getPopular: async()=>{
         try{
-            const response = await fetch(`${books_url}?category=css_book`)
+            const response = await fetch(`${books_url}?category=physics_book`)
             return response;
         }catch(err){
             return err;

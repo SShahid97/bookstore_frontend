@@ -173,7 +173,9 @@ function Cart() {
     }
     
     
-    
+    const handleBack =()=>{
+        navigate(-2);
+    }
     return (
     <>   
     {showLoader && (<Loader/>) } 
@@ -220,7 +222,7 @@ function Cart() {
                                 <div className='image-mobile'>
                                 <div className='width-15 book_image'>
                                     {(item.book.discount>0) && (
-                                        <span className='discount-badge' >{item.book.discount*100}%</span>
+                                        <span className='discount-badge' >{Math.floor(item.book.discount*100)}%</span>
                                     )}
                                    {item.book.book_image &&  <img src={require(`../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />}
                                    {!item.book.book_image &&  <img src={require(`../../public/assets/images/${bookDummyImage}`)} alt={item.book.book_name} />}
@@ -249,11 +251,12 @@ function Cart() {
                                         )}
                                     </div>
                                     <div className='width-15 book_price'>
-                                      <span className='price-sub'>Price:</span> &#8377;{item.price-item.price*item.book.discount}
-                                     {item.book.discount > 0 && <span className='old-price'> &#8377;{item.price}</span>}
+                                      <span className='price-sub'>Price:</span> &#8377;{(item.price-item.price*item.book.discount).toFixed(2)}
+                                      {item.book.discount > 0 && <span className='old-price'> &#8377;{item.price}</span>}
                                     </div>
+                                    
                                     <div className='width-15 book_amount'>
-                                     <span className='price-sub'>Subtotal:</span> &#8377;{item.quantity*(item.price-item.price*item.book.discount)}
+                                     <span className='price-sub'>Subtotal:</span> &#8377;{item.quantity*((item.price-item.price*item.book.discount).toFixed(2))}
                                     </div>
                                     <div className='width-15 remove-item'>
                                         <button className='remove-item-btn' onClick={() => handleRemoveItem(item._id,index) }>Remove</button> 
@@ -274,7 +277,7 @@ function Cart() {
         
                 {/* Buttons */}
                 <div className='checkout-btns'>
-                    <button className='btns'>Continue Shopping</button>
+                    <button className='btns' onClick={handleBack}>Continue Shopping</button>
                     <button className='btns' onClick={()=> hanldeCheckout(cartItems[0].user_id)}>Checkout</button>
                 </div>
             </div>

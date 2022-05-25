@@ -55,6 +55,7 @@ function Book() {
 
     // const [showCart, setShowCart] = useState([]);
     useEffect(()=>{
+        console.log("helo")
         window.scrollTo(0, 0);
         let isMounted = true;
         if (isMounted){
@@ -67,6 +68,7 @@ function Book() {
                 setUser(curr_user);
                 checkIfSubmitted(curr_user.token,curr_user._id, params.id);
             }
+            console.log(params.id)
             getBookDetails(params.id);
             getReviews(params.id);
         } 
@@ -118,7 +120,7 @@ function Book() {
             console.log(bookDetails);
             if(bookDetails.discount>0){
                 bookDetails.discountPercent = Math.floor(bookDetails.discount*100) + "%";
-                bookDetails.newPrice = bookDetails.price - (bookDetails.price* bookDetails.discount);
+                bookDetails.newPrice = bookDetails.price - (bookDetails.price* bookDetails.discount).toFixed(2);
             }
             setDetails(bookDetails);
             let itmImageName = [{id:bookDetails._id ,image: bookDetails.book_image, name:bookDetails.book_name}];
@@ -473,9 +475,11 @@ function Book() {
                         )}
                         {(bookDetails.discount>0) && (
                             <div className='discounted-prices'>
-                                <span className='new-price' >&#8377; {Math.round(bookDetails.newPrice)}</span>
+
+                                {/* Discounted Price */}
+                                <span className='new-price' >&#8377; {bookDetails.newPrice}</span>  
                                 <span className='old-price'>&#8377;{bookDetails.price}</span>
-                                <span className='percent-off'>({Math.floor(bookDetails.discount*100)}% off)</span>
+                                <span className='percent-off'>({bookDetails.discountPercent} off)</span>
                             </div>
                         )}
                         <div className='availability'>

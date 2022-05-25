@@ -17,6 +17,7 @@ function Latest(props) {
         // let cat;
         // cat = props.category; 
         if(props.category  !== undefined){
+            console.log(props.category);
             getLatest(props.category);
         } 
     },[props.category]);
@@ -28,7 +29,7 @@ function Latest(props) {
             fetchedBooks.forEach((book)=>{
                 if(book.discount>0){
                     book.discountPercent = Math.floor(book.discount*100) + "%";
-                    book.newPrice = book.price - (book.price* book.discount);
+                    book.newPrice = (book.price - (book.price* book.discount)).toFixed(2);
                 }
                 if(book.discount===0){
                     book.newPrice = book.price; 
@@ -104,7 +105,7 @@ function Latest(props) {
                                         )}
                                         {(book.discount>0) && (
                                             <>
-                                            <span>&#8377; {Math.round(book.newPrice)}</span>
+                                            <span>&#8377; {book.newPrice}</span>
                                             <span className='old-price'>&#8377;{book.price}</span>
                                             </>
                                         )}

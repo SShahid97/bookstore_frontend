@@ -118,7 +118,7 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
         order.forEach((item)=>{
             orderArr.push({
                 book_id:item.book._id,
-                price:(item.price - (item.price*item.book.discount)),
+                price:(item.price - (item.price*item.book.discount)).toFixed(2),   //discounted Prcie
                 quantity:item.quantity,
                 discount:item.book.discount,
 

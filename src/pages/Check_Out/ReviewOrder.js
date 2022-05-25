@@ -77,7 +77,7 @@ function ReviewOrder() {
                                 <div className='image-mobile'>
                                 <div className='width-15 book_image'>
                                     {(item.book.discount>0) && (
-                                        <span className='discount-badge' >{item.book.discount*100}%</span>
+                                        <span className='discount-badge' >{Math.floor(item.book.discount*100)}%</span>
                                     )}
                                    {item.book.book_image && <img src={require(`../../../public/assets/images/${item.book.book_image}`)} alt={item.book.book_name} />}
                                    {!item.book.book_image && <img src={require(`../../../public/assets/images/${bookDummyImage}`)} alt={item.book.book_name} />}
@@ -92,10 +92,10 @@ function ReviewOrder() {
                                         <span className='price-sub'>Quantity:</span> {item.quantity}
                                     </div>
                                     <div className='width-25 book_price'>
-                                      <span className='price-sub'>Price:</span> &#8377;{item.price-item.price*item.book.discount}
+                                      <span className='price-sub'>Price:</span> &#8377;{Math.floor(item.price-item.price*item.book.discount)}
                                     </div>
                                     <div className='width-25 book_amount'>
-                                     <span className='price-sub'>Subtotal:</span> &#8377;{item.quantity*(item.price-item.price*item.book.discount)}
+                                     <span className='price-sub'>Subtotal:</span> &#8377;{Math.floor(item.quantity*(item.price-item.price*item.book.discount))}
                                     </div>
                                 </div>        
                             </div>

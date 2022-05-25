@@ -158,13 +158,13 @@ function AddEditAddress() {
     }
   return (
      <EditAddAddressOuter>
-         <span className='back-arrow-span' title="back" onClick={handleBack}>
+        <span className='back-arrow-span' title="back" onClick={handleBack}>
             <FaArrowLeft className='back-arrow'/>
         </span>
-         <EditAddAddressInner>
-         {messageSuccess !== "" && (
+        <EditAddAddressInner>
+        {messageSuccess !== "" && (
             <PopUp messageSuccess={messageSuccess}/> 
-         )}
+        )}
          {showLoader && (< Loader/>)} 
             <h3 className='add-edit-address-heading'>{addEditHead } Address</h3>
                 <form onSubmit={handleSubmitAddress} className={responseNotReturned?"stockformDim add-edit-address-form":"add-edit-address-form"} > 
@@ -214,10 +214,10 @@ function AddEditAddress() {
                         </div>
                     </div>
                     <label htmlFor="contact"><strong>Contact<span >*</span>:</strong></label><br/>
-                    <input type="tel" className="form-control" name="contact" maxLength={12} 
+                    <input type="tel" className="form-control" name="contact" maxLength={10} 
                             placeholder="Contact Number" 
                             onChange={handleContact}
-                            value={contact || " "}
+                            value={contact}
                             required/>
                     <br/> 
                     <label htmlFor="contact"><strong>Address<span >*</span>:</strong></label><br/>

@@ -32,6 +32,7 @@ function Books() {
                 let searchKey = params.cat.substring(7); 
                 getSearched(searchKey);
             }else{
+                console.log(params.cat);
                 getBooksByCategory(params.cat);
             }
         },300)
@@ -79,7 +80,7 @@ function Books() {
             fetchedBooks.forEach((book)=>{
                 if(book.discount>0){
                     book.discountPercent = Math.floor(book.discount*100) + "%";
-                    book.newPrice = book.price - (book.price* book.discount);
+                    book.newPrice = (book.price - (book.price* book.discount)).toFixed(2) ;
                 }
                 if(book.discount===0){
                     book.newPrice = book.price; 
@@ -106,17 +107,21 @@ function Books() {
         let value = e.target.value;
         setSortByValue(e.target.value);
         if(value === 'default'){
-            setTempBooks([...books]);
+            let booksOrg = [...books];
+            setTempBooks(booksOrg);
             return;
         }
         if(value === 'increase'){
-            tempBooks.sort((a,b) => a.newPrice - b.newPrice);
+            const temp = tempBooks.slice(0).sort((a,b) => a.newPrice - b.newPrice);
+            setTempBooks(temp);
         }
         if(value === 'decrease'){
-            tempBooks.sort((a,b) => b.newPrice - a.newPrice);
+            const temp = tempBooks.slice(0).sort((a,b) => b.newPrice - a.newPrice);
+            setTempBooks(temp);
         }
         if(value === 'discount'){
-            tempBooks.sort((a,b) => b.discount - a.discount);
+            const temp = tempBooks.slice(0).sort((a,b) => b.discount - a.discount);
+            setTempBooks(temp);
         }
         
     }
@@ -220,7 +225,7 @@ function Books() {
                                     )}
                                     {(book.discount>0) && (
                                         <>
-                                            <span>&#8377; {Math.round(book.newPrice)}</span>
+                                            <span>&#8377; {book.newPrice}</span>
                                             <span className='old-price'>&#8377;{book.price}</span>
                                         </>
                                     )}

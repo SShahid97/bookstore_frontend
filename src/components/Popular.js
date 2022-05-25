@@ -23,7 +23,7 @@ function Popular (){
             fetchedBooks.forEach((book)=>{
                 if(book.discount>0){
                     book.discountPercent = Math.floor(book.discount*100) + "%";
-                    book.newPrice = book.price - (book.price* book.discount);
+                    book.newPrice = (book.price - (book.price* book.discount)).toFixed(2);
                 }
                 if(book.discount===0){
                     book.newPrice = book.price; 

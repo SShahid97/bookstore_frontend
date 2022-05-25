@@ -46,6 +46,7 @@ function Billing() {
             // setAddressExits(true);
         }else if (response.status === 204){
             // setAddressExits(false);
+            setShowLoader(false);
             console.log("No address saved");
         }
     }
@@ -118,13 +119,14 @@ function Billing() {
                             placeholder="Enter E-mail" 
                             onChange={handleEmail}
                             value={email || " "}
+                            disabled={true}
                             required/>
                     <br/>
                     <label htmlFor="contact"><strong>Contact<span >*</span>:</strong></label><br/>
-                    <input type="tel" className="form-control" name="contact" maxLength={12} 
+                    <input type="tel" className="form-control" name="contact" maxLength={10}
                             placeholder="Contact Number" 
                             onChange={handleContact}
-                            value={contact || " "}
+                            value={contact}
                             required/>
                     <br/>
                     <div className='country-state-fields'>

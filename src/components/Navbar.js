@@ -6,7 +6,7 @@ import { useNavigate,Link,NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import {userService, cartService, logOutService} from "../services/LocalService";
 import {motion} from "framer-motion";
-
+import Tooltip from './Tooltip';
 import {SiElasticsearch} from 'react-icons/si';
 import { GiHamburgerMenu } from "react-icons/gi";
 import { 
@@ -34,6 +34,10 @@ function Navbar() {
     const [isLoggedOut, setisLoggedOut] = useState(true);
     const [cartItemsLength, setCartItemsLength]= useState(0);
     const [showMobSearch, setShowMobSearch] = useState(false);
+    const [showToopTip, setShowToopTip] = useState(false);
+    const [showCartToopTip, setShowCartToopTip] = useState(false);
+    // const [hideOnStart, setHideOneStart] = useState(false);
+
     const navigate = useNavigate();
     // For animation
     const [rotate, setRotate] = useState(false);
@@ -48,7 +52,7 @@ function Navbar() {
     useEffect(()=>{
       // window.addEventListener('scroll', handleScroll, { passive: true });
 
-    
+      // setHideOneStart(true);
       // getCartItems();
       // runs for first time
       let user = JSON.parse(localStorage.getItem('user'));
@@ -241,9 +245,14 @@ function Navbar() {
            {/* Cart */}
            {!isAdmin && (
              <>    
-             <div title='Cart' className="cart-icon" onClick={handleCart}>
+             <div 
+                 onMouseOver={()=>setShowCartToopTip(true)}
+                 onMouseOut={()=>setShowCartToopTip(false)}
+                className="cart-icon" onClick={handleCart}>
                <span className='cart-bage'>{cartItemsLength}</span>
-               <FaShoppingCart  />
+               <FaShoppingCart  
+               />
+               {showCartToopTip && <Tooltip tooltipMessage={"Cart"}/>}
              </div>
              </>
            )}
@@ -251,12 +260,17 @@ function Navbar() {
 
             {/* User */}
           {(!isAdmin && (
-            <div className={toggleDropdown?'user-icon activeIcon':'user-icon '} onClick={handleUserAccount}>
+            <div 
+            onMouseOver={()=>setShowToopTip(true)}
+            onMouseOut={()=>setShowToopTip(false)}
+            className={toggleDropdown?'user-icon activeIcon':'user-icon '} onClick={handleUserAccount}>
               {/* <span className='username'>{userName}</span> */}
-              {isLoggedOut && (<FaUserCog   title="Account Info"/>)}
-              {!isLoggedOut && ( <FaUserCircle   title={user.name}/>) }
+              {isLoggedOut && (<FaUserCog  />)}
+              {!isLoggedOut && ( <FaUserCircle   />) }
+              {(isLoggedOut && showToopTip) && <Tooltip tooltipMessage={"Account Info"} />}
+              {(!isLoggedOut && showToopTip)  && <Tooltip tooltipMessage={user.name} />}
             </div>
-             
+            
           ))}
 
 
@@ -415,6 +429,15 @@ const Nav = styled.div`
   /* background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); */
   background: grey;
   margin-bottom: 0.5rem;
+  .cart-icon .tooltip{
+    min-width:fit-content;
+    padding:5px 12px;
+    transform: translate(-17px, 45px) !important;
+  }
+  .cart-icon .tooltip .tip{
+        top: -6px;
+        right: 8px;
+    }
   .showNav{
     display: contents;
   }

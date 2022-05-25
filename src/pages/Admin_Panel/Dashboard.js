@@ -18,6 +18,7 @@ function Dashboard() {
     const [allOrders, setAllorders] = useState([]);
     const [months, setMonths] = useState([]);
     const [noOfOrders, setNoOfOrders] = useState([]);
+    const [deliveredOrders, setDeliveredOrders]= useState();
     const [revenueGeneratedPerMonth, setRevenueGeneratedPerMonth ]=useState([]);
     let user_admin = JSON.parse(localStorage.getItem("user"));
     
@@ -165,14 +166,21 @@ function Dashboard() {
         const response = await Order_Service.getAllOrders(token);
         if(response.status === 200){
             const returnedOrders = await response.json();
-            // console.log(returnedOrders);
+            console.log(returnedOrders);
             let monthsSet = new Set([]);
+            let deliveredOrderCount = 0;
             returnedOrders.forEach((order)=>{
                 let date = new Date(order.date);
                 let monthNumber = date.getMonth()+1;
                 let month = convertToMonth(monthNumber);
                 monthsSet.add(month);
+                if(order.delivery_status === "Delivered"){
+                    deliveredOrderCount+=1;
+                }
             }); 
+            console.log(deliveredOrderCount);
+            setDeliveredOrders(deliveredOrderCount);
+
             let monthsArr = [...monthsSet];    //converting set to array
             setMonths(monthsArr);
             setAllorders(returnedOrders);
@@ -285,7 +293,7 @@ function Dashboard() {
             </Card>
             <Card>
                 <div className='card-text'>
-                    <p>{allOrders && allOrders.length}</p>
+                    <p>{allOrders && deliveredOrders}</p>
                     <p>Orders Delivered so far</p>
                 </div>
                 <div className='icon'><FaGift/></div>

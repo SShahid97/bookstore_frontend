@@ -51,7 +51,7 @@ export const Compter_Science = {
         {
             name:"General",
             sub_categories:[
-                {name:"General", link:"/book/html_book"}
+                {name:"General", link:"/books/html_book"}
             ]
         }
     ]
