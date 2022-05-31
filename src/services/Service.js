@@ -354,6 +354,17 @@ export const Item_Service = {
         }
         
     },
+    
+    getSearchSuggestions: async (searchKey)=>{
+        try{
+            const response = await fetch(`${books_url}/search_suggestions?keyWord=${searchKey}`);
+            return response;
+        }catch(err){
+            return err;
+        }
+        
+    },
+
 
     getBooksByCategory: async (category)=>{
         try{

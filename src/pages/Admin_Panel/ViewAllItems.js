@@ -13,7 +13,8 @@ import {
     Literature,
     Mathematics,
     Social_Sciences,
-    History
+    History,
+    General
 } from "../../services/BookCategories";
 
 let Admin = {};
@@ -22,7 +23,7 @@ function ViewAllItems() {
     // const General_Categories = ["Computer Science", "Mathematics","Business Management","English","Science"];
     
     // const categoryNameMapping = {link:'js_book', name:'JavaScript Books'}
-    const General_Categories = [{name:"Select"},{name:"All Books"},Compter_Science, Business_Management,Science, Mathematics,Social_Sciences,Literature,History];
+    const General_Categories = [{name:"Select"},{name:"All Books"},Compter_Science, Business_Management,Science, Mathematics,Social_Sciences,Literature,History,General];
     // const Second_GCategories = [];   
     const [allBooks, setAllBooks] = useState([]);
     const [tempBooks, setTempBooks] = useState([]);
@@ -173,8 +174,10 @@ function ViewAllItems() {
             setErrorMsg("");
         }else if(response.status === 204){
             setShowLoader(false);
+            setTempBooks([]);
             setErrorMsg("No Results found for the given category.");
         }else if(response.status === 400){
+            setTempBooks([]);
             setShowLoader(false);
             setErrorMsg("");
             console.log("Bad Request");
@@ -223,7 +226,7 @@ function ViewAllItems() {
                 setShowLoader(false);
                 setNoResultsFound(false);
                 setTempBooks(booksReturned);
-            }else{
+            }else if (booksReturned.length===0){
                 setBookFound(false);
                 setNoResultsFound(true);
                 setShowLoader(false);

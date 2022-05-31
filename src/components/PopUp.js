@@ -11,6 +11,8 @@ function PopUp({messageSuccess}) {
 
 const PopupOuter = styled.div`
 position: fixed;
+right: 0;
+top: 51px;
 display:flex;
 width:25%;
 background-color: #11b511;
@@ -18,11 +20,14 @@ border-radius: 2px;
 padding:15px;
 color:yellow;
 z-index:1500;
-transform: translate(505px, -33px);
+/* transform: translate(505px, -33px); */
 animation: fadeOut ease 6s;
 -webkit-animation: fadeOut ease 6s;
 -moz-animation: fadeOut ease 6s;
-
+@media (max-width:650px){
+    width: 90%;
+    left: 15px;
+}
 @keyframes fadeOut {
     0% {
         opacity:1;
@@ -58,10 +63,7 @@ animation: fadeOut ease 6s;
         opacity:0.5;
     }
 }
-@media (max-width:650px){
-    transform: translate(3px, -38px);
-    width: 90%;
-}
+
 p{
     font-weight: 600;
 }

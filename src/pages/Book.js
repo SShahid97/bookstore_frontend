@@ -677,12 +677,6 @@ const Wrapper = styled.div`
         width:95%;
         margin:0 auto;
     }
-    .pop-up {
-        transform: translate(873px,-10px) !important;
-        @media (max-width:650px){
-            transform: translate(10px, -12px) !important;
-        }
-    }
     .hide-back{
         @media (min-width:650px){
             display:none;

@@ -3,9 +3,9 @@ import styled from "styled-components";
 import {Link} from "react-router-dom";
 
 function UserDetails({user}) {
-    let cust = {user};
+    // let cust = {user};
     useEffect(()=>{
-        console.log(cust);
+        // console.log(cust);
     },[])
   return (
     <UserOuter>
@@ -68,6 +68,9 @@ const Orders = styled.div`
         color:black;
         margin-right:10px;
         cursor: pointer;
+        a{
+            font-weight: 500;
+        }
         &:hover{
             a{
                 color:white;

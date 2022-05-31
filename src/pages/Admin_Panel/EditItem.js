@@ -82,6 +82,7 @@ function EditItem() {
     const value = event.target.value;
     setItem(values => ({ ...values, [name]: name === "price" ? Number(value) : value }))
     setformInput(values => ({ ...values, [name]: name === "price" ? Number(value) : value }))
+    setDuplicateEntryError("");
   }
 
   const onFormSubmit = async (event) => {
@@ -136,23 +137,26 @@ function EditItem() {
 
 const sumbitImageUpload = async ()=>{
     const formData = new FormData();
-    formData.append('photo', imageFile);
+    if (imageFile !== null){
+      formData.append('photo', imageFile);
 
-    const response = await Upload_Service.uploadImage(Admin.token, formData);
-    if (response.status === 200){
-        const data = await response.json();
-        console.log(data);
-        console.log("Image uploaded")
-        // for storing in database 
-        // formInput.book_image = imageFile.name;
-       
-    }else{
-      setMessageFailure("Image not uploaded, try again later.");
-      setTimeout(()=>{
-          setMessageFailure("");
-      },5000);
-      return false;
+      const response = await Upload_Service.uploadImage(Admin.token, formData);
+      if (response.status === 200){
+          const data = await response.json();
+          console.log(data);
+          console.log("Image uploaded")
+          // for storing in database 
+          // formInput.book_image = imageFile.name;
+        
+      }else{
+        setMessageFailure("Image not uploaded, try again later.");
+        setTimeout(()=>{
+            setMessageFailure("");
+        },5000);
+        return false;
+      }
     }
+    
   }
  //for Bookcode
   const handleKeys = (e) => {
@@ -185,7 +189,7 @@ const sumbitImageUpload = async ()=>{
       
       {/* <h3 className="heading">EDIT ITEM</h3> */}
       <div className='image-upload-form'>
-            <form onSubmit={sumbitImageUpload}>
+            {/* <form onSubmit={sumbitImageUpload}> */}
                 <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>Change Image</button>
                 <input type="file" id="getFile" accept='image/*' style={{display:'none'}} name="photo" onChange={handleImageUpload}/>
                 {/* <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
@@ -208,7 +212,7 @@ const sumbitImageUpload = async ()=>{
                         }  
                     
                 </div>
-            </form>
+            {/* </form> */}
       </div>
       <div className='details-form'>
             <form className="editItemform" onSubmit={onFormSubmit}>

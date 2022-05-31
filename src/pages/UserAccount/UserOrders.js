@@ -82,8 +82,9 @@ function UserOrders() {
                 })
               }
                 <div className='total-amt'>
+                  <p >Delivery Status:&#8377;{orderInfo.shipping_charges}</p>
                   <p >Total Amount: &#8377;{orderInfo.total_amount}</p>
-                  <p >Delivery Status: Not Delivered!</p>
+                  <p >Delivery Status: {orderInfo.delivery_status}</p>
                 </div>
               </div>
             </div>

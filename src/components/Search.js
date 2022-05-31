@@ -1,16 +1,19 @@
 import styled from 'styled-components';
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect,useCallback} from 'react';
 import {FaSearch,FaTimes,FaArrowLeft} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
+import SearchSuggestions from "./SearchSuggestions";
  
 function Search({setShowMobSearch}) {
     const [input, setInput] = useState("");
+    const [keyWord, setKeyWord] = useState("");
     const [showClose, setShowClose]=useState(false);
     const navigate = useNavigate();
     useEffect(()=>{
         // console.log("aav");
-    },[])
+    },[input])
     const submitHandler = (e)=>{
+        setKeyWord("");
         navigate("/books/search_"+input);
         e.preventDefault();
     }
@@ -25,6 +28,7 @@ function Search({setShowMobSearch}) {
 
     const handleCloseIcon = ()=>{
         setInput("");
+        setKeyWord("");
         setShowClose(false);
         // navigate("/books/search_clear");
     }
@@ -32,7 +36,31 @@ function Search({setShowMobSearch}) {
     const closeSearchBar = ()=>{
         setShowMobSearch(false)
     }
+    function debounce(func, delay){
+        let timeoutId;
+        return function(){
+            let context = this;
+            let args = arguments;
+            if (timeoutId){
+                clearTimeout(timeoutId);  //clears the previous timeout callback 
+            }
+            timeoutId = setTimeout(()=>{
+                func.apply(context,args);
+            },delay);
+        }
+    }
+    
+    function  handleSuggestions (e){
+        console.log("Suggestion for ",e.target.value);
+        setKeyWord(e.target.value);
+    }
+    /*
+        There is a caveat in function components. Local variables inside a function expires after every call.
+         Every time the component is re-evaluated, the local variables gets initialized again.
+    */
+    const handleDecoratedSuggestions = useCallback(debounce(handleSuggestions,300),[]);
   return (
+      <>
     <FormStyle onSubmit={submitHandler}>
         <div className='form-div' >
             {/* {!showMobSearch && (  */}
@@ -42,10 +70,12 @@ function Search({setShowMobSearch}) {
             {/* {showMobSearch && (
              <FaArrowLeft onClick={hideSearchBox}/>
              )} */}
-            <input placeholder='Search by book name...'
+            <input placeholder='Search by book name, category...'
             className='search-bar'
+            onInput={handleDecoratedSuggestions}
             onChange = {handleSearch}
             type="text" value={input}/>
+            <input className='searchKeyWord' hidden={true} type="submit" value="search"/>
             {showClose && (
                 <span className='close-icon'>
                     <FaTimes onClick={handleCloseIcon} />
@@ -53,6 +83,8 @@ function Search({setShowMobSearch}) {
             )}
         </div>
     </FormStyle>
+    <SearchSuggestions keyWord={keyWord} setInput={setInput}/>
+    </>
   )
 }
 
@@ -129,7 +161,7 @@ const FormStyle = styled.form`
     input{
         border:none;
         background: linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131);
-        font-size:1.1rem;
+        font-size:0.95rem;
         background:white;
         color:grey;
         padding: 0.4rem 0.7rem;
@@ -140,11 +172,11 @@ const FormStyle = styled.form`
         border-radius: 2px;
     
         @media (max-width: 850px){
-            font-size:1rem;
+            font-size:0.95rem;
             width:80%;
         }
         @media (max-width: 650px){
-            font-size:1.1rem;
+            font-size:0.9rem;
             padding: 0.3rem 2rem;
             width: 100% !important;
             height: 3rem;

@@ -92,6 +92,9 @@
   margin-bottom:1rem;
 }
 
+.hideRecommendation{
+  display: none;
+}
 
 ::-webkit-scrollbar {
   width:0.6rem;

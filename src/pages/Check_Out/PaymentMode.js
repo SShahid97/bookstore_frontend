@@ -111,9 +111,7 @@ function PaymentMode() {
 }
 
 const PaymentScreenOuter = styled.div`
-    .popup-failure{
-        transform: translate(1007px, -9px);
-    }
+
 `;
 const PaymentMethodScreen = styled.div`
     

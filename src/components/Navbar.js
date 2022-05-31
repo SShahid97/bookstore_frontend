@@ -160,15 +160,16 @@ function Navbar() {
       setUser("");
       // userService.sendUser({});
       logOutService.setLogOut(null);  
-      localStorage.removeItem("user");
-      localStorage.removeItem("cart");
-      localStorage.removeItem("customerInfo");
-      localStorage.removeItem("general")
-      localStorage.removeItem("category")
-      localStorage.removeItem("sub_category");
-      localStorage.removeItem("area_code_details");
-      localStorage.removeItem("OrderId")
-
+      // localStorage.removeItem("user");
+      // localStorage.removeItem("cart");
+      // localStorage.removeItem("customerInfo");
+      // localStorage.removeItem("general")
+      // localStorage.removeItem("category")
+      // localStorage.removeItem("sub_category");
+      // localStorage.removeItem("area_code_details");
+      // localStorage.removeItem("OrderId")
+      console.log("Logged out");
+      localStorage.clear();
       // window.location.reload();
       navigate("/");
     }
@@ -424,15 +425,19 @@ const Nav = styled.div`
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
   display: grid;
-  grid-template-columns: 2rem 9rem 4fr 1fr 4rem 5rem;
+  grid-template-columns: 2rem 9rem 3fr 1fr 4rem 5rem;
   /* padding:0.5rem 0rem; */
   /* background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); */
   background: grey;
   margin-bottom: 0.5rem;
   .cart-icon .tooltip{
-    min-width:fit-content;
+    right: 60px;
+    min-width:fit-content !important ;
+    width:fit-content !important; 
     padding:5px 12px;
-    transform: translate(-17px, 45px) !important;
+    @media(max-width:1000px){
+      right: 90px;
+    }
   }
   .cart-icon .tooltip .tip{
         top: -6px;

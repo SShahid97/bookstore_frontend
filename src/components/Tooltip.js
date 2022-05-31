@@ -6,9 +6,9 @@ function Tooltip({tooltipMessage}) {
   return (
     <TooltipOuter
     animate={
-        {opacity:[0.2,0.5,1]}
+        {opacity:[0.4,1,0]}
         }
-    transition={{type:"tween", duration: 0.5 }}
+    transition={{type:"tween", duration: 0.7 }}
     // transition={{type:"spring",duration: 1 }}
     className="tooltip">
         <div className='tip'>
@@ -19,19 +19,20 @@ function Tooltip({tooltipMessage}) {
 }
 
 const TooltipOuter = styled(motion.div)`
-    position: fixed;
+    position: absolute;
+    right: 10px;
+    top: 60px;
     display:flex;
-    min-width:100px;
     width:fit-content;
     background: black;
     border-radius: 5px;
     padding:8px;
     color:white;
     z-index:1500;
-    transform: translate(-60px, 43px);
-    /* animation: fadeOut ease 6s;
-    -webkit-animation: fadeOut ease 6s;
-    -moz-animation: fadeOut ease 6s; */
+    @media(max-width:1000px){
+        right: 50px;
+    }
+
     .tip{
         width: 10px;
         height: 10px;

@@ -2,6 +2,7 @@ import React , {useState, useEffect} from 'react'
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import {userService} from "../services/LocalService";
+import {FaAngleUp} from "react-icons/fa";
 function Footer() {
   const [isAdmin, setIsAdmin]=useState(false);
   useEffect(()=>{
@@ -16,7 +17,7 @@ function Footer() {
   },[isAdmin]);
 
   userService.onUser().subscribe(user => {
-    console.log(user);
+    // console.log(user);
     if(user ){
       if (user.role==="admin") {
         setIsAdmin(true);
@@ -26,11 +27,15 @@ function Footer() {
     }
     
   });
+  const moveToTop =()=>{
+    // window.scrollTo(0,0);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
 
   return (
     <FooterOuter className="main-footer">
       {!isAdmin && ( 
-      <div className='header-head'> 
+      <div className='footer-head'> 
         <ul>
           <h3>More</h3>
           <li><Link to = '/about-us'>About Us</Link></li>
@@ -45,7 +50,13 @@ function Footer() {
         </ul>
       </div>
       )}
-      <div className='header-foot'>
+
+      <div className='backToTopDiv' >
+        <span  onClick={moveToTop} title="Scroll To Top">
+          <FaAngleUp/>
+        </span>
+      </div>
+      <div className='footer-foot'>
         <h4> &copy;All Rights Reserved: 2022 </h4>
       </div>
     </FooterOuter>
@@ -61,7 +72,26 @@ const FooterOuter = styled.footer`
     padding:1.5rem;
     /* margin-top:1rem;  */
     
-  .header-head {
+   .backToTopDiv{
+     display:flex;
+     position: absolute;
+     right: 15px;
+   }
+   .backToTopDiv svg{
+    transform: scale(1.2);
+   } 
+   .backToTopDiv span{
+      cursor: pointer;
+      width: 40px;
+      text-align: center;
+      border: 1px solid white;
+      border-radius: 3px;
+      padding: 5px;
+   }
+   .backToTopDiv span:hover{
+     background: linear-gradient(to right, #f27121, #e94057);
+   }
+  .footer-head {
     display: inline-flex; 
     justify-content: space-around; 
     width: 100%;
@@ -73,14 +103,14 @@ const FooterOuter = styled.footer`
     color:wheat;
     text-decoration: underline;
   }
-  .header-head h3 { 
+  .footer-head h3 { 
     margin-bottom: 10px;
   }
-  .header-head li { 
+  .footer-head li { 
     list-style: none;
     margin-bottom: 5px;
   }
-  .header-foot { 
+  .footer-foot { 
     margin-top: 20px;
     text-align: center;
   }

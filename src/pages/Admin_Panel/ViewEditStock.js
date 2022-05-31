@@ -115,7 +115,8 @@ function ViewEditStock() {
                     placeholder="Total Count"
                     type="number"
                     name="total_count"
-                    value={totalCount || ""}
+                    min={0}
+                    value={totalCount}
                     required
                     onChange={handleTotalCount}
                 />
@@ -125,7 +126,8 @@ function ViewEditStock() {
                     placeholder='Count In Stock'
                     type="number"
                     name="count_in_stock"
-                    value={countInStock || ""}
+                    min={0}
+                    value={countInStock}
                     required
                     onChange={handleCountInStock}
                 />
@@ -148,6 +150,9 @@ function ViewEditStock() {
 const EditStockOuter = styled.div`
     width:70%;
     margin:0 auto;
+    @media (max-width:650px){
+        width: 95%;
+    }
     .link-to-addstock{
         padding-left:10px;
         color:blue;
@@ -195,7 +200,7 @@ const EditStockDiv = styled.div`
       margin: 0 auto;
       padding: 15px;
       @media (max-width:650px){
-          width:90%;
+          width:100%;
       }
     }
     .edit-stock-div{

@@ -63,12 +63,12 @@ function Filters({books, setTempBooks,tempBooks }) {
             setFilters(true);
             if(ondiscount || onpricerange){
                 let temp = [...tempBooks];
-                temp.sort((a,b) => b.rating - a.rating);
-                setTempBooks(temp);
+                const tmp = temp.slice(0).sort((a,b) => b.rating - a.rating);
+                setTempBooks(tmp);
             }else{
                 let booksTemp = [...books];
-                booksTemp.sort((a,b) => b.rating - a.rating);
-                setTempBooks(booksTemp);
+                const temp = booksTemp.slice(0).sort((a,b) => b.rating - a.rating);
+                setTempBooks(temp);
             }
         }else if(!topRated){
             setFilters(false);

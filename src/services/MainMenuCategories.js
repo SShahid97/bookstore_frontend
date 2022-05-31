@@ -4,54 +4,53 @@ export const Compter_Science = {
         {
             name:"Web Development",
             sub_categories:[
-                {name:"JavaScript", link:"/books/js_book"},
-                {name:"Html", link:"/books/html_book"},
-                {name:"CSS", link:"/books/css_book"}, 
-                {name:"React", link:"/books/mysql_book"},
-                {name:"Angular", link:"/books/mysql_book"},
-                {name:"Backend Technologies", link:"/books/mysql_book"},
+                {name:"JavaScript", link:"/books/web development javascript"},
+                {name:"Html", link:"/books/web development html"},
+                {name:"CSS", link:"/books/web development css"}, 
+                {name:"React", link:"/books/web development react"},
+                {name:"Angular", link:"/books/web development angular"},
+                {name:"Backend Technologies", link:"/books/web development backend"}
                 
             ]
         },
         {
             name:"Programming Languages",
             sub_categories:[
-                {name:"C", link:"/books/js_book"},
-                {name:"C++", link:"/books/html_book"},
-                {name:"Java", link:"/books/css_book"}, 
-                {name:"C#", link:"/books/mysql_book"},
-                {name:"PHP", link:"/books/php_book"}, 
-                {name:"Python", link:"/books/php_book"} 
+                {name:"C", link:"/books/programming c"},
+                {name:"C++", link:"/books/programming c++"},
+                {name:"Java", link:"/books/programming java"}, 
+                {name:"C#", link:"/books/programming csharp"},
+                {name:"PHP", link:"/books/programming php"}, 
+                {name:"Python", link:"/books/programming python"} 
             ]
         },
         {
             name:"Computer Networking & Communication",
             sub_categories:[
-                {name:"Computer Networks", link:"/books/cn_book"},
-                {name:"Wireless and Mobile Communication", link:"/books/js_book"},
+                {name:"Computer Networks", link:"/books/networking computer networks"},
+                {name:"Wireless and Mobile Communication", link:"/books/communication wireless mobile"}
             ]
         },
         {
             name:"Database Management",
             sub_categories:[
-                {name:"DBMS/RDBMS", link:"/books/js_book"},
-                {name:"Database Languages", link:"/books/js_book"},
-                {name:"Data Mining & Warehousing", link:"/books/js_book"},
-                {name:"Wireless Communication", link:"/books/js_book"},
+                {name:"DBMS/RDBMS", link:"/books/database rdbms"},
+                {name:"Database Languages", link:"/books/database mysql"},
+                {name:"Data Mining & Warehousing", link:"/books/database mining"}
             ]
         },
         {
             name:"Operating Systems",
             sub_categories:[
-                {name:"Unix", link:"/books/css_book"},
-                {name:"Microsoft Windows", link:"/books/js_book"},
-                {name:"Mac OS", link:"/books/js_book"},
+                {name:"Unix", link:"/books/os unix"},
+                {name:"Microsoft Windows", link:"/books/os microsoft windows"},
+                {name:"Mac OS", link:"/books/os macintosh"}
             ]
         },
         {
             name:"General",
             sub_categories:[
-                {name:"General", link:"/books/html_book"}
+                {name:"General", link:"/books/web development"}
             ]
         }
     ]
@@ -62,23 +61,23 @@ export const Business_Management = {
         {
             name:"Sales & Marketing",
             sub_categories:[
-                {name:"Market Research", link:"/books/marketing_book"},
-                {name:"Public Relations", link:"/books/business_management_book"},
-                {name:"Customer Services", link:"/books/business_management_book"}, 
-                {name:"Advertising", link:"/books/marketing_book"},
+                {name:"Market Research", link:"/books/marketing"},
+                {name:"Public Relations", link:"/books/marketing"},
+                {name:"Customer Services", link:"/books/sales customer services"}, 
+                {name:"Advertising", link:"/books/marketing"},
             ]
         },
         {
             name:"Finance & Accounting",
             sub_categories:[
-                {name:"Finance", link:"/books/business_management_book"},
-                {name:"Accounting", link:"/books/business_management_book"},
+                {name:"Finance", link:"/books/finance"},
+                {name:"Accounting", link:"/books/accounting"}
             ]
         },
         {
             name:"General",
             sub_categories:[
-                {name:"General", link:"/books/business_management_book"},
+                {name:"General", link:"/books/business management"},
             ]
         }
     ]
@@ -89,29 +88,29 @@ export const Science = {
         {
             name:"Physical Science",
             sub_categories:[
-                {name:"Applied Physics", link:"/books/physics_book"},
-                {name:"Atomic & Moleclar Physics", link:"/books/physics_book"},
-                {name:"Optics", link:"/books/physics_book"}, 
-                {name:"Classical Mechanices", link:"/books/physics_book"},
-                {name:"General", link:"/books/physics_book"} 
+                {name:"Applied Physics", link:"/books/applied physics"},
+                {name:"Atomic & Moleclar Physics", link:"/books/physics"},
+                {name:"Optics", link:"/books/optical physics"}, 
+                {name:"Classical Mechanics", link:"/books/classical mechanics"},
+                {name:"General", link:"/books/physics"} 
             ]
         },
         {
             name:"Biology & Life Sciences",
             sub_categories:[
-                {name:"Zoology", link:"/books/biology_book"},
-                {name:"Botany", link:"/books/biology_book"},
-                {name:"Cellular Biology", link:"/books/biology_book"}, 
-                {name:"Human Biology", link:"/books/biology_book"},
-                {name:"General", link:"/books/biology_book"} 
+                {name:"Zoology", link:"/books/zoology"},
+                {name:"Botany", link:"/books/general biology"},
+                {name:"Cellular Biology", link:"/books/general biology"}, 
+                {name:"Human Biology", link:"/books/human biology"},
+                {name:"General", link:"/books/general biology"} 
             ]
         },
         {
             name:"Chemical Science",
             sub_categories:[
-                {name:"Organic Chemistry", link:"/books/chemistry_book"},
-                {name:"Inorganic Chemistry", link:"/books/chemistry_book"},
-                {name:"Phyical Chemistry", link:"/books/chemistry_book"},
+                {name:"Organic Chemistry", link:"/books/organic chemistry"},
+                {name:"Inorganic Chemistry", link:"/books/inorganic chemistry"},
+                {name:"Phyical Chemistry", link:"/books/physical chemistry"},
             ]
         }
     ]
@@ -122,30 +121,30 @@ export const Mathematics = {
         {
             name:"General",
             sub_categories:[
-                {name:"Algebra", link:"/books/maths_book"},
-                {name:"Graph Theory", link:"/books/maths_book"},
-                {name:"Group Theory", link:"/books/maths_book"}, 
-                {name:"Discrete Mathematics", link:"/books/maths_book"},
-                {name:"Number Thoery", link:"/books/maths_book"}, 
-                {name:"Calculus", link:"/books/php_book"}, 
-                {name:"Probability & Statics", link:"/books/maths_book"} 
+                {name:"Algebra", link:"/books/algebra"},
+                {name:"Graph Theory", link:"/books/mathematics"},
+                {name:"Group Theory", link:"/books/mathematics"}, 
+                {name:"Discrete Mathematics", link:"/books/discrete mathematics"},
+                {name:"Number Thoery", link:"/books/number theory"}, 
+                {name:"Calculus", link:"/books/mathematics calculus"}, 
+                {name:"Probability & Statics", link:"/books/algebra"} 
             ]
         },
         {
             name:"Applid Mathematics",
             sub_categories:[
-                {name:"Fuzzy Set Theory", link:"/books/maths_book"},
-                {name:"Mathematical Modelling", link:"/books/maths_book"},
-                {name:"Chaos Theory", link:"/books/maths_book"}
+                {name:"Fuzzy Set Theory", link:"/books/applied mathematics"},
+                {name:"Mathematical Modelling", link:"/books/applied mathematics"},
+                {name:"Chaos Theory", link:"/books/applied mathematics"}
             ]
         },
         {
             name:"Geomotry",
             sub_categories:[
-                {name:"Algebraic Geometry", link:"/books/maths_book"},
-                {name:"Analytic Geometry", link:"/books/maths_book"},
-                {name:"Euclidean Geometry", link:"/books/maths_book"},
-                {name:"Trigonometry", link:"/books/maths_book"},
+                {name:"Algebraic Geometry", link:"/books/mathematics"},
+                {name:"Analytic Geometry", link:"/books/mathematics"},
+                {name:"Euclidean Geometry", link:"/books/mathematics"},
+                {name:"Trigonometry", link:"/books/mathematics"},
             ]
         }
     ]
@@ -156,28 +155,35 @@ export const Other = {
         {
             name:"Social Science",
             sub_categories:[
-                {name:"Education", link:"/books/general_book"},
-                {name:"Politics & Current Affairs", link:"/books/general_book"},
-                {name:"Sociology & Culture", link:"/books/general_book"}, 
-                {name:"psychology", link:"/books/general_book"},
+                {name:"Education", link:"/books/social science"},
+                {name:"Politics & Current Affairs", link:"/books/social science"},
+                {name:"Sociology & Culture", link:"/books/social science"}, 
+                {name:"psychology", link:"/books/social science"},
             ]
         },
         {
             name:"History",
             sub_categories:[
-                {name:"General & World History", link:"/books/history_book"},
-                {name:"Regional & national History", link:"/books/history_book"},
-                {name:"Earliest times to present day", link:"/books/history_book"}
+                {name:"General & World History", link:"/books/history"},
+                {name:"Regional & national History", link:"/books/history"},
+                {name:"Earliest times to present day", link:"/books/history"}
             ]
         },
         {
             name:"Literature",
             sub_categories:[
-                {name:"Anthologies (non-poetry)", link:"/books/general_book"},
-                {name:"History & Critism", link:"/books/general_book"},
-                {name:"Plays", link:"/books/general_book"}, 
-                {name:"Poetry", link:"/books/general_book"},
-                {name:"Prose", link:"/books/general_book"}
+                {name:"Anthologies (non-poetry)", link:"/books/literature"},
+                {name:"History & Critism", link:"/books/literature"},
+                {name:"Plays", link:"/books/literature"}, 
+                {name:"Poetry", link:"/books/literature"},
+                {name:"Prose", link:"/books/literature"}
+            ]
+        },
+        {
+            name:"General",
+            sub_categories:[
+                {name:"Religion", link:"/books/religion"},
+                {name:"General", link:"/books/miscellaneous"},
             ]
         }
     ]

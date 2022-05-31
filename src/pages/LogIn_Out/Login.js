@@ -54,7 +54,7 @@ function Login() {
       event.preventDefault();
         const response = await Auth_Service.onLogin(inputs);
         if(response.status === 200){
-           console.log(response);
+          //  console.log(response);
             setInvalidCredentials(false);
             setEmailExists(false);
             setInvalidPassword(false);

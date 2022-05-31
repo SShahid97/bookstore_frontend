@@ -30,10 +30,10 @@ function Popular (){
                 }
             });
             setPopular(fetchedBooks);
-        }else if (response.status === 404){
-            const data = await response.json();
+        }else if (response.status === 204){
+            // const data = await response.json();
             // setNotFound(data.message);
-            console.log(data);
+            console.log("No data found");
         }else if (response.status === 400){
             console.log("Bad Request");
         }

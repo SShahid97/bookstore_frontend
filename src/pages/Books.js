@@ -15,7 +15,7 @@ function Books() {
    const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
    const [sortByValue, setSortByValue] = useState('');
    const [openSideNav,setOpenSideNav] = useState(false);
-//    const [searchKeyword, setSearchKeyword] = useState("");
+   const [category, setCategory] = useState("");
    const [notFound, setNotFound] = useState("");
    const [isFound, setIsFound] = useState(false);
    const [showLoader, setShowLoader] = useState(false);
@@ -30,9 +30,11 @@ function Books() {
         setTimeout(()=>{
             if(params.cat.substring(0, 7) === "search_"){ 
                 let searchKey = params.cat.substring(7); 
+                setCategory(searchKey);
                 getSearched(searchKey);
             }else{
-                console.log(params.cat);
+                // console.log(params.cat);
+                setCategory(params.cat);
                 getBooksByCategory(params.cat);
             }
         },300)
@@ -133,6 +135,7 @@ function Books() {
     {showLoader && (<Loader/>)} 
      {!showLoader && (  
       <Wrapper>
+          
        {isFound && (
            <>
             <SideNav>
@@ -177,6 +180,9 @@ function Books() {
             <div className='results-found'>
                 <strong> {tempBooks.length} results found </strong>
             </div>
+            <div>
+                <span className='category-selected'> {category}</span>
+            </div>
             <div className='sortbydiv'>
                <strong>Sort by</strong>&nbsp; 
                 <span>
@@ -187,7 +193,7 @@ function Books() {
                         <option value="default">Relevance</option>
                         <option value="increase">Price Low to High</option>
                         <option value="decrease">Price High to Low</option>
-                        <option value="discount">Discount</option>
+                        <option value="discount">Maximum Discount</option>
                        
                 </select>
                 </span>
@@ -277,6 +283,13 @@ const Top = styled.div`
             /* padding-top: 10px; */
         }
     }
+    .category-selected{
+        background: #e9e9e9;
+        padding: 6px;
+        font-size: 0.8rem;
+        border-radius: 30px;
+        color: darkblue;
+    }
     .sort-by{
         padding: 3px;
         cursor: pointer;
@@ -284,20 +297,19 @@ const Top = styled.div`
     }
     @media (max-width:600px){
         font-size: 0.8rem;
+        flex-wrap: wrap;
         .sortbydiv{
             text-align: -webkit-center;
+            margin-top: 15px;
         }
-        .sort-by{
-            width: 96px;
-        }
-
     }
 `;
 const Grid = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(11rem,1fr));
+    grid-template-columns: repeat(auto-fit, minmax(11rem,12rem));
     grid-gap:1rem;
     @media (max-width:650px){
+        margin-top: 30px;
         grid-template-columns: repeat(auto-fit,minmax(19rem,1fr));
         margin-left: -25px;
     }

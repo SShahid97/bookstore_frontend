@@ -299,12 +299,7 @@ const CartCard = styled.div`
     margin-top: 5px;
     text-align: center;
     margin-bottom: 1rem;
-    .pop-up {
-        transform: translate(738px,-10px) !important;
-        @media (max-width:650px){
-            transform: translate(10px, -12px) !important;
-        }
-    }
+    
     @media (max-width:1100px) {
             width: 90%;
     }

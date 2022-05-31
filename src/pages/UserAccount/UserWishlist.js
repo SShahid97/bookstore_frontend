@@ -54,6 +54,7 @@ function UserWishlist() {
       const response = await Wishlist_Service.deleteWishlistItem(token,itemId);
       if(response.status === 200){
         const deleteItem = await response.json();
+        console.log(deleteItem.message);
         setMessageSuccess(deleteItem.message);
         setTimeout(()=>{
             setMessageSuccess("");
