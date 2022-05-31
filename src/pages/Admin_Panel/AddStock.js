@@ -114,7 +114,8 @@ function AddStock() {
                     placeholder="Total Count"
                     type="number"
                     name="total_count"
-                    value={totalCount || ""}
+                    min={0}
+                    value={totalCount}
                     required
                     onChange={handleTotalCount}
                 />
@@ -124,7 +125,8 @@ function AddStock() {
                     placeholder='Count In Stock'
                     type="number"
                     name="count_in_stock"
-                    value={countInStock || ""}
+                    min={0}
+                    value={countInStock}
                     required
                     onChange={handleCountInStock}
                 />
