@@ -14,6 +14,7 @@ function ReviewOrder() {
     const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
     // const [bookImage, setBookImage] = useState([]);
     useEffect(() => {
+        window.scrollTo(0,0);
         getCartItems();
         let customerInfo = JSON.parse(localStorage.getItem("customerInfo"));
         if (customerInfo)

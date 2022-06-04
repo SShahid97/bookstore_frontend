@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import {Stock_Service} from "../../services/Service"; 
 import Loader from "../../components/Loader";
@@ -14,12 +15,14 @@ function AddStock() {
     const [showLoader, setShowLoader] = useState(false);
     const [messageSuccess, setMessageSuccess] = useState("");
     const [invalidInput, setInvalidInput] = useState(false);
+    let params=useParams();
     let curr_user = JSON.parse(localStorage.getItem('user'));
     
     useEffect(()=>{
         window.scrollTo(0,0);
         if(curr_user && curr_user.role === "admin"){
             Admin = curr_user;
+            setBookCode(params.code);
         }else{
             Admin=null;
         }
@@ -58,7 +61,10 @@ function AddStock() {
             },5000)
             setResponseNotReturned(false);
             setShowLoader(false);
-        }else if(response.status === 422){
+            setBookCode("");
+            setTotalCount("");
+            setCountInStock("");
+        }else if(response.status === 422){  //duplicate book code
             const error = await response.json();
             setErrorMsg(error.message);
             // console.log(error.message);
@@ -72,15 +78,6 @@ function AddStock() {
             setShowLoader(false);
         }
     }
-    const handleKeys = (e) => {
-        if (e.which === 32) {
-          // console.log('Space Detected');
-          setInvalidInput(true);
-          return false;
-        } else {
-          setInvalidInput(false);
-        }
-      }
   return (
       <AddStockDiv >
         {messageSuccess !== "" && (
@@ -101,7 +98,7 @@ function AddStock() {
                     name="book_code"
                     value={bookCode || ""}
                     required
-                    onKeyDown={handleKeys}
+                    disabled={true}
                     onChange={handleBookCode}
                 />
                 {invalidInput && (

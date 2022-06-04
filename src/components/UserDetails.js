@@ -79,11 +79,5 @@ const Orders = styled.div`
             border:1px solid blue;
         }
     }
-    .your-orders{
-
-    }
-    .your-wishlist{
-
-    }
 `;
 export default UserDetails

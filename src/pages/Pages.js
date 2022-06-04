@@ -35,6 +35,7 @@ import Invoice from './Admin_Panel/Invoice';
 import VerifyEmail from './UserAccount/VerifyEmail';
 import ResetPassword from './UserAccount/ResetPassword';
 import Statistics from './Admin_Panel/Statistics';
+import AdminProfile from './Admin_Panel/AdminProfile';
 
 function Pages() {
   return (
@@ -63,18 +64,19 @@ function Pages() {
         <Route path="admin-panel" element={<AdminPanel />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="admin-profile" element={<AdminProfile />} />
             <Route path="manage-books/view-all-items" element={<ViewAllItems />} />
             {/* <Route path="manage-books/view-all-items/:cat" element={<ViewAllItems />} /> */}
             <Route path="manage-books/view-all-items/edit-item/:id" element={<EditItem />} />
             <Route path="manage-books/view-all-items/view-edit-stock/:code" element={<ViewEditStock />} />
             <Route path="manage-books/add-item" element={<AddItem />} />
+            <Route path="manage-books/add-item/add-stock/:code" element={<AddStock />} />
             <Route path="manage-users/view-all-users" element={<ViewAllUsers />} /><></>
             <Route path="manage-users/view-all-users/user-address/:id" element={<UserAddress />} />
             <Route path="manage-users/view-all-users/user-orderhistory/:id" element={<UserOrderHistory />} />
             <Route path="manage-users/search-user" element={<SearchUser />} />
             <Route path="manage-users/search-order" element={<SearchOrder />} />
             <Route path="manage-users/search-order/invoice/:id" element={<Invoice />} />
-            <Route path="manage-books/add-stock" element={<AddStock />} />
             <Route path="manage-books/statistics" element={<Statistics />} />
             <Route path="*" element={<PageNotFound />} />
         </Route>

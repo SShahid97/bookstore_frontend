@@ -55,15 +55,25 @@ function SearchSuggestions({keyWord, setInput}) {
         {results.map((item, index)=>{
             return  (
             <div key={index}>
-             {item.book_name && (
-                <li onClick={()=>handleSuggested(item.book_name)}>{item.book_name}</li>
-             )}
-              {item.category && (
-                <li onClick={()=>handleSuggested(item.category)}>{item.category}</li>
-             )}
-             {item.book_author && (
-                <li onClick={()=>handleSuggested(item.book_author)}>{item.book_author}</li>
-             )}
+                {item.book_name && (
+                    <li onClick={()=>handleSuggested(item.book_name)}>
+                    <div>{item.book_name}</div>
+                    <div className='sub-suggestion'>book</div>
+                        </li>
+                )}
+                {item.category && (
+                    <li onClick={()=>handleSuggested(item.category)}>
+                        <div>{item.category}</div>
+                        <div className='sub-suggestion'>category</div>
+                        </li>
+                )}
+                {item.book_author && (
+                    <li onClick={()=>handleSuggested(item.book_author)}>
+                        <div>{item.book_author}</div>
+                        <div className='sub-suggestion'>author</div>
+                        
+                    </li>
+                )}
              </div>
             )
         })}    
@@ -78,11 +88,17 @@ const SuggestionsOuter = styled.div`
     display: flex;
     position: absolute;
     background: #fafcff;
-    width: 19%;
     border-radius:8px;
     padding:5px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    width: 16.2rem;
     @media (max-width:650px){
         width: 98%;
+    }
+    .sub-suggestion{
+        font-size: 0.66rem;
+        color:darkblue;
     }
     ul{
         list-style-type: none;

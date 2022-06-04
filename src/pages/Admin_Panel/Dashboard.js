@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
-import { Order_Service,Auth_Service } from '../../services/Service';
-import { Bar,Pie} from 'react-chartjs-2'
+import { Order_Service,Auth_Service,Item_Service } from '../../services/Service';
+import { Bar,Pie,Doughnut} from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js';
 import {
     FaUserFriends,
     FaEye,
-    FaGift
+    FaGift,
+    FaBook
 } from "react-icons/fa";
 Chart.register(...registerables);
 
@@ -20,6 +21,9 @@ function Dashboard() {
     const [noOfOrders, setNoOfOrders] = useState([]);
     const [deliveredOrders, setDeliveredOrders]= useState();
     const [revenueGeneratedPerMonth, setRevenueGeneratedPerMonth ]=useState([]);
+    const [books,setBooks]=useState([]);
+    const [inStock,setInStock]=useState();
+    const [outOfStock,setOutOfStock]=useState();
     let user_admin = JSON.parse(localStorage.getItem("user"));
     
     let xAxis = {
@@ -140,8 +144,31 @@ function Dashboard() {
             setAdmin(user_admin);
             getAllOrders(user_admin.token);
             getAllUsers(user_admin.token);
+            getAllBooks();
         }
     },[]);
+    const getAllBooks = async()=>{
+        const response = await Item_Service.getAllBooks();
+        // console.log(response.status);
+        if(response.status === 200){
+            const books = await response.json();
+            // console.log(books);
+            let in_stock=0;
+            let out_of_Stock=0;
+            setBooks(books);
+            books.forEach((item)=>{
+                if(item.stock_details.count_in_stock>0)
+                    in_stock = in_stock+item.stock_details.count_in_stock;
+                else if(item.stock_details.count_in_stock === 0){
+                    out_of_Stock = out_of_Stock+1;
+                }
+            })
+            setInStock(in_stock);
+            setOutOfStock(out_of_Stock);
+        }else if(response.status === 400){
+            console.log("Bad Request");
+        }
+    }
     const getAllUsers = async (token) => {
         const response = await Auth_Service.getUsers(token);
         if(response.status === 200){
@@ -166,7 +193,7 @@ function Dashboard() {
         const response = await Order_Service.getAllOrders(token);
         if(response.status === 200){
             const returnedOrders = await response.json();
-            console.log(returnedOrders);
+            // console.log(returnedOrders);
             let monthsSet = new Set([]);
             let deliveredOrderCount = 0;
             returnedOrders.forEach((order)=>{
@@ -178,7 +205,7 @@ function Dashboard() {
                     deliveredOrderCount+=1;
                 }
             }); 
-            console.log(deliveredOrderCount);
+            // console.log(deliveredOrderCount);
             setDeliveredOrders(deliveredOrderCount);
 
             let monthsArr = [...monthsSet];    //converting set to array
@@ -298,6 +325,20 @@ function Dashboard() {
                 </div>
                 <div className='icon'><FaGift/></div>
             </Card>
+            <Card>
+                <div className='card-text stockDetails'>
+                    <div>
+                        <p>{inStock}</p>    
+                        <p>Books in Stock</p>
+                    </div>
+                    <div>
+                        <p>{outOfStock}</p>
+                        <p>Books out of Stock</p>
+                    </div>
+                    
+                </div>
+                <div className='icon'><FaBook/></div>
+            </Card>
             <div className='graphs-div-outer'>
                 
                 <div className='graphs-div'>
@@ -377,6 +418,44 @@ function Dashboard() {
                     />
                     </div>
                 </div>
+
+                   {/*3rd  */}
+                   <div className='graphs'>
+                    <div>
+                        <h3>Stock</h3>
+                    </div>
+                    <div>
+                    <Doughnut
+                    data={
+                        {
+                            labels: ["In Stock", "Out of Stock"],
+                            datasets: [
+                            {
+                                fill: false,
+                                // lineTension: 0.5,
+                                backgroundColor: bgColorArray,
+                                borderWidth: 1,
+                                data: [inStock, outOfStock]
+                            }
+                            ]
+                        }
+                    }
+                    height={300}
+                    width={350}
+                    options={{
+                        responsive: true,
+                        // plugins: charTitle,
+                       maintainAspectRatio:false,  
+                       legend:{
+                         display:true,
+                         position:'center'
+                       },
+
+                     }}
+                    
+                    />
+                    </div>
+                </div>
             
             </div> 
           </div>        
@@ -413,28 +492,11 @@ const DashboardInner = styled.div`
     display: flex;
     flex-wrap: wrap;
     /* justify-content: flex-start; */
-    width:95%;
+    width:98%;
     margin:0 auto;
     margin-top:1rem;
     margin-bottom:1rem;
-    // .sales-img-div{
-    //     min-width: 10rem;
-    //     width: 70%;
-    //     height: auto;
-    //     margin: 0 auto;
-    //     border: 1px solid lightgrey;
-    //     border-radius: 3px;
-    //     margin-top: 15px;
-    //     @media (max-width:650px){
-    //         width: 97%;
-    //         margin-top: 5px;
-    //     }
-    // }
-    // .sales-img-div img{
-    //     width: 100%;
-    //     height: inherit;
-    //     border-radius: 3px;
-    // }
+
     .graphs-div{
         display:flex;
         justify-content: space-between;
@@ -446,7 +508,7 @@ const DashboardInner = styled.div`
     }
 
     .graphs-div-outer{
-        width: 90%;
+        width: 100%;
         margin: 0 auto;
         margin-top: 1rem;
         h3{
@@ -460,7 +522,7 @@ const DashboardInner = styled.div`
         }
     }
     .graphs{
-        width:45%;
+        width:33%;
         @media (max-width:650px){
             width:100%;
         }
@@ -482,12 +544,13 @@ const Card = styled.div`
     background: linear-gradient(85deg,#0000ffb3,#38dfd7d1);
     padding: 1.5rem 0.5rem;
     height:auto;
-    width:19rem;
+    width:20rem;
     border-radius:3px;
     overflow:hidden;
     position:relative;
     margin: 0 auto;
     display:flex;
+    margin-bottom: 5px;
     @media (max-width:1250px){
         width:16rem;
     }
@@ -516,10 +579,20 @@ const Card = styled.div`
             padding: 8px 16px;
         }
     }
+    svg{
+        margin-top: 10px;
+    }
     .card-text{
         width:75%;
         @media (max-width:650px){
             padding-left: 10px;
+        }
+    }
+    .stockDetails{
+        display: flex;
+        justify-content: space-between;
+        p{
+            font-size:17px ;
         }
     }
     p{

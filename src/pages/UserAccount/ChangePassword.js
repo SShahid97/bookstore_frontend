@@ -194,7 +194,7 @@ const ChangePasswordOuter = styled.div`
 `;
 
 const ChangePasswordInner = styled.div`
-    width: 40%;
+    width: 50%;
     height: auto;
     margin: 0 auto;
     border-left: 1px solid grey;

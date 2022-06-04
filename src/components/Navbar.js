@@ -21,7 +21,8 @@ import {
   FaSearch,
   FaUserCircle,
   FaGift,
-  FaHeart } from "react-icons/fa";
+  FaHeart,
+  FaWhatsapp } from "react-icons/fa";
 
 
 function Navbar() {
@@ -360,11 +361,63 @@ function Navbar() {
               <Category />
             </Nav2>
           )} */}
-        
+        {!isAdmin && (
+          <WhatsAppOuter>
+            <a className="whatsapp-for-desktop" href="https://web.whatsapp.com/send?phone=+919622572247" target="_blank" rel="noopener noreferrer" title='Contact Us'>
+              <FaWhatsapp/>
+            </a>
+            <a className="whatsapp-for-mobile" href="https://wa.me/+919622572247" target="_blank" rel="noopener noreferrer" title='Contact Us'>
+              <FaWhatsapp/>
+            </a>
+          </WhatsAppOuter>
+        )}
     </div>
   )
 }
 
+const WhatsAppOuter = styled.div`
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  z-index:1500;
+  
+  @media (max-width:650px){
+      transform: scale(1.3);
+      right: 20px;
+      .whatsapp-for-desktop{
+          display: none;
+      }
+      .whatsapp-for-mobile{
+          display: block;
+      }
+  }
+  @media (min-width:650px){
+    .whatsapp-for-mobile{
+      display: none;
+    }
+    .whatsapp-for-desktop{
+      display: block;
+    }
+  }
+  svg{
+    transform: scale(2);
+    color: white;
+    background: #59bb58;
+    border-radius: 7px;
+    padding: 1px;
+    transition: all ease-in 0.3s;
+    -webkit-transition: all ease-in 0.3s;
+    -moz-transition: all ease-in 0.3s;
+    &:hover{
+      transform: scale(2.3);
+      transition: all ease-out 0.3s;
+      -webkit-transition: all ease-out 0.3s;
+      -moz-transition: all ease-out 0.3s;
+
+    }
+    
+  }
+`;
 
 const Logo= styled(Link)`
    display: flex;

@@ -1,5 +1,5 @@
 import React, { useState,useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import styled from "styled-components";
 import {FaCheckCircle} from "react-icons/fa";
 import Loader from '../../components/Loader';
@@ -27,7 +27,7 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
         if(custInfo)
             addCustomerAddress(custInfo,curr_user);
         else{
-            alert("There was some error!");
+            // alert("There was some error!");
             return;
         } 
         
@@ -35,7 +35,7 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
         if(custOrder)
             addCustomerOrder(custOrder,curr_user);
         else{
-            alert("There was some error!");
+            // alert("There was some error!");
             return;
         }   
         // if(!custInfo || !custOrder){
@@ -185,6 +185,7 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
         <>
         {!isConfirmed  && (<Loader/>)}
         {isConfirmed && (
+            <>
             <OrderConfirmation > 
                 <FaCheckCircle className='check'/>
                 <h3>{user.name}, Thanks for Shopping with us!</h3>
@@ -194,7 +195,14 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
                 ):(
                     <p style={{marginTop:'0.7rem'}}>A Confirmation email has been sent to your mail box.</p> 
                 )}
+                 <div className='view-order-div'>
+                    <Link to={"/user/orders"}>
+                        View Order
+                    </Link>
+                </div>  
             </OrderConfirmation>
+               
+            </>
         )}
         </>
     </Wrapper>
@@ -212,6 +220,27 @@ const Wrapper = styled.div`
     padding:10px;
     @media (max-width:650px){
         width:90%;
+    }
+    .view-order-div{
+        width:110px;
+        display:inline-block;
+        margin-top: 20px;
+        padding:5px 12px;
+        border-radius: 3px;
+        border: 1px solid grey;
+        background: whitesmoke;
+        color:black;
+        cursor: pointer;
+        a{
+            font-weight: 500;
+        }
+        &:hover{
+            a{
+                color:white;
+            }
+            border:1px solid #f7f7f7;
+            background: linear-gradient(to right, #f27121, #e94057);
+        }
     }
 `;
 const OrderConfirmation = styled.div`

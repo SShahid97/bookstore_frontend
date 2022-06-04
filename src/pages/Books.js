@@ -1,6 +1,6 @@
 import React, { useEffect,useState } from 'react';
 import styled from 'styled-components';
-// import {motion} from 'framer-motion';
+import {motion} from 'framer-motion';
 import {Link, useParams, useNavigate} from 'react-router-dom';
 import Loader from '../components/Loader';
 import {Item_Service} from '../services/Service';
@@ -49,7 +49,7 @@ function Books() {
             fetchedData.forEach((book)=>{
                 if(book.discount>0){
                     book.discountPercent = book.discount*100 + "%";
-                    book.newPrice = book.price - (book.price* book.discount);
+                    book.newPrice = (book.price - (book.price* book.discount)).toFixed(2);
                }
                if(book.discount===0){
                     book.newPrice = book.price; 
@@ -206,7 +206,13 @@ function Books() {
             {/* <Searched/> */}
           {tempBooks.map((book)=>{
               return (
-                  <Card key = {book._id}>
+                  <Card 
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+
+                  transition= {{ease: "easeOut",type:"spring",  duration:0.2}}
+                    key = {book._id}>
                       {(book.discount>0) && (
                         <span className='discount' >{book.discountPercent}</span>
                       )}
@@ -425,13 +431,16 @@ const SideNav =  styled.div`
             display: none;
     }
 `;
-const Card = styled.div`
+const Card = styled(motion.div)`
     border:1px solid #80808038 !important;
     padding: 0.8rem;
     min-height:20rem;
     border-radius:5px;
     overflow:hidden;
     position:relative;
+    transition: all ease-out 0.3s;
+    -webkit-transition: all ease-out 0.3s;
+    -moz-transition: all ease-out 0.3s;
     @media (max-width:650px){
         padding: 5px;
         min-height: 0;

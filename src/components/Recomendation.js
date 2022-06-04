@@ -140,7 +140,7 @@ function Recomendation({user}) {
 
                     {!book.book_image && <img src={require(`../../public/assets/images/${bookDummyImage}`)} alt={book.book_name} />}
                     <div style={{marginLeft:'0.3rem', marginTop:'0.5rem'}}>
-                        <p>{book.book_name}</p>
+                    <p>{book.book_name.length > 40? book.book_name.slice(0,40)+"...":book.book_name}</p>
                         {(book.discount===0)  && (
                             <>
                             <span>&#8377;</span><span>{book.price}</span>

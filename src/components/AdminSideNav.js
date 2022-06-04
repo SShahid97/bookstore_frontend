@@ -7,9 +7,10 @@ import {
   FaSearchDollar,
   FaRegEye,
   FaChalkboardTeacher,
-  FaChartLine
+  FaChartLine,
+  FaUserCircle
   } from "react-icons/fa";
-import {MdLibraryAdd} from "react-icons/md"
+import {MdOutlineVpnKey} from "react-icons/md"
 
 function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
   let navigate = useNavigate();
@@ -27,7 +28,13 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
   return (
     <NavOuter>
       <List className={toggleArrowMenu?"mobile-view":"desktop-view"} onClick={handleCloseNav}>
-        <SLink to={"dashboard"} className='dropdown-item' style={{marginTop: '20px'}}>         
+        <div className="AdminProfileDiv">
+          <SLink to={"admin-profile"} className='dropdown-item' style={{borderRadius: '20px', padding:'13px'}}>         
+            <FaUserCircle className="AdminProfileIcon" />
+          </SLink>
+        </div>
+      <hr/>
+        <SLink to={"dashboard"} className='dropdown-item' style={{marginTop: '3px'}}>         
           <span className='icons'> <FaChalkboardTeacher /></span><h4>Admin Dashboard</h4>
         </SLink>
         <h4 className='headings'>Manage Books</h4>
@@ -46,13 +53,13 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
         <span className='icons'> < FaSearchDollar/> </span><h4>Search Order / Genearte Invoice</h4>
         </SLink>
 
-        <h4 className='headings'>Manage Stock</h4>
-        <SLink to={'manage-books/add-stock'}  >
-        <span className='icons'> < MdLibraryAdd/> </span> <h4>Add Stock Details</h4>
-        </SLink>
+        <h4 className='headings'>Statistics</h4>
         <SLink to={"manage-books/statistics"} className='dropdown-item'>         
           <span className='icons'> <FaChartLine /></span><h4>Statistics and Data Visualization</h4>
         </SLink>
+        {/* <SLink to={'manage-books/add-stock'}  >
+        <span className='icons'> < MdLibraryAdd/> </span> <h4>Add Stock Details</h4>
+        </SLink> */}
         {/* <SLink to={'manage-books/view-all-items/view-edit-stock/:code'} >
         <span className='icons'> < FaEdit/> </span><h4>Edit Stock Details</h4>
         </SLink> */}
@@ -111,6 +118,17 @@ const NavOuter = styled.div`
     }
 `;
 const List = styled.div`
+    .AdminProfileDiv{
+      border-radius: 50%;
+      width: 70px;
+      height: 60px;
+      padding:10px;
+      margin: auto;
+    }
+    .AdminProfileIcon{
+      transform: scale(3.5);
+    }
+
     .headings{
         padding: 0.4rem;
         font-size: 1.1rem;

@@ -1,4 +1,5 @@
 import React, {useState,useEffect} from 'react';
+import {useNavigate} from "react-router-dom";
 import styled from "styled-components";
 import { Item_Service, Upload_Service } from '../../services/Service';
 // import {FaUpload} from "react-icons/fa";
@@ -6,20 +7,20 @@ import PopUp from '../../components/PopUp';
 import PopupFailure from "../../components/PopupFailure";
 import "./styles.css";
 
-import {
-    Compter_Science, 
-    Business_Management,
-    Science,
-    Mathematics,
-    Literature,
-    Social_Sciences,
-    History
-} from "../../services/BookCategories";
+// import {
+//     Compter_Science, 
+//     Business_Management,
+//     Science,
+//     Mathematics,
+//     Literature,
+//     Social_Sciences,
+//     History
+// } from "../../services/BookCategories";
 // import {Service} from "../../services/Service";
 
 let Admin = {};
 function AddItem() {
-    let generalCategory = [Compter_Science,Business_Management,Science,Mathematics];
+    // let generalCategory = [Compter_Science,Business_Management,Science,Mathematics];
 
     const [formInput, setformInput] = useState({ });
     const [discount, setDiscount] = useState(0);
@@ -39,6 +40,7 @@ function AddItem() {
     const [messageFailure, setMessageFailure] = useState("");
     const [invalidInput, setInvalidInput] = useState(false);
     const [duplicateEntryError, setDuplicateEntryError] = useState("");
+    let navigate = useNavigate();
     useEffect(()=>{
         let curr_user = JSON.parse(localStorage.getItem('user'));
         localStorage.removeItem("OrderId")
@@ -117,6 +119,7 @@ function AddItem() {
             setDiscount(0);
             console.log(data);
             setDuplicateEntryError("");
+            navigate("add-stock/"+data.book_code);
         }else if(response.status === 422){  //if duplicate unique field entered
             const error = await response.json();
             setDuplicateEntryError(error.message);

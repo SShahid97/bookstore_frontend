@@ -563,7 +563,7 @@ function Book() {
                                      {scale:move?1.5:1,z:move?-50:0,color:move?"rgb(230 0 0)":"rgb(255 255 255)"}
                                      }
                                 //  transition={{type:"tween", duration: 0.7 }}
-                                transition={{type:"spring",bounce:10,duration: 1 }}
+                                transition={{type:"spring",bounce:0.7,duration: 1 }}
                                  
                                
                                > <FaHeart className='wish-cart-btn' /> </motion.span> <span style={{marginLeft:'1.2rem'}}>Add to Wishlist</span>
