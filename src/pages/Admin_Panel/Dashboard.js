@@ -157,11 +157,14 @@ function Dashboard() {
             let out_of_Stock=0;
             setBooks(books);
             books.forEach((item)=>{
-                if(item.stock_details.count_in_stock>0)
-                    in_stock = in_stock+item.stock_details.count_in_stock;
-                else if(item.stock_details.count_in_stock === 0){
-                    out_of_Stock = out_of_Stock+1;
+                if(item.stock_details){
+                    if(item.stock_details.count_in_stock>0)
+                        in_stock = in_stock+item.stock_details.count_in_stock;
+                    else if(item.stock_details.count_in_stock === 0){
+                        out_of_Stock = out_of_Stock+1;
+                    }
                 }
+                
             })
             setInStock(in_stock);
             setOutOfStock(out_of_Stock);

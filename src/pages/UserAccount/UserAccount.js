@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {useNavigate} from "react-router-dom";
 import styled from "styled-components";
-import {Address_Service, Auth_Service} from "../../services/Service";
+import {Address_Service, Auth_Service, Upload_Service} from "../../services/Service";
 import Loader from "../../components/Loader";
 import PopUp from '../../components/PopUp';
+import PopupFailure from "../../components/PopupFailure";
 import {mobileMenuService} from "../../services/LocalService";
-import { FaEdit, FaAngleDown, FaAngleUp  } from "react-icons/fa";
+import { FaEdit, FaAngleDown, FaAngleUp, FaUpload, FaUserCircle } from "react-icons/fa";
+import ProfilePicModal from '../../components/ProfilePicModal';
 
 function UserAccount() {
   const [user, setUser]= useState({});
@@ -20,6 +22,16 @@ function UserAccount() {
   const [isInvalid, setIsInvalid] = useState(false);
   const [responseNotReturned, setResponseNotReturned] = useState(false);
   const [messageSuccess, setMessageSuccess] = useState("");
+
+  const [imageFile, setImageFile]= useState(null);
+  const [imagePrevFile, setImagePrevFile] = useState(null);
+  const [previewImageURL, setPreviewImageURL] = useState(null);
+  const [imageChoosen, setImageChoosen] = useState(false);
+  const [profilePic, setProfilePic] = useState("");
+  const [messageFailure, setMessageFailure] = useState("");
+  const [existingProfilePic, setExistingProfilePic] = useState([]);
+  const [showProfilePicModal, setShowProfilePicModal] = useState(false);
+
   let navigate = useNavigate();
  
     useEffect(()=>{
@@ -29,11 +41,110 @@ function UserAccount() {
         let curr_user = JSON.parse(localStorage.getItem('user'));
         if(curr_user){
           setUser(curr_user);
+          if (curr_user.hasOwnProperty("profile_pic")){
+            let profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
+            console.log(profilePicture);
+            setExistingProfilePic(profilePicture);
+          }else{
+            setExistingProfilePic([]);
+          }
           setUserName(curr_user.name);
           getUserAddress(curr_user.token, curr_user._id);
         }
-    },[]);
 
+        if(imagePrevFile){
+          const reader = new FileReader();
+          reader.onload = ()=>{
+              if(reader.readyState === 2){
+                  setPreviewImageURL(reader.result);
+              }         
+          };
+          reader.readAsDataURL(imagePrevFile);
+          // for Storing imageName in database
+          setProfilePic(imagePrevFile.name);    
+        }else{
+            setPreviewImageURL(null);
+        }
+    },[imagePrevFile]);
+    const handleImageUpload = (e)=>{
+      const file = e.target.files[0];
+      console.log(file);
+      if(!file.type.includes("image") ){
+        setMessageFailure("Only Images are allowed!");
+          setTimeout(()=>{
+              setMessageFailure("");
+          },5000);
+        return;
+      }
+      // console.log(file);
+      setImageFile(file);
+      setImagePrevFile(file);
+      setImageChoosen(true);
+  }
+  const sumbitProfilePic  = async(e)=>{
+      e.preventDefault();
+      setResponseNotReturned(true);
+      setShowLoader(true);
+      let profileObj = {
+          profile_pic:profilePic
+      }
+      // console.log(profileObj);
+
+      const response = await Auth_Service.uploadProfilePic(user.token, user._id,profileObj);
+      if(response.status === 200){
+        const updatedProfilePic = await response.json();
+        console.log(updatedProfilePic.message);
+        await sumbitImageUpload();
+        //   setMessageSuccess(updatedProfilePic.message);
+        //   setTimeout(()=>{
+          //     setMessageSuccess("");
+          //   },5000)
+          let updatedUser = {...user};
+          updatedUser.profile_pic = profilePic;
+          console.log(updatedUser);
+
+          setUser(updatedUser);
+          // userService.sendUser(updatedUser); 
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+      }else{
+        console.log("pic not uploaded");
+      }
+  }
+
+  const sumbitImageUpload = async ()=>{
+      
+      const formData = new FormData();
+      formData.append('photo', imageFile);
+      const response = await Upload_Service.uploadImage(user.token,formData);
+      if (response.status === 200){
+          const data = await response.json();
+          console.log(data);
+          // console.log("Image Uploaded");
+         
+          setResponseNotReturned(false);
+          setShowLoader(false);
+          window.location.reload();
+          setMessageSuccess("Picture uploaded successfully");
+          setTimeout(()=>{
+            setMessageSuccess("");
+          },5000)
+          
+          // alert("Image Uploaded Successfully");
+          
+      }else{
+          setResponseNotReturned(false);
+          setShowLoader(false);
+          // setImageNotUploaded(true);
+          setMessageFailure("Image not uploaded, try again later.");
+          setTimeout(()=>{
+              setMessageFailure("");
+          },5000);
+          return false;
+      }
+    }
+    const handleProfilePic = (e)=>{
+      console.log(e.target.value);
+    }
     const getUserAddress = async(token,userId)=>{
       const response = await Address_Service.getUserAddress(token,userId);
       if(response.status === 200){
@@ -49,18 +160,7 @@ function UserAccount() {
       }
 
     }
-    // const getOrderHistory = async (token, userId)=>{
-    //   const response = await Order_Service.getOrderHistory(token,userId);
-    //   if(response.status === 200){
-    //     setShowLoader(false);
-    //     const returnedHistory = await response.json();
-    //     // console.log(returnedHistory);
-    //   }else if (response.status === 204){
-    //     setShowLoader(false);
-    //   }else if (response.status === 400){
-    //     console.log("Bad Request");
-    //   }
-    // }
+
     const handleChangePassword = ()=>{
       setShowChangePassword(!showChangePassword);
     }
@@ -152,11 +252,21 @@ function UserAccount() {
     }
 
   }
+  const handleOpenImage = ()=>{
+    setShowProfilePicModal(true);
+  }
   return (
-    <> 
+    <>
+    {messageFailure !== "" && (
+        <PopupFailure messageFailure={messageFailure}/> 
+     )}
+
      {messageSuccess !== "" && (
         <PopUp messageSuccess={messageSuccess}/> 
      )}
+     {showProfilePicModal && (
+            <ProfilePicModal setShowProfilePicModal={setShowProfilePicModal} pic={existingProfilePic[0].image}/>
+      )} 
     {showLoader && (<Loader/>)}
     {!showLoader && (
       <>
@@ -164,6 +274,46 @@ function UserAccount() {
       <p className='account-heading'>Hello <strong>{user.name}</strong>, Welcome to your Account Dashboard.</p>
       <hr/>
       <AccountInner>
+      <div className='profile-pic-outer'>
+                {/* <div className='image-upload-form'> */}
+                <form className={responseNotReturned?"formDim":""} onSubmit={sumbitProfilePic}>
+                    
+                    {/* <div className='image-preview'> */}
+                        <div className='profile-pic-inner' >
+                        {!previewImageURL && existingProfilePic.map((item)=>{   
+                            return ( 
+                            <img key={item.id} onClick={handleOpenImage} className='previewImg' src={require(`../../../public/assets/images/${item.image}`)} alt={item.name}/>
+                            )
+                        })}
+                            {previewImageURL ? 
+                                <img className='previewImg' src={previewImageURL}  alt="Preview"/>:
+                                (<div >
+                                  {existingProfilePic.length===0 &&  <FaUserCircle className='dummy-pic'/>}
+                                </div>)
+                            } 
+                        </div> 
+                    {/* </div> */}
+                        <input
+                            type="text"
+                            name="profile_pic"
+                            value={profilePic}
+                            required
+                            hidden={true}
+                            onChange={handleProfilePic}
+                        />
+                    <div className="picture-btns" >
+                        <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>Choose Profile Picture</button>
+                        <input type="file" id="getFile" accept='image/*' style={{display:'none'}} name="photo" onChange={handleImageUpload}/>
+                        <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
+                            <FaUpload/>
+                        </button>
+                    </div>
+                </form>
+                {/* </div> */}
+            
+          </div>
+          
+
           <Card>
               <h4 className='card-headings'>Your Account Info</h4>
               <div className='details'>
@@ -252,7 +402,7 @@ function UserAccount() {
 
 const AccountOuter = styled.div`
     /* display: flex; */
-    background-color: #e9e9e9;
+    background-color: #fbfbfb;
     width: 60%;
     margin: 0 auto;
     margin-bottom: 1rem;
@@ -262,7 +412,14 @@ const AccountOuter = styled.div`
     text-align: center;
     padding-bottom: 1rem;
     padding-top: 1rem;
-    
+    .lds-spinner{
+        transform: translate(480px,140px);
+        position: absolute;
+        z-index:1;
+        @media (max-width:650px){
+            transform: translate(150px,140px); 
+        }
+    }
     .account-heading{
         margin-bottom:0.8rem ;
         font-size: 1.2rem;
@@ -285,7 +442,129 @@ const AccountInner = styled.div`
     width:95%;
     margin:0 auto;
     margin-top:1rem;
-    svg{
+    .formDim{
+        opacity:0.6;
+    }
+    form{
+      width: 90%;
+      margin:auto;
+      padding: 10px;
+      border: 1px solid #b5b3b3;
+      border-radius: 3px;
+      margin-top: 5px;
+      box-shadow: 2px 2px 2px grey;
+      margin-bottom: 5px;
+    }
+    .picture-btns{
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        width: 70%;
+        margin: auto;
+        margin-top: 15px;
+        padding: 5px;
+        @media (max-width:650px){
+            width:95%;
+        }
+    }
+    .disable-btn{
+        opacity: 0.5;
+        background-color: blue;
+        cursor: auto;
+        color:white;
+    }
+    .error-msg{
+        color:#ed1111f2;
+        width: 85%;
+        margin-bottom: 8px;
+        font-size: 15px;
+        padding: 5px 5px;
+        border: 1px solid #ed1111f2;
+        border-radius: 3px; 
+        text-align: center;
+    }
+    .previewImg{
+        height: 100%;
+        width: 100%;
+        padding: 5px;
+        border-radius: 9px;
+        &:hover{
+          cursor: zoom-in;
+        }
+    }
+
+    .image-preview-text{
+        color: #605151;
+        margin: auto auto;
+        font-size: larger;
+        font-weight: 700;
+    }
+    .choose-image-btn{
+        display:inline-block;
+        width:75%;
+        background-color: #3caf4d;
+        color:white;
+        font-size: 15px;
+        padding: 8px 5px;
+        border: 1px solid #9e9e9e73;
+        border-radius: 3px;
+        outline:none;
+    }
+
+    .choose-image-btn:hover{
+        cursor: pointer;
+        background-color: #22a736;
+        color: white;
+    }
+    .upload-btn{
+        display:inline-block;
+        width:15%;
+        background-color: blue;
+        color:white;
+        font-size: 15px;
+        padding: 6px 3px;
+        border: 1px solid #9e9e9e73;
+        border-radius: 3px;
+        outline:none;
+    }
+    .disable-upload-btn{
+        opacity: 0.5;
+        cursor: auto;
+        display:inline-block;
+        width:15%;
+        background-color: blue;
+        color:white;
+        font-size: 15px;
+        padding: 6px 3px;
+        border: 1px solid #9e9e9e73;
+        border-radius: 3px;
+        outline:none;
+    }
+    .upload-btn:hover{
+        cursor: pointer;
+        background-color: rgb(12 12 194 / 90%);
+    }
+    .profile-pic-outer{
+      width: 80%;
+      @media (max-width:650px){
+        width: 100%;
+      }
+    }
+    .profile-pic-inner{
+        width: 150px;
+        height: 150px;
+        display: block;
+        border-radius: 75px;
+        padding: 5px;
+        margin: auto auto;
+        text-align: center;
+        .dummy-pic{
+            transform: scale(9);
+            margin-top: 60px;
+            color: lightgray;
+        }
+    }
+    .details svg{
       margin-left: 15px;
       color: white;
       cursor: pointer;

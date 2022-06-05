@@ -37,6 +37,9 @@ function Navbar() {
     const [showMobSearch, setShowMobSearch] = useState(false);
     const [showToopTip, setShowToopTip] = useState(false);
     const [showCartToopTip, setShowCartToopTip] = useState(false);
+
+    const [profilePic, setProfilePic] = useState([]);
+
     // const [hideOnStart, setHideOneStart] = useState(false);
 
     const navigate = useNavigate();
@@ -58,12 +61,36 @@ function Navbar() {
       // runs for first time
       let user = JSON.parse(localStorage.getItem('user'));
       if(user){
+        console.log("yes yes")
         setUser(user);
         let name = user.name.split(" ")[0];
         name = name.substring(0,5);
         setUserName(name);
         checkUser(user);
+
+        let profilePicture; 
+        if(user.hasOwnProperty("profile_pic")){
+          profilePicture = [{id:1 ,image: user.profile_pic, name:user.name}];
+          // console.log("Before Observable: ",profilePicture)
+          console.log("changed")
+          setProfilePic(profilePicture);
+        }else{
+          setProfilePic([]);
+        }
+  
+        
+        // try{
+        //   let profileImageName;
+        //   profileImageName  = require(`../../public/assets/images/${profilePicture[0].image}`);
+        //   // console.log("profileImageName: ",profileImageName);
+        //   console.log("in Try")
+        // }catch(err){
+        //   setProfilePic([]);
+        //   console.log(err);
+        // }
       }
+
+     
       
       userService.onUser().subscribe(curr_user => {
         if (curr_user) {
@@ -73,6 +100,16 @@ function Navbar() {
             // console.log(name.substring(0,4));
             name = name.substring(0,5);
             setUserName(name);
+
+            let profilePicture; 
+            if(curr_user.hasOwnProperty("profile_pic")){
+              profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
+              // console.log("Before Observable: ",profilePicture)
+              console.log("changed")
+              setProfilePic(profilePicture);
+            }else {
+              setProfilePic([]);
+            }
           }
           checkUser(curr_user)
         } else {
@@ -268,7 +305,20 @@ function Navbar() {
             className={toggleDropdown?'user-icon activeIcon':'user-icon '} onClick={handleUserAccount}>
               {/* <span className='username'>{userName}</span> */}
               {isLoggedOut && (<FaUserCog  />)}
-              {!isLoggedOut && ( <FaUserCircle   />) }
+              {!isLoggedOut && ( 
+                // <FaUserCircle/>
+                <>
+                  {profilePic.length === 0 && <FaUserCircle />}
+                  {profilePic.length>0?   
+                    profilePic.map((item)=>{   
+                      return ( 
+                        <img key={item.id}  className='previewImg' src={require(`../../public/assets/images/${item.image}`)} alt={item.name}/>
+                      )
+                    }): ("")
+                  }
+                </>
+              ) }
+
               {(isLoggedOut && showToopTip) && <Tooltip tooltipMessage={"Account Info"} />}
               {(!isLoggedOut && showToopTip)  && <Tooltip tooltipMessage={user.name} />}
             </div>
@@ -384,6 +434,7 @@ const WhatsAppOuter = styled.div`
   @media (max-width:650px){
       transform: scale(1.3);
       right: 20px;
+      z-index: 900;
       .whatsapp-for-desktop{
           display: none;
       }
@@ -660,6 +711,15 @@ const Nav = styled.div`
     }
   }
 
+  .previewImg{
+    height: 32px;
+    width: 35px;
+    border-radius: 30px;
+    @media (max-width:650px){
+      height: 27px;
+      width: 30px;
+    }
+  }
   .user-icon{
     &:hover{
       background: linear-gradient(to right, #f27121, #e94057);

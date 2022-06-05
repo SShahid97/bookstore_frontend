@@ -1,6 +1,7 @@
-import React,{useEffect} from 'react'
+import React,{useEffect, useState} from 'react'
 import { NavLink,useNavigate } from 'react-router-dom';
 import styled from "styled-components";
+import {userService} from "../services/LocalService";
 import {
   FaUserFriends,
   FaFileImport,
@@ -14,6 +15,7 @@ import {MdOutlineVpnKey} from "react-icons/md"
 
 function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
   let navigate = useNavigate();
+  const [profilePic, setProfilePic] = useState([]);
   let curr_user=JSON.parse(localStorage.getItem("user"));
   useEffect(()=>{
     if(!curr_user ){
@@ -21,7 +23,25 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
     }else if(curr_user.role !== "admin"){
       navigate("/");
     }
-  },[])
+    let profilePicture; 
+    if(curr_user.profile_pic){
+      profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
+      console.log("Before Observable: ",profilePicture)
+      setProfilePic(profilePicture);
+    }
+
+    let profileImageName;
+    try{
+      profileImageName  = require(`../../public/assets/images/${profilePicture[0].image}`);
+      // console.log("profileImageName: ",profileImageName);
+    }catch(err){
+      setProfilePic([]);
+      console.log(err);
+    }
+   
+  },[]);
+  
+  
   const handleCloseNav = ()=>{
     setToggleArrowMenu(false)
   }
@@ -29,8 +49,15 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
     <NavOuter>
       <List className={toggleArrowMenu?"mobile-view":"desktop-view"} onClick={handleCloseNav}>
         <div className="AdminProfileDiv">
-          <SLink to={"admin-profile"} className='dropdown-item' style={{borderRadius: '20px', padding:'13px'}}>         
-            <FaUserCircle className="AdminProfileIcon" />
+          <SLink to={"admin-profile"} className='dropdown-item' style={{borderRadius: '40px', padding:'3px', height:'inherit'}}>         
+            {profilePic.length === 0 && <FaUserCircle className="AdminProfileIcon" />}
+            {profilePic.length>0?   
+               profilePic.map((item)=>{   
+                return ( 
+                  <img key={item.id}  className='previewImg' src={require(`../../public/assets/images/${item.image}`)} alt={item.name}/>
+                )
+               }): ("")
+            }
           </SLink>
         </div>
       <hr/>
@@ -118,13 +145,17 @@ const NavOuter = styled.div`
     }
 `;
 const List = styled.div`
+     .previewImg{
+        height: 100%;
+        width: 100%;
+        border-radius: 35px;
+    }
     .AdminProfileDiv{
-      border-radius: 50%;
-      width: 70px;
-      height: 60px;
-      padding:10px;
+      width: 90px;
+      height: 90px;
       margin: auto;
     }
+
     .AdminProfileIcon{
       transform: scale(3.5);
     }

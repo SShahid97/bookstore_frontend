@@ -139,6 +139,14 @@ function AddItem() {
 
     const handleImageUpload = (e)=>{
         const file = e.target.files[0];
+        // console.log(file);
+        if(!file.type.includes("image") ){
+          setMessageFailure("Only Images are allowed!");
+            setTimeout(()=>{
+                setMessageFailure("");
+            },5000);
+          return;
+        }
         setImageFile(file);
         setImagePrevFile(file);
         setImageChoosen(true);

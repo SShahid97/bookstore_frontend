@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { FaEdit, FaAngleDown, FaAngleUp  } from "react-icons/fa";
 import styled from "styled-components";
 import Loader from "../../components/Loader";
 import PopUp from '../../components/PopUp';
-import {Auth_Service} from "../../services/Service";
+import PopupFailure from "../../components/PopupFailure";
+import {Auth_Service,Upload_Service} from "../../services/Service";
 import ChangePassword from "../UserAccount/ChangePassword";
-
+import { FaEdit, FaAngleDown, FaAngleUp,FaUserCircle,FaUpload  } from "react-icons/fa";
+import ProfilePicModal from '../../components/ProfilePicModal';
 
 function AdminProfile() {
     const [user, setUser]= useState({});
@@ -21,15 +22,117 @@ function AdminProfile() {
     const [showChangePasswordComponent, setShowChangePasswordComponent] = useState(false);
     const [messageSuccess, setMessageSuccess] = useState("");
     
+    const [imageFile, setImageFile]= useState(null);
+    const [imagePrevFile, setImagePrevFile] = useState(null);
+    const [previewImageURL, setPreviewImageURL] = useState(null);
+    const [imageChoosen, setImageChoosen] = useState(false);
+    const [profilePic, setProfilePic] = useState("");
+    const [messageFailure, setMessageFailure] = useState("");
+    const [existingProfilePic, setExistingProfilePic] = useState([]);
+    const [showProfilePicModal, setShowProfilePicModal] = useState(false);
     useEffect(()=>{
         // setShowLoader(true);
         let curr_user = JSON.parse(localStorage.getItem('user'));
         if(curr_user){
           setUser(curr_user);
           setUserName(curr_user.name);
+          if (curr_user.profile_pic){
+            let profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
+            console.log(profilePicture);
+            setExistingProfilePic(profilePicture);
+          }
         }
-    },[]);
 
+        if(imagePrevFile){
+            const reader = new FileReader();
+            reader.onload = ()=>{
+                if(reader.readyState === 2){
+                    setPreviewImageURL(reader.result);
+                }         
+            };
+            reader.readAsDataURL(imagePrevFile);
+            // for Storing imageName in database
+            setProfilePic(imagePrevFile.name);    
+        }else{
+            setPreviewImageURL(null);
+        }
+    },[imagePrevFile]);
+    const handleImageUpload = (e)=>{
+        const file = e.target.files[0];
+        console.log(file);
+        if(!file.type.includes("image") ){
+          setMessageFailure("Only Images are allowed!");
+            setTimeout(()=>{
+                setMessageFailure("");
+            },5000);
+          return;
+        }
+        // console.log(file);
+        setImageFile(file);
+        setImagePrevFile(file);
+        setImageChoosen(true);
+    }
+    const sumbitProfilePic  = async(e)=>{
+        e.preventDefault();
+        setResponseNotReturned(true);
+        setShowLoader(true);
+        let profileObj = {
+            profile_pic:profilePic
+        }
+        // console.log(profileObj);
+
+        const response = await Auth_Service.uploadProfilePic(user.token, user._id,profileObj);
+        if(response.status === 200){
+          const updatedProfilePic = await response.json();
+          console.log(updatedProfilePic.message);
+          await sumbitImageUpload();
+          //   setMessageSuccess(updatedProfilePic.message);
+          //   setTimeout(()=>{
+            //     setMessageSuccess("");
+            //   },5000)
+            let updatedUser = {...user};
+            updatedUser.profile_pic = profilePic;
+            console.log(updatedUser);
+
+            setUser(updatedUser);
+            // userService.sendUser(updatedUser); 
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+        }else{
+          console.log("pic not uploaded");
+        }
+    }
+
+    const sumbitImageUpload = async ()=>{
+        
+        const formData = new FormData();
+        formData.append('photo', imageFile);
+        const response = await Upload_Service.uploadImage(user.token,formData);
+        if (response.status === 200){
+            const data = await response.json();
+            console.log(data);
+            // console.log("Image Uploaded");
+           
+            setResponseNotReturned(false);
+            setShowLoader(false);
+            window.location.reload();
+            setMessageSuccess("Picture uploaded successfully");
+            setTimeout(()=>{
+              setMessageSuccess("");
+            },5000)
+            
+            // alert("Image Uploaded Successfully");
+            
+        }else{
+            setResponseNotReturned(false);
+            setShowLoader(false);
+            // setImageNotUploaded(true);
+            setMessageFailure("Image not uploaded, try again later.");
+            setTimeout(()=>{
+                setMessageFailure("");
+            },5000);
+            return false;
+        }
+    }
     const handleChangePassword = ()=>{
         setShowChangePassword(!showChangePassword);
     }
@@ -68,7 +171,8 @@ function AdminProfile() {
       }
       const handleUserName = (e)=>{
         const value = e.target.value;
-        const re = /^[ A-Za-z ]+$/;   //only alphabets are allowed
+        //only alphabets are allowed
+        const re = /^[ A-Za-z ]+$/;   
         if (value === "" || re.test(value)){
           setUserName(value);     
           setNameError("");
@@ -113,17 +217,68 @@ function AdminProfile() {
         }
     
       }
+    const handleProfilePic = (e)=>{
+        console.log(e.target.value);
+    }
+    const handleOpenImage = ()=>{
+      setShowProfilePicModal(true);
+    }
   return (
       <>
+    {messageFailure !== "" && (
+        <PopupFailure messageFailure={messageFailure}/> 
+     )}
     {messageSuccess !== "" && (
         <PopUp messageSuccess={messageSuccess}/> 
      )}
-    {showLoader && (<Loader/>)}
-    {!showLoader && (
-      <>
+    
     <AdminProfileOuter>
+     {showProfilePicModal && (
+            <ProfilePicModal setShowProfilePicModal={setShowProfilePicModal} pic={existingProfilePic[0].image}/>
+      )} 
+
+    {showLoader && (<Loader/>)}
         <AdminProfileInner>
               <h4 className='card-headings'>Your Account Info</h4>
+              <div className='profile-pic-outer'>
+                
+                    {/* <div className='image-upload-form'> */}
+                    <form className={responseNotReturned?"formDim":""} onSubmit={sumbitProfilePic}>
+                        
+                        {/* <div className='image-preview'> */}
+                            <div className='profile-pic-inner' >
+                            {!previewImageURL && existingProfilePic.map((item)=>{   
+                                return ( 
+                                <img key={item.id} onClick={handleOpenImage} className='previewImg' src={require(`../../../public/assets/images/${item.image}`)} alt={item.name}/>
+                                )
+                            })}
+                                {previewImageURL ? 
+                                    <img className='previewImg' src={previewImageURL}  alt="Preview"/>:
+                                    (<div >
+                                      {existingProfilePic.length===0 &&  <FaUserCircle className='dummy-pic'/>}
+                                    </div>)
+                                } 
+                            </div> 
+                        {/* </div> */}
+                            <input
+                                type="text"
+                                name="profile_pic"
+                                value={profilePic}
+                                required
+                                hidden={true}
+                                onChange={handleProfilePic}
+                            />
+                        <div className="picture-btns" >
+                            <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>Choose Profile Picture</button>
+                            <input type="file" id="getFile" accept='image/*' style={{display:'none'}} name="photo" onChange={handleImageUpload}/>
+                            <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
+                                <FaUpload/>
+                            </button>
+                        </div>
+                    </form>
+                    {/* </div> */}
+                
+              </div>  
               <div className='details'>
                 <p><strong>Name: </strong> {user.name} <FaEdit title="Edit" onClick={handleEditName}/></p>
                  {editName && (
@@ -181,8 +336,6 @@ function AdminProfile() {
             )}
         </AdminProfileOuter>
     </>
-    )}
-    </>
   )
 }
 
@@ -199,7 +352,115 @@ const AdminProfileInner = styled.div`
     box-shadow: 5px 4px 5px grey;
     border: 1px solid grey;
     margin: auto;
-    svg{
+    .formDim{
+        opacity:0.6;
+    }
+    .picture-btns{
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        width: 70%;
+        margin: auto;
+        margin-top: 15px;
+        padding: 5px;
+        @media (max-width:650px){
+            width:95%;
+        }
+    }
+    .disable-btn{
+        opacity: 0.5;
+        background-color: blue;
+        cursor: auto;
+        color:white;
+    }
+    .error-msg{
+        color:#ed1111f2;
+        width: 85%;
+        margin-bottom: 8px;
+        font-size: 15px;
+        padding: 5px 5px;
+        border: 1px solid #ed1111f2;
+        border-radius: 3px; 
+        text-align: center;
+    }
+    .previewImg{
+        height: 100%;
+        width: 100%;
+        padding: 5px;
+        border-radius: 9px;
+        &:hover{
+          cursor: zoom-in;
+        }
+    }
+    .image-preview-text{
+        color: #605151;
+        margin: auto auto;
+        font-size: larger;
+        font-weight: 700;
+    }
+    .choose-image-btn{
+        display:inline-block;
+        width:75%;
+        background-color: #3caf4d;
+        color:white;
+        font-size: 15px;
+        padding: 8px 5px;
+        border: 1px solid #9e9e9e73;
+        border-radius: 3px;
+        outline:none;
+    }
+
+    .choose-image-btn:hover{
+        cursor: pointer;
+        background-color: #22a736;
+        color: white;
+    }
+    .upload-btn{
+        display:inline-block;
+        width:15%;
+        background-color: blue;
+        color:white;
+        font-size: 15px;
+        padding: 6px 3px;
+        border: 1px solid #9e9e9e73;
+        border-radius: 3px;
+        outline:none;
+    }
+    .disable-upload-btn{
+        opacity: 0.5;
+        cursor: auto;
+        display:inline-block;
+        width:15%;
+        background-color: blue;
+        color:white;
+        font-size: 15px;
+        padding: 6px 3px;
+        border: 1px solid #9e9e9e73;
+        border-radius: 3px;
+        outline:none;
+    }
+    .upload-btn:hover{
+        cursor: pointer;
+        background-color: rgb(12 12 194 / 90%);
+    }
+    .profile-pic-outer{
+
+    }
+    .profile-pic-inner{
+        width: 150px;
+        height: 150px;
+        display: block;
+        border-radius: 75px;
+        padding: 5px;
+        margin: auto auto;
+        text-align: center;
+        .dummy-pic{
+            transform: scale(9);
+            margin-top: 60px;
+            color: lightgray;
+        }
+    }
+    .details svg{
       margin-left: 15px;
       color: white;
       cursor: pointer;
@@ -226,6 +487,7 @@ const AdminProfileInner = styled.div`
     }
     form{
       width: 90%;
+      margin:auto;
       padding: 10px;
       border: 1px solid #b5b3b3;
       border-radius: 3px;
@@ -313,6 +575,33 @@ const AdminProfileOuter = styled.div`
    .back-arrow-span{
        display: none;
    }
+   .lds-spinner{
+        transform: translate(480px,140px);
+        position: absolute;
+        z-index:1;
+        @media (max-width:650px){
+            transform: translate(150px,140px); 
+        }
+    }
+    .modal-outer{
+      left:200px;
+      @media (max-width:650px){
+        left: 3px;
+        top: -10px;
+        z-index: 1000;
+      }
+    }
+    .modal-outer .modal-inner{
+        width: 600px;
+        height: 450px;
+        @media (max-width:650px){
+          width:320px;
+          img{
+            object-fit: contain;
+          }
+        }
+        
+    }
 `;
 
 

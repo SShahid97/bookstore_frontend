@@ -493,6 +493,21 @@ export const Cart_Service ={
 
 // User Service
 export const Auth_Service = {
+    uploadProfilePic: async (token, userId, formData)=>{
+        try{
+            const response = await fetch(`${auth_url}/${userId}`,{
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'auth-token': token
+                },
+                body:JSON.stringify(formData)
+            })
+            return response;
+        }catch(err){
+            return err;
+        }
+    },
     updateUserName: async (token, userId, formData)=>{
         try{
             const response = await fetch(`${auth_url}/${userId}`,{

@@ -141,7 +141,7 @@ function ViewEditStock() {
     {!stock && (
         <div style={{width:'80%', margin:'0 auto', textAlign:'center'}}>
         <p style={{color:'red',padding:'10px', fontWeight:'600'}}>No stock details available</p>
-        <Link className='link-to-addstock' to={"/admin-panel/manage-books/add-stock"}>Click here to add stock details</Link>
+        <Link className='link-to-addstock' to={"/admin-panel/manage-books/add-item/add-stock/"+params.code}>Click here to add stock details</Link>
         </div>
      )} 
     </EditStockOuter>

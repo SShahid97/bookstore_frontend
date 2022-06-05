@@ -124,8 +124,13 @@ function EditItem() {
   }
   const handleImageUpload = (e)=>{
     const file = e.target.files[0];
-    // console.log(file.name);
-    // formInput.book_image = file.name;
+    if(!file.type.includes("image") ){
+      setMessageFailure("Only Images are allowed!");
+        setTimeout(()=>{
+            setMessageFailure("");
+        },5000);
+      return;
+    }
     setImageChoosen(true);
     setImageFile(file);
     setImagePrevFile(file);

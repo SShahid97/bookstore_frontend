@@ -387,7 +387,8 @@ function ViewAllItems() {
                             <span><strong>Price:</strong></span><span></span><p>&#8377;{book.price}</p>
                             <span><strong>Description:</strong></span>
                             <section style={{textAlign:'justify'}}>{book.book_description}</section>
-                            <span><strong>Count in Stock:</strong></span><p>{book.stock_details.count_in_stock}</p>                            
+                            <span><strong>Count in Stock:</strong></span>
+                            <p>{book.stock_details ? book.stock_details.count_in_stock:("No info")}</p>                            
                         </div>
                     </div>
                     {/* </div> */}
