@@ -302,7 +302,7 @@ function UserAccount() {
                             onChange={handleProfilePic}
                         />
                     <div className="picture-btns" >
-                        <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>Choose Profile Picture</button>
+                        <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>{existingProfilePic.length===0?"Choose Profile Picture":"Change Profile Picture"}</button>
                         <input type="file" id="getFile" accept='image/*' style={{display:'none'}} name="photo" onChange={handleImageUpload}/>
                         <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
                             <FaUpload/>

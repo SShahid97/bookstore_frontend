@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState } from "react";
-import {useNavigate, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Auth_Service} from '../../services/Service';
 import {mobileMenuService} from "../../services/LocalService";
 import "./styles.css";
@@ -9,8 +9,8 @@ import "./styles.css";
 import { FaUserPlus,FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Register() {
-    const navigate = useNavigate();
-    const [inputs, setInputs] = useState({});
+    // const navigate = useNavigate();
+    const [inputs, setInputs] = useState({name:"",email:"",password:""});
     const [confirmPass, setConfirmPass] = useState('');
     const [isMatched, setIsMatched] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
@@ -26,6 +26,7 @@ function Register() {
         mobileMenuService.setMobileMenuIndicies(null);
     },[])
     const handleChange = (event) => {
+        console.log(event.target.value);
         setEmailErrorDot("");
         setEmailErrorRate("");
         setNameError("");
@@ -167,6 +168,7 @@ function Register() {
              </div>  
             )} */}
             <form className="form_" onSubmit={registerUser}>
+              <div className='inputBox'>
                 <input
                     placeholder="Name"
                     type="text"
@@ -178,11 +180,14 @@ function Register() {
                     onChange={handleChange}
                     onBlur={handleNameError}
                 />
+                {inputs?.name !== "" && <span>Name</span>}
+              </div>
                {nameError !=="" && (
                     <div className='pass-match-error'>
                         <p>{nameError}!</p>
                     </div>  
                )} 
+               <div className='inputBox'>
                 <input
                     placeholder="Email"
                     type="email"
@@ -192,6 +197,8 @@ function Register() {
                     onChange={handleChange}
                     onBlur={handleEmailError}
                 />
+                {inputs?.email !== "" && <span>Email</span>}
+                </div>
                 {emailErrorRate !=="" && (
                     <div className='pass-match-error'>
                         <p>{emailErrorRate}!</p>
@@ -201,7 +208,8 @@ function Register() {
                     <div className='pass-match-error'>
                         <p>{emailErrorDot}!</p>
                     </div>  
-                )}       
+                )} 
+                <div className='inputBox'>     
                 <input
                     id="password"
                     placeholder='Password'
@@ -213,11 +221,14 @@ function Register() {
                     onChange={handleChange}
                     onBlur={handlePasswordError}
                 />
+                {inputs?.password !== "" && <span>Password</span>}
+                </div> 
                 {passwordError !== "" && (
                     <div className='pass-match-error'>
                         <p>{passwordError}!</p>
                     </div>  
                 )} 
+                 <div className='inputBox'>   
                 <input
                     className={!isMatched?'password-error':''}
                     id="confirmPassword"
@@ -231,12 +242,15 @@ function Register() {
                     onBlur={handleConfirmPassword}
                     
                 />
+                {confirmPass !== "" && <span>Confirm Password</span>}
                 {showPassword && (
                     <FaEye onClick={showHidePassword} style={eyeStyle}/>
                 )}
                 {!showPassword && (
                     <FaEyeSlash onClick={showHidePassword} style={eyeStyle}/>
                 )}
+                </div>
+                
                 {!isMatched && (
                     <div className='pass-match-error'>
                         <p>Password does not match!!!</p>

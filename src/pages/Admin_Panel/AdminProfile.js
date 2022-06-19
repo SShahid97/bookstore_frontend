@@ -269,7 +269,7 @@ function AdminProfile() {
                                 onChange={handleProfilePic}
                             />
                         <div className="picture-btns" >
-                            <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>Choose Profile Picture</button>
+                            <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>Change Profile Picture</button>
                             <input type="file" id="getFile" accept='image/*' style={{display:'none'}} name="photo" onChange={handleImageUpload}/>
                             <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
                                 <FaUpload/>
@@ -338,6 +338,39 @@ function AdminProfile() {
     </>
   )
 }
+const AdminProfileOuter = styled.div`
+    min-height: 90vh;
+   .back-arrow-span{
+       display: none;
+   }
+   .lds-spinner{
+        transform: translate(480px,140px);
+        position: absolute;
+        z-index:1;
+        @media (max-width:650px){
+            transform: translate(150px,140px); 
+        }
+    }
+    .modal-outer{
+      left:200px;
+      @media (max-width:650px){
+        left: 3px;
+        top: -10px;
+        z-index: 1000;
+      }
+    }
+    .modal-outer .modal-inner{
+        width: 600px;
+        height: 450px;
+        @media (max-width:650px){
+          width: 98vw;
+          img{
+            object-fit: contain;
+          }
+        }
+        
+    }
+`;
 
 const AdminProfileInner = styled.div`
      color: black;
@@ -571,38 +604,7 @@ const AdminProfileInner = styled.div`
       width: 98%;
     }
 `;
-const AdminProfileOuter = styled.div`
-   .back-arrow-span{
-       display: none;
-   }
-   .lds-spinner{
-        transform: translate(480px,140px);
-        position: absolute;
-        z-index:1;
-        @media (max-width:650px){
-            transform: translate(150px,140px); 
-        }
-    }
-    .modal-outer{
-      left:200px;
-      @media (max-width:650px){
-        left: 3px;
-        top: -10px;
-        z-index: 1000;
-      }
-    }
-    .modal-outer .modal-inner{
-        width: 600px;
-        height: 450px;
-        @media (max-width:650px){
-          width:320px;
-          img{
-            object-fit: contain;
-          }
-        }
-        
-    }
-`;
+
 
 
 export default AdminProfile

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState,useEffect} from "react";
+import { useState,useEffect, useCallback} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import "./styles.css";
 import {userService, cartService,mobileMenuService} from "../../services/LocalService";
@@ -10,7 +10,7 @@ import { FaUserCircle, FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
     const navigate = useNavigate();
-    const [inputs, setInputs] = useState({});
+    const [inputs, setInputs] = useState({email:"",password:""});
     const [showPassword, setShowPassword] = useState(false);
     const [invalidCredentails,setInvalidCredentials] = useState(false);
     const [emailExists,setEmailExists] = useState(false);
@@ -50,7 +50,7 @@ function Login() {
   //   userService.sendUser(user);
   // }
 
-    const loginForm = async (event) => {
+    const loginForm = useCallback(async (event) => {
       event.preventDefault();
         const response = await Auth_Service.onLogin(inputs);
         if(response.status === 200){
@@ -64,13 +64,14 @@ function Login() {
             },5000)
             const user = await response.json();
             // sendUser(user);
-            userService.sendUser(user);  //subject
             localStorage.setItem("user", JSON.stringify(user));
             if(user.role === "admin"){
               // console.log("admin")
+              userService.sendUser(user);  //subject
               navigate("/admin-panel/dashboard");
               return;
             }else{
+              userService.sendUser(user);  //subject
               getCartItems();
               navigate("/");
               return;
@@ -89,7 +90,7 @@ function Login() {
           setInvalidPassword(false);
           console.log(response);
         }
-    }  
+    },[inputs,navigate]);  
 
     const getCartItems = async()=>{
       let user = JSON.parse(localStorage.getItem('user'));
@@ -122,14 +123,37 @@ function Login() {
         </div>
     )}
     <form className="form_" onSubmit={loginForm}>
-      <input
+      {/* <input
         placeholder="Email"
         type="email" 
         name="email" 
         value={inputs.email || ""} 
         required
         onChange={handleChange}
-      />
+      /> */}
+      {/* <input
+        id="password"
+        placeholder='Password' 
+        type="password" 
+        name="password" 
+        value={inputs.password || ""}
+        required 
+        onChange={handleChange}
+      /> */}
+      <div className='inputBox'>
+        <input
+          placeholder="Email"
+          id="email"
+          type="email" 
+          name="email" 
+          value={inputs.email || ""} 
+          required
+          onChange={handleChange}
+        />
+       {inputs.email !== "" && <span>Email</span>}
+      </div>
+
+      <div className='inputBox'>
       <input
         id="password"
         placeholder='Password' 
@@ -139,13 +163,17 @@ function Login() {
         required 
         onChange={handleChange}
       />
-        
+      
+       {inputs.password !== "" && <span>Password</span>}
         {showPassword && (
           <FaEye onClick={showHidePassword} style={eyeStyle}/>
         )}
         {!showPassword && (
            <FaEyeSlash onClick={showHidePassword} style={eyeStyle}/>
         )}
+      </div>
+        
+        
         {emailExists && (
           <div className='pass-match-error'>
               <p>Email not registered!</p>

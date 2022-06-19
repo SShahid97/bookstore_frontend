@@ -61,7 +61,7 @@ const ProfilePicModalOuter = styled(motion.div)`
                 color:white;
             }
             svg{
-                transform: scale(1.5);
+                transform: scale(2);
             }
         }
 
@@ -74,7 +74,7 @@ const ProfilePicModalOuter = styled(motion.div)`
         border: 1px solid grey;
         border-radius:5px;
         @media (max-width:650px){
-            width:330px;
+            width: 98vw;
             height:560px;
         }
     }

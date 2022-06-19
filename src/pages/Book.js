@@ -117,7 +117,7 @@ function Book() {
         const response = await Item_Service.getBookDetails(bookId);
         if(response.status === 200){
             const bookDetails = await response.json();
-            console.log(bookDetails);
+            // console.log(bookDetails);
             if(bookDetails.discount>0){
                 bookDetails.discountPercent = Math.floor(bookDetails.discount*100) + "%";
                 bookDetails.newPrice = bookDetails.price - (bookDetails.price* bookDetails.discount).toFixed(2);

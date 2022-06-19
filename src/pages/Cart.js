@@ -9,7 +9,7 @@ import {BiRefresh} from "react-icons/bi";
 import {FaPlus,FaMinus} from "react-icons/fa";
 
 function Cart() {
-    let i=1;
+    // let i=1;
     let params = useParams();
     let navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
@@ -278,7 +278,7 @@ function Cart() {
                 {/* Buttons */}
                 <div className='checkout-btns'>
                     <button className='btns' onClick={handleBack}>Continue Shopping</button>
-                    <button className='btns' onClick={()=> hanldeCheckout(cartItems[0].user_id)}>Checkout</button>
+                    <button className='btns' onClick={()=> hanldeCheckout(cartItems[0].user_id)}>Proceed to Checkout</button>
                 </div>
             </div>
             </>

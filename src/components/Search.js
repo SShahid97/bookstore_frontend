@@ -59,6 +59,9 @@ function Search({setShowMobSearch}) {
          Every time the component is re-evaluated, the local variables gets initialized again.
     */
     const handleDecoratedSuggestions = useCallback(debounce(handleSuggestions,300),[]);
+    const handleOnFocus = ()=>{
+        setKeyWord(input);
+    }
   return (
       <>
     <FormStyle onSubmit={submitHandler}>
@@ -74,6 +77,7 @@ function Search({setShowMobSearch}) {
             className='search-bar'
             onInput={handleDecoratedSuggestions}
             onChange = {handleSearch}
+            onFocus = {handleOnFocus}
             type="text" value={input}/>
             <input className='searchKeyWord' hidden={true} type="submit" value="search"/>
             {showClose && (

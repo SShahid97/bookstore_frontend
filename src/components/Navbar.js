@@ -54,68 +54,65 @@ function Navbar() {
     // const [isMenu, setIsMenu] = useState(false);
 
     useEffect(()=>{
+      let isMounted = true;
       // window.addEventListener('scroll', handleScroll, { passive: true });
 
       // setHideOneStart(true);
       // getCartItems();
       // runs for first time
-      let user = JSON.parse(localStorage.getItem('user'));
-      if(user){
-        console.log("yes yes")
-        setUser(user);
-        let name = user.name.split(" ")[0];
-        name = name.substring(0,5);
-        setUserName(name);
-        checkUser(user);
-
-        let profilePicture; 
-        if(user.hasOwnProperty("profile_pic")){
-          profilePicture = [{id:1 ,image: user.profile_pic, name:user.name}];
-          // console.log("Before Observable: ",profilePicture)
-          console.log("changed")
-          setProfilePic(profilePicture);
-        }else{
-          setProfilePic([]);
-        }
+      if(isMounted){
+        let user = JSON.parse(localStorage.getItem('user'));
+        if(user){
+          console.log("yes yes")
+          setUser(user);
+          let name = user.name.split(" ")[0];
+          name = name.substring(0,5);
+          setUserName(name);
+          checkUser(user);
   
-        
-        // try{
-        //   let profileImageName;
-        //   profileImageName  = require(`../../public/assets/images/${profilePicture[0].image}`);
-        //   // console.log("profileImageName: ",profileImageName);
-        //   console.log("in Try")
-        // }catch(err){
-        //   setProfilePic([]);
-        //   console.log(err);
-        // }
-      }
+          let profilePicture; 
+          if(user.hasOwnProperty("profile_pic")){
+            profilePicture = [{id:1 ,image: user.profile_pic, name:user.name}];
+            // console.log("Before Observable: ",profilePicture)
+            // console.log("changed")
+            setProfilePic(profilePicture);
+          }else{
+            setProfilePic([]);
+          }
+  
+        }
 
-     
-      
-      userService.onUser().subscribe(curr_user => {
-        if (curr_user) {
-          setUser(curr_user);
-          if(curr_user.name!== undefined){
-            let name = curr_user.name.split(" ")[0];
-            // console.log(name.substring(0,4));
-            name = name.substring(0,5);
-            setUserName(name);
-
+        userService.onUser().subscribe(curr_user => {
+          if (curr_user) {
+            setUser(curr_user);
+            checkUser(curr_user)
             let profilePicture; 
             if(curr_user.hasOwnProperty("profile_pic")){
               profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
               // console.log("Before Observable: ",profilePicture)
-              console.log("changed")
               setProfilePic(profilePicture);
             }else {
-              setProfilePic([]);
+                setProfilePic([]);
             }
+            if(curr_user.name!== undefined){
+              let name = curr_user.name.split(" ")[0];
+              // console.log(name.substring(0,4));
+              name = name.substring(0,5);
+              setUserName(name);
+            }
+            
+          } else {
+            // setIsUser(false);
           }
-          checkUser(curr_user)
-        } else {
-          // setIsUser(false);
-        }
-      });
+        });
+
+        
+      }
+     
+
+     
+      
+      
 
       // if(!isLoggedOut){              //if logged in
       //   setTimeout(()=>{
@@ -134,9 +131,11 @@ function Navbar() {
       // return subscription.unsubscribe;   
       return () => {
         // window.removeEventListener('scroll', handleScroll);
+        isMounted = false;
       };
-    },[userName]);
+    },[]);
 
+    
     cartService.onUpdateCartItems().subscribe(cartItemsLen => {
       // debugger;
       if(cartItemsLen >= 0){
@@ -433,7 +432,9 @@ const WhatsAppOuter = styled.div`
   
   @media (max-width:650px){
       transform: scale(1.3);
-      right: 20px;
+      bottom: 15px;
+      left: 20px;
+      right: unset;
       z-index: 900;
       .whatsapp-for-desktop{
           display: none;
