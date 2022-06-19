@@ -1,7 +1,7 @@
 import React, { useEffect,useState } from 'react';
 import styled from 'styled-components';
 import {motion} from 'framer-motion';
-import {Link, useParams, useNavigate} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import Loader from '../components/Loader';
 import {Item_Service} from '../services/Service';
 import Filters from '../components/Filters';
@@ -12,19 +12,20 @@ function Books() {
    let params = useParams();
    const [books, setBooks]=useState([]);
    const [tempBooks, setTempBooks]= useState([]);
-   const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
+   const [bookDummyImage, setBookDummyImage]= useState([]);
    const [sortByValue, setSortByValue] = useState('');
    const [openSideNav,setOpenSideNav] = useState(false);
    const [category, setCategory] = useState("");
    const [notFound, setNotFound] = useState("");
    const [isFound, setIsFound] = useState(false);
    const [showLoader, setShowLoader] = useState(false);
-    let navigate = useNavigate(); 
+    // let navigate = useNavigate(); 
    //const [isSliderOpen, setIsSliderOpen] = useState(false);
    
     useEffect(()=>{
         // console.log(params.cat);
         setShowLoader(true);
+        setBookDummyImage(['dummy_book_img.png']);
         // const searchKeyword = params.cat.substring(7);
         window.scrollTo(0, 0);
         setTimeout(()=>{
@@ -42,7 +43,7 @@ function Books() {
 
     const getSearched = async (searchKey)=>{
         const response = await Item_Service.getSearched(searchKey);
-        console.log(response.status);
+        // console.log(response.status);
         if(response.status === 200){
             const fetchedData = await response.json();
 
@@ -64,7 +65,7 @@ function Books() {
         }else if(response.status === 204){
             setShowLoader(false);
             setIsFound(false);
-            console.log(response);
+            // console.log(response);
             setNotFound("No Results Found");
             setTempBooks([]);
         }else if(response.status === 400){
@@ -95,7 +96,7 @@ function Books() {
             setShowLoader(false);
        }else if(response.status === 204){
             setShowLoader(false);
-            console.log(response);
+            // console.log(response);
             setNotFound("No Results Found");
        }else if(response.status === 400){
             setShowLoader(false);

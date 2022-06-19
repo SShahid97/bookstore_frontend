@@ -26,7 +26,7 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
     let profilePicture; 
     if(curr_user.profile_pic){
       profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
-      console.log("Before Observable: ",profilePicture)
+      // console.log("Before Observable: ",profilePicture)
       setProfilePic(profilePicture);
     }
 
@@ -36,7 +36,7 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
       // console.log("profileImageName: ",profileImageName);
     }catch(err){
       setProfilePic([]);
-      console.log(err);
+      // console.log(err);
     }
    
   },[]);

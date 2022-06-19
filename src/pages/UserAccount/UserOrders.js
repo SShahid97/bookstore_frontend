@@ -9,10 +9,11 @@ import {mobileMenuService} from "../../services/LocalService";
 function UserOrders() {
   const [orderHistory, setOrderHistory] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
-  const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
+  const [bookDummyImage, setBookDummyImage]= useState([]);
   let navigate = useNavigate();
   useEffect(()=>{
     setShowLoader(true);
+    setBookDummyImage(['dummy_book_img.png'])
     mobileMenuService.setMobileMenuIndicies(null);
     let curr_user = JSON.parse(localStorage.getItem('user'));
     if(curr_user){
@@ -26,7 +27,7 @@ function UserOrders() {
     if(response.status === 200){
       setShowLoader(false); 
       const returnedHistory = await response.json();
-      console.log(returnedHistory);
+      // console.log(returnedHistory);
       // Date.parse("2019-01-01T12:30:00.000Z")
       returnedHistory.forEach((item)=>{
         const dateFormat = new Date(item.date);

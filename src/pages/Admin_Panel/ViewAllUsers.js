@@ -18,7 +18,7 @@ function ViewAllUsers() {
     // window.scrollTo(0,0);
     setShowLoader(true);
     if (curr_user && curr_user.role === "admin") {
-      console.log("hello")
+      // console.log("hello")
       // setAdmin(curr_user);
       getAllUsers(curr_user.token);
     }
@@ -46,7 +46,7 @@ function ViewAllUsers() {
     
   }
   const handleDeleteUser = async(userId)=>{
-    console.log(userId);
+    // console.log(userId);
     const confirmation = window.confirm("Do you want to deleted the User?");
     if(confirmation){
       const response = await Auth_Service.deleteUser(curr_user.token, userId);

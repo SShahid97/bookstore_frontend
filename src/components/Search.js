@@ -51,7 +51,7 @@ function Search({setShowMobSearch}) {
     }
     
     function  handleSuggestions (e){
-        console.log("Suggestion for ",e.target.value);
+        // console.log("Suggestion for ",e.target.value);
         setKeyWord(e.target.value);
     }
     /*

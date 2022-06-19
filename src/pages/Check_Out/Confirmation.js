@@ -7,12 +7,12 @@ import {Order_Service, Address_Service, Cart_Service} from "../../services/Servi
 import {cartService} from "../../services/LocalService";
 import emailjs from "@emailjs/browser";
 
-function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
+function Confirmation({paymentStatus, paymentMethod }) {
     const [orderId, setOrderId] = useState("");
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [user,setUser] = useState({});
     const [errorInMail, setErrorInMail] = useState(false);
-    const [alreadySavedAddress, setAlreadySavedAddress] = useState({});
+    // const [alreadySavedAddress, setAlreadySavedAddress] = useState({});
     let navigate = useNavigate();
     useEffect(()=>{
         let curr_user = JSON.parse(localStorage.getItem("user"));
@@ -50,12 +50,12 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
         let isAddress;
         const response = await Address_Service.getUserAddress(curr_user.token,curr_user._id);
         if(response.status === 200){
-            const addressReturned = await response.json();
+            // const addressReturned = await response.json();
             // console.log("Existed Address:", addressReturned);
-            setAlreadySavedAddress(addressReturned);
+            // setAlreadySavedAddress(addressReturned);
             isAddress = true;
         }else if (response.status === 204){
-            console.log("Address did not existed");
+            // console.log("Address did not existed");
             isAddress = false;
         }
         //if exists then update older one 
@@ -76,14 +76,14 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
                 pincode:info.pincode,
                 address:info.address
             }
-            console.log("Updated address:(from local)",addressUpdatedObj);
+            // console.log("Updated address:(from local)",addressUpdatedObj);
             //change existing address
             const response =await Address_Service.updateAddress(curr_user.token,info._id,addressUpdatedObj);
             if(response.status===200){
-                const updatedAddress = await response.json();
+                // const updatedAddress = await response.json();
                 // console.log("Updated Address ",updatedAddress);     
             }else if(response.status===204){
-                console.log("Address not updated");
+                // console.log("Address not updated");
             }else if(response.status===400){
                 console.log("There was some error");
             }
@@ -101,10 +101,10 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
             // console.log(address);
             const response = await Address_Service.addAddress(curr_user.token,addressObj);
             if(response.status === 201){
-                const savedAddress = await response.json();
+                // const savedAddress = await response.json();
                 // console.log(savedAddress);
             }else if(response.status===204){
-                console.log("Address not added");
+                // console.log("Address not added");
             }else if(response.status===400){
                 console.log("There was some");
             }
@@ -138,22 +138,22 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
             delivery_status:deliveryStatus,
             order:orderArr
         }
-        console.log(orderObj);
+        // console.log(orderObj);
          try{
             const response = await Order_Service.addOrder(curr_user.token,orderObj);
             if(response.status === 201){
                 const savedOrder = await response.json(); 
-                console.log(savedOrder._id);
+                // console.log(savedOrder._id);
                 setOrderId(savedOrder._id);
                 
                 // deleting cart
                 const deleted = await Cart_Service.deleteCart(curr_user.token, curr_user._id);
                 if(deleted){
-                    console.log(deleted);
+                    // console.log(deleted);
                 }
                 cartService.updateCartItems(0);
                 let custAddress = JSON.parse(localStorage.getItem("customerInfo"));
-                console.log(custAddress); 
+                // console.log(custAddress); 
                 let CustomerOrderInfo = {
                     customerAddress:custAddress,
                     orderInfo:savedOrder
@@ -173,10 +173,10 @@ function Confirmation({paymentStatus, paymentMethod, setConfirmed }) {
                 cartService.updateCartItems(0);
                 localStorage.removeItem("customerInfo");
                 setIsConfirmed(true);
-                setConfirmed(true)
+                // setConfirmed(true)
             }
         }catch(err){
-            console.log(err);
+            // console.log(err);
             alert("Sorry! There was some error while placing the order: ");
         }
     }

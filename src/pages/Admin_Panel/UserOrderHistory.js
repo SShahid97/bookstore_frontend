@@ -24,7 +24,7 @@ function UserOrderHistory() {
       if(response.status === 200){
         setShowLoader(false);
         const returnedHistory = await response.json();
-        console.log(returnedHistory);
+        // console.log(returnedHistory);
         setUsersOrderHistoy(returnedHistory);
       }else if (response.status === 204){
         setShowLoader(false);

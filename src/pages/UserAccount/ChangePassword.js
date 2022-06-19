@@ -37,7 +37,7 @@ function ChangePassword() {
       }
       const handlePasswordError = (e)=>{
         const value= e.target.value;
-        console.log(value.length);
+        // console.log(value.length);
         if(value.length < 6){
             setIsInvalid(true);
             setPasswordError("Password must be at least 6 characters");

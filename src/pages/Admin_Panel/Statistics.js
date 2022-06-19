@@ -7,7 +7,7 @@ Chart.register(...registerables);
 // defaults.global.legend.position = 'bottom'
 
 function Statistics() {
-    const [allOrders, setAllorders] = useState([]);
+    // const [allOrders, setAllorders] = useState([]);
     const [months, setMonths] = useState([]);
     const [noOfOrders, setNoOfOrders] = useState([]);
     // const [topFiveSellingBooks, setTopFiveSellingBooks ]=useState([]);
@@ -192,7 +192,7 @@ function Statistics() {
         const response = await Order_Service.getAllOrders(token);
         if(response.status === 200){
             const returnedOrders = await response.json();
-            console.log(returnedOrders);
+            // console.log(returnedOrders);
             let allBooks = []; 
             returnedOrders.forEach((item)=>{
               item.order.forEach((book)=>{
@@ -227,7 +227,7 @@ function Statistics() {
             // sort the array based on qty in decreasing order
             uniqueBooksArr.sort((a,b) => b.qty - a.qty);
             // console.log(uniqueBooksArr);
-            console.log(uniqueBooksArr.slice(0,5));
+            // console.log(uniqueBooksArr.slice(0,5));
 
             // setTopFiveSellingBooks(uniqueBooksArr.slice(0,5));
             let bookNames=[];
@@ -239,10 +239,10 @@ function Statistics() {
             setTopFiveSellingBookNames(bookNames);
             setTopFiveSellingBookQtys(qtys);
            //converting set to array
-            setAllorders(returnedOrders);
+            // setAllorders(returnedOrders);
             filterByDate(returnedOrders);
         }else if (response.status === 204){
-            console.log("No orders found");
+            // console.log("No orders found");
         }else {
             console.log("There was some error while fetching orders");
         }
@@ -290,9 +290,9 @@ function Statistics() {
                 }
             }
         });
-        console.log("revenuePerMonth :",revenuePerMonth);
+        // console.log("revenuePerMonth :",revenuePerMonth);
         setRevenueGeneratedPerMonth(revenuePerMonth);
-        console.log(numberOfOrderArr);
+        // console.log(numberOfOrderArr);
         setNoOfOrders(numberOfOrderArr);
     }  
     

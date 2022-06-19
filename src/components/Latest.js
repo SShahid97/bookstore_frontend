@@ -17,7 +17,7 @@ function Latest(props) {
         // let cat;
         // cat = props.category; 
         if(props.category  !== undefined){
-            console.log(props.category);
+            // console.log(props.category);
             getLatest(props.category);
         } 
     },[props.category]);
@@ -39,7 +39,7 @@ function Latest(props) {
         }else if (response.status === 404){
             const data = await response.json();
             // setNotFound(data.message);
-            console.log(data);
+            // console.log(data);
         }else if (response.status === 400){
             console.log("Bad Request");
         }

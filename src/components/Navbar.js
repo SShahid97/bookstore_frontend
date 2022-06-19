@@ -63,7 +63,7 @@ function Navbar() {
       if(isMounted){
         let user = JSON.parse(localStorage.getItem('user'));
         if(user){
-          console.log("yes yes")
+          // console.log("yes yes")
           setUser(user);
           let name = user.name.split(" ")[0];
           name = name.substring(0,5);
@@ -163,11 +163,11 @@ function Navbar() {
           // setIsUser(true);
           setIsAdmin(true);
           setisLoggedOut(false);
-          console.log("i am admin well")
+          // console.log("i am admin well")
         }else{
           setIsUser(true);
           setisLoggedOut(false);
-          console.log("i am user")
+          // console.log("i am user")
         }
       // }
     }

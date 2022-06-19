@@ -32,13 +32,13 @@ function ViewEditStock() {
         const response = await Stock_Service.getStockDetails(bookcode);
         if(response.status===200){
             const returnedData = await response.json();
-            console.log(returnedData);
+            // console.log(returnedData);
             setTotalCount(returnedData.total_count);
             setCountInStock(returnedData.count_in_stock);
             setStock(returnedData);
         }else if(response.status === 204){
             setStock(null);
-            console.log("No stock details available");
+            // console.log("No stock details available");
         }else {
             console.log("There was some error");
         }
@@ -65,8 +65,8 @@ function ViewEditStock() {
         // console.log(stockObj);
         const response = await Stock_Service.editStockDetails(Admin.token,stock._id,stockObj);
         if(response.status === 200){
-            const updatedStock = await response.json();
-            console.log(updatedStock);
+            // const updatedStock = await response.json();
+            // console.log(updatedStock);
             setMessageSuccess("Stock Details Updated");
             setTimeout(()=>{
                 setMessageSuccess("");
@@ -76,13 +76,13 @@ function ViewEditStock() {
         }else if(response.status === 422){
             const error = await response.json();
             setErrorMsg(error.message);
-            console.log(error.message);
+            // console.log(error.message);
             setResponseNotReturned(false);
             setShowLoader(false);
         }else if(response.status === 400){
             const error = await response.json();
             setErrorMsg(error.message);
-            console.log(error.message);
+            // console.log(error.message);
             setResponseNotReturned(false);
             setShowLoader(false);
         }

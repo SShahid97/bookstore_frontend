@@ -3,7 +3,7 @@ import "./styles.css";
 import {useNavigate, useParams} from 'react-router-dom';
 import { Item_Service, Upload_Service } from '../../services/Service';
 import styled from "styled-components";
-import {FaUpload,FaArrowLeft} from "react-icons/fa";
+import {FaArrowLeft} from "react-icons/fa";
 import PopUp from '../../components/PopUp';
 import PopupFailure from "../../components/PopupFailure";
 import Loader from "../../components/Loader";
@@ -70,7 +70,7 @@ function EditItem() {
       setItem(itemDetails);
     }else if(response.status === 204){
       setShowLoader(false);
-      console.log("No Content")
+      // console.log("No Content")
     }else if(response.status === 400){
       setShowLoader(false);
       console.log("Bad Request")
@@ -91,11 +91,11 @@ function EditItem() {
       alert("Please edit any field...");
       return;
     }
-    console.log(formInput); 
+    // console.log(formInput); 
     const response = await Item_Service.updateBookItem(Item._id, Admin.token,formInput);
     if(response.status === 200){
       const updatedItem = await response.json();
-      console.log(updatedItem);
+      // console.log(updatedItem);
       sumbitImageUpload();
       setMessageSuccess("Item Updated Successfully");
       setTimeout(()=>{
@@ -149,7 +149,7 @@ const sumbitImageUpload = async ()=>{
       if (response.status === 200){
           const data = await response.json();
           console.log(data);
-          console.log("Image uploaded")
+          // console.log("Image uploaded")
           // for storing in database 
           // formInput.book_image = imageFile.name;
         

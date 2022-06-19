@@ -217,7 +217,7 @@ function Dashboard() {
             filterByDate(returnedOrders);
         }else if (response.status === 204){
             setAllorders(null);
-            console.log("No orders found");
+            // console.log("No orders found");
         }else {
             console.log("There was some error while fetching orders");
         }

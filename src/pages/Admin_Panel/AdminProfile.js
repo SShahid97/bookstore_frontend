@@ -92,7 +92,7 @@ function AdminProfile() {
             //   },5000)
             let updatedUser = {...user};
             updatedUser.profile_pic = profilePic;
-            console.log(updatedUser);
+            // console.log(updatedUser);
 
             setUser(updatedUser);
             // userService.sendUser(updatedUser); 
@@ -109,7 +109,7 @@ function AdminProfile() {
         const response = await Upload_Service.uploadImage(user.token,formData);
         if (response.status === 200){
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             // console.log("Image Uploaded");
            
             setResponseNotReturned(false);
@@ -158,7 +158,7 @@ function AdminProfile() {
          setShowChangePasswordComponent(true);
         }else if(response.status === 401) {
          const failureReply = await response.json(); 
-         console.log(failureReply.message);
+        //  console.log(failureReply.message);
          // setPasswordCorrect(false);
          setPasswordNotCorrect(failureReply.message);
         }else if(response.status === 400){
@@ -192,14 +192,14 @@ function AdminProfile() {
        }
     const onNameChange = async(e)=>{
         e.preventDefault();
-        console.log(userName);
+        // console.log(userName);
         let userObj = {
           name:userName
         }
         const response = await Auth_Service.updateUserName(user.token, user._id,userObj);
         if(response.status === 200){
           const updatedName = await response.json();
-          console.log(updatedName);
+          // console.log(updatedName);
           setMessageSuccess(updatedName.message);
           setTimeout(()=>{
             setMessageSuccess("");
@@ -209,16 +209,16 @@ function AdminProfile() {
           let updatedUser = {...user};
           updatedUser.name = userName;
           setUser(updatedUser);
-          console.log(updatedUser);
+          // console.log(updatedUser);
           localStorage.setItem("user", JSON.stringify(updatedUser));
         }else{
           setResponseNotReturned(false);
-          console.log("Name not changed");
+          // console.log("Name not changed");
         }
     
       }
     const handleProfilePic = (e)=>{
-        console.log(e.target.value);
+        // console.log(e.target.value);
     }
     const handleOpenImage = ()=>{
       setShowProfilePicModal(true);
