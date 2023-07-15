@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react'
 import { useState } from "react";
-import {useNavigate, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Auth_Service} from '../../services/Service';
 import {mobileMenuService} from "../../services/LocalService";
+import Loader from '../../components/Loader';
 import "./styles.css";
 
 // icon imports
 import { FaUserPlus,FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Register() {
-    const navigate = useNavigate();
-    const [inputs, setInputs] = useState({});
+    // const navigate = useNavigate();
+    const [inputs, setInputs] = useState({name:"",email:"",password:""});
     const [confirmPass, setConfirmPass] = useState('');
     const [isMatched, setIsMatched] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
@@ -21,11 +22,13 @@ function Register() {
     const [nameError, setNameError] = useState("");
     const [emailAlreadyExists, setEmailAlreadyExists] = useState(false);
     const [registeredSuccess, setRegisteredSuccess] = useState();
+    const [showLoader, setShowLoader] = useState(false);
 
     useEffect(()=>{
         mobileMenuService.setMobileMenuIndicies(null);
     },[])
     const handleChange = (event) => {
+        console.log(event.target.value);
         setEmailErrorDot("");
         setEmailErrorRate("");
         setNameError("");
@@ -62,17 +65,21 @@ function Register() {
 
     const registerUser = async (event) => {
         event.preventDefault();
+        setShowLoader(true);
         const response = await Auth_Service.onRegister(inputs);
          if(response.status === 201){
             const data = await response.json();
             console.log(data);
+            setShowLoader(false);
             setRegisteredSuccess(true);
-            setInputs({});
-            setConfirmPass(" ");
+            setInputs({name:"",email:"",password:""});
+            setConfirmPass("");
         }else if (response.status === 400) {
+            setShowLoader(false);
             setRegisteredSuccess(false);
             console.log("There was some error: ",response)
         }else if(response.status === 409){
+            setShowLoader(false);
             setEmailAlreadyExists(true);
         }
 
@@ -150,7 +157,9 @@ function Register() {
         color:'#686464'
     }
     return (
-        <div className="RegisterForm">
+        <>
+        {showLoader && (< Loader/>)}
+        <div className= {showLoader?"dim_form RegisterForm":"RegisterForm"}>
             <FaUserPlus className="userIconLogin"/>
             {registeredSuccess && (
                 <div className='register-success'>
@@ -167,6 +176,7 @@ function Register() {
              </div>  
             )} */}
             <form className="form_" onSubmit={registerUser}>
+              <div className='inputBox'>
                 <input
                     placeholder="Name"
                     type="text"
@@ -178,11 +188,14 @@ function Register() {
                     onChange={handleChange}
                     onBlur={handleNameError}
                 />
+                {inputs?.name !== "" && <span>Name</span>}
+              </div>
                {nameError !=="" && (
                     <div className='pass-match-error'>
                         <p>{nameError}!</p>
                     </div>  
                )} 
+               <div className='inputBox'>
                 <input
                     placeholder="Email"
                     type="email"
@@ -192,6 +205,8 @@ function Register() {
                     onChange={handleChange}
                     onBlur={handleEmailError}
                 />
+                {inputs?.email !== "" && <span>Email</span>}
+                </div>
                 {emailErrorRate !=="" && (
                     <div className='pass-match-error'>
                         <p>{emailErrorRate}!</p>
@@ -201,7 +216,8 @@ function Register() {
                     <div className='pass-match-error'>
                         <p>{emailErrorDot}!</p>
                     </div>  
-                )}       
+                )} 
+                <div className='inputBox'>     
                 <input
                     id="password"
                     placeholder='Password'
@@ -213,11 +229,14 @@ function Register() {
                     onChange={handleChange}
                     onBlur={handlePasswordError}
                 />
+                {inputs?.password !== "" && <span>Password</span>}
+                </div> 
                 {passwordError !== "" && (
                     <div className='pass-match-error'>
                         <p>{passwordError}!</p>
                     </div>  
                 )} 
+                 <div className='inputBox'>   
                 <input
                     className={!isMatched?'password-error':''}
                     id="confirmPassword"
@@ -231,12 +250,15 @@ function Register() {
                     onBlur={handleConfirmPassword}
                     
                 />
+                {confirmPass !== "" && <span>Confirm Password</span>}
                 {showPassword && (
                     <FaEye onClick={showHidePassword} style={eyeStyle}/>
                 )}
                 {!showPassword && (
                     <FaEyeSlash onClick={showHidePassword} style={eyeStyle}/>
                 )}
+                </div>
+                
                 {!isMatched && (
                     <div className='pass-match-error'>
                         <p>Password does not match!!!</p>
@@ -256,6 +278,7 @@ function Register() {
                 </div>
             </form>
         </div>
+        </>
     )
 }
 

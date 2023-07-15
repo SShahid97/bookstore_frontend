@@ -44,9 +44,9 @@ function Footer() {
         </ul>
         <ul>
           <h3>Popular</h3>
-          <li><Link to = '/books/history_book'>General & World History</Link></li>
-          <li><Link to = '/books/js_book'>Web Development</Link></li>
-          <li><Link to = '/books/maths_book'>Mathematics</Link></li>
+          <li><Link to = '/books/history'>General & World History</Link></li>
+          <li><Link to = '/books/web development javascript'>Web Development</Link></li>
+          <li><Link to = '/books/mathematics'>Mathematics</Link></li>
         </ul>
       </div>
       )}

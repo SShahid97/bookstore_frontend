@@ -70,7 +70,10 @@ function VerifyEmail() {
                 userID:returnedUser._id
             }
              // mail starts here
-            emailjs.send("service_2rgz7hq", "template_r4gi8ss", resetPasswordObj, "3DRAqhnj6rTu4Rzmb")
+            const service_id = "service_2rgz7hq";
+            const templete_id = "template_r4gi8ss";
+            const public_key = "TgLzuPcfVuyBlzR3D";
+             emailjs.send(service_id, templete_id, resetPasswordObj, public_key)
             .then(function(response) {
                 console.log('SUCCESS!', response.status, response.text);
                 setEmailSent(true);

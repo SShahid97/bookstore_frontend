@@ -284,6 +284,7 @@ function Dashboard() {
               break;
             case 7:
                 month = "July";
+                break;
             case 8:
                 month = "August";
                 break;

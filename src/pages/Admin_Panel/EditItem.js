@@ -10,6 +10,15 @@ import Loader from "../../components/Loader";
 
 let Admin = {};
 function EditItem() {
+  const categories = ['web development javascript','web development html','web development css','web development react',
+        'web development angular','web development backend','programming c','programming c++','programming java',
+        'programming csharp','programming php','programming python','networking computer networks',
+        'communication wireless mobile','database rdbms','database mysql','database mining','os unix','os microsoft windows',
+        'os macintosh','web development','marketing','sales customer services','finance','accounting','business management',
+        'applied physics','physics','optical physics','classical mechanics','zoology','general biology','human biology',
+        'organic chemistry','inorganic chemistry','physical chemistry','algebra','mathematics','discrete mathematics','number theory',
+        'mathematics calculus','applied mathematics','literature','social science','history','religion','miscellaneous'];
+
   const [formInput, setformInput] = useState({});
   const [discount, setDiscount] = useState(0);
   const [imageFile, setImageFile]= useState(null);
@@ -292,14 +301,29 @@ const sumbitImageUpload = async ()=>{
                         </div>
                    
                   </div>
-                <input
+                  <div  style={{width:'85%'}}>
+                    <div className='discount-div'>
+                        <select style={{ padding: '7px 5px'}}
+                            className="form-control"
+                            name="category"
+                            value={Item.category || ""} 
+                            onChange={handleformInput}
+                        >
+                        <option value="" disabled={true} >Select Category</option>
+                        { categories.map((category,index)=>{          
+                            return <option key={index}   value={category}>{category}</option>
+                        }) }
+                      </select><br/>
+                    </div>
+                 </div>  
+                {/* <input
                     placeholder='Category'
                     type="text"
                     name="category"
                     value={Item.category ||  ""}
                     required
                     onChange={handleformInput}
-                />
+                /> */}
                 <textarea
                     rows={5}
                     name="book_description"
@@ -321,7 +345,7 @@ const sumbitImageUpload = async ()=>{
 }
 
 const EditOuter = styled.div`
-  height:100%;
+  height:90vh;
   .back-arrow-span{
     @media (max-width:650px){
       display: none;

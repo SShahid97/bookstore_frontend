@@ -1,21 +1,22 @@
 import React from 'react'
-import { useState,useEffect} from "react";
+import { useState,useEffect, useCallback} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import "./styles.css";
 import {userService, cartService,mobileMenuService} from "../../services/LocalService";
 import {Auth_Service,Cart_Service} from "../../services/Service";
 // icon imports
 import { FaUserCircle, FaEye, FaEyeSlash } from "react-icons/fa";
-
+import Loader from '../../components/Loader';
 
 function Login() {
     const navigate = useNavigate();
-    const [inputs, setInputs] = useState({});
+    const [inputs, setInputs] = useState({email:"",password:""});
     const [showPassword, setShowPassword] = useState(false);
     const [invalidCredentails,setInvalidCredentials] = useState(false);
     const [emailExists,setEmailExists] = useState(false);
     const [invalidPassword,setInvalidPassword] = useState(false);
     const [loginSuccessMessage, setLoginSuccessMessage] = useState("");
+    const [showLoader, setShowLoader] = useState(false);
 
     useEffect(()=>{
       let isMounted = true;
@@ -50,27 +51,30 @@ function Login() {
   //   userService.sendUser(user);
   // }
 
-    const loginForm = async (event) => {
+    const loginForm = useCallback(async (event) => {
       event.preventDefault();
+      setShowLoader(true);
         const response = await Auth_Service.onLogin(inputs);
         if(response.status === 200){
           //  console.log(response);
             setInvalidCredentials(false);
-            setEmailExists(false);
+            setEmailExists(false);  //already existed 
             setInvalidPassword(false);
+            setShowLoader(false);
             setLoginSuccessMessage("Login Success");
-            setTimeout(()=>{
-              setLoginSuccessMessage("");
-            },5000)
+            // setTimeout(()=>{
+            //   setLoginSuccessMessage("");
+            // },5000)
             const user = await response.json();
             // sendUser(user);
-            userService.sendUser(user);  //subject
             localStorage.setItem("user", JSON.stringify(user));
             if(user.role === "admin"){
               // console.log("admin")
+              userService.sendUser(user);  //subject
               navigate("/admin-panel/dashboard");
               return;
             }else{
+              userService.sendUser(user);  //subject
               getCartItems();
               navigate("/");
               return;
@@ -79,17 +83,20 @@ function Login() {
             // navigate(-1);   //redirect back to previous page (url/link)   
         }else if(response.status === 400){
             setInvalidCredentials(true);
+            setShowLoader(false);
             console.log("There was some error: ",response.statusText);
         }else if(response.status === 401){   //invalid password
           setInvalidPassword(true);
           setEmailExists(false);
+          setShowLoader(false);
           console.log(response);
         }else if (response.status === 204) { //email doesn't exist
-          setEmailExists(true);
+          setEmailExists(true);   //no email found
           setInvalidPassword(false);
+          setShowLoader(false);
           console.log(response);
         }
-    }  
+    },[inputs,navigate]);  
 
     const getCartItems = async()=>{
       let user = JSON.parse(localStorage.getItem('user'));
@@ -114,7 +121,9 @@ function Login() {
       color:'#686464'
     }
   return (
-    <div className="loginForm"> 
+    <>
+    {showLoader && (< Loader/>)}
+    <div className={showLoader?"dim_form loginForm":"loginForm"} > 
     <FaUserCircle className='userIconLogin'/>
     {loginSuccessMessage !== "" && (
         <div className='login-success'>
@@ -122,14 +131,37 @@ function Login() {
         </div>
     )}
     <form className="form_" onSubmit={loginForm}>
-      <input
+      {/* <input
         placeholder="Email"
         type="email" 
         name="email" 
         value={inputs.email || ""} 
         required
         onChange={handleChange}
-      />
+      /> */}
+      {/* <input
+        id="password"
+        placeholder='Password' 
+        type="password" 
+        name="password" 
+        value={inputs.password || ""}
+        required 
+        onChange={handleChange}
+      /> */}
+      <div className='inputBox'>
+        <input
+          placeholder="Email"
+          id="email"
+          type="email" 
+          name="email" 
+          value={inputs.email || ""} 
+          required
+          onChange={handleChange}
+        />
+       {inputs.email !== "" && <span>Email</span>}
+      </div>
+
+      <div className='inputBox'>
       <input
         id="password"
         placeholder='Password' 
@@ -139,13 +171,17 @@ function Login() {
         required 
         onChange={handleChange}
       />
-        
+      
+       {inputs.password !== "" && <span>Password</span>}
         {showPassword && (
           <FaEye onClick={showHidePassword} style={eyeStyle}/>
         )}
         {!showPassword && (
            <FaEyeSlash onClick={showHidePassword} style={eyeStyle}/>
         )}
+      </div>
+        
+        
         {emailExists && (
           <div className='pass-match-error'>
               <p>Email not registered!</p>
@@ -171,6 +207,7 @@ function Login() {
        
     </form>
     </div>
+    </>
   )
 }
 

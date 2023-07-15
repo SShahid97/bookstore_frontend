@@ -5,7 +5,7 @@ import {Address_Service, Auth_Service, Upload_Service} from "../../services/Serv
 import Loader from "../../components/Loader";
 import PopUp from '../../components/PopUp';
 import PopupFailure from "../../components/PopupFailure";
-import {mobileMenuService} from "../../services/LocalService";
+import {mobileMenuService, userService} from "../../services/LocalService";
 import { FaEdit, FaAngleDown, FaAngleUp, FaUpload, FaUserCircle } from "react-icons/fa";
 import ProfilePicModal from '../../components/ProfilePicModal';
 
@@ -31,27 +31,41 @@ function UserAccount() {
   const [messageFailure, setMessageFailure] = useState("");
   const [existingProfilePic, setExistingProfilePic] = useState([]);
   const [showProfilePicModal, setShowProfilePicModal] = useState(false);
-
+  const [imageForModal, setImageForModal] = useState("");
   let navigate = useNavigate();
- 
     useEffect(()=>{
-        setShowLoader(true);
-        mobileMenuService.setMobileMenuIndicies(null);
+      mobileMenuService.setMobileMenuIndicies(null);
         
         let curr_user = JSON.parse(localStorage.getItem('user'));
         if(curr_user){
           setUser(curr_user);
-          if (curr_user.hasOwnProperty("profile_pic")){
-            let profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
-            console.log(profilePicture);
-            setExistingProfilePic(profilePicture);
-          }else{
-            setExistingProfilePic([]);
-          }
           setUserName(curr_user.name);
           getUserAddress(curr_user.token, curr_user._id);
-        }
 
+          if (curr_user.hasOwnProperty("profile_pic")){
+            let profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
+            // console.log(profilePicture);
+
+            try{
+              let profileImageName  = require(`../../../public/assets/images/${profilePicture[0].image}`);
+              profilePicture[0].image = profileImageName;
+              console.log("profileImageName: ",profileImageName);
+            }catch(err){
+              profilePicture[0].image = "dummyProfilePic.png";
+              profilePicture[0].image =  require(`../../../public/assets/images/${ profilePicture[0].image}`);
+              // setProfilePic(profilePicture);
+              console.log(err);
+            }
+            // setProfilePic(profilePicture);
+            setImageForModal(profilePicture[0].image);
+            setExistingProfilePic(profilePicture);
+          }
+          
+        }
+    },[])
+
+    useEffect(()=>{
+        // setShowLoader(true);
         if(imagePrevFile){
           const reader = new FileReader();
           reader.onload = ()=>{
@@ -68,7 +82,7 @@ function UserAccount() {
     },[imagePrevFile]);
     const handleImageUpload = (e)=>{
       const file = e.target.files[0];
-      console.log(file);
+      // console.log(file);
       if(!file.type.includes("image") ){
         setMessageFailure("Only Images are allowed!");
           setTimeout(()=>{
@@ -123,7 +137,8 @@ function UserAccount() {
          
           setResponseNotReturned(false);
           setShowLoader(false);
-          window.location.reload();
+          // window.location.reload();
+          userService.sendUser(user);
           setMessageSuccess("Picture uploaded successfully");
           setTimeout(()=>{
             setMessageSuccess("");
@@ -255,6 +270,10 @@ function UserAccount() {
   const handleOpenImage = ()=>{
     setShowProfilePicModal(true);
   }
+  const handleOpenPreviewImage = ()=>{
+    setImageForModal(previewImageURL);
+    setShowProfilePicModal(true);
+  }
   return (
     <>
     {messageFailure !== "" && (
@@ -265,7 +284,7 @@ function UserAccount() {
         <PopUp messageSuccess={messageSuccess}/> 
      )}
      {showProfilePicModal && (
-            <ProfilePicModal setShowProfilePicModal={setShowProfilePicModal} pic={existingProfilePic[0].image}/>
+            <ProfilePicModal setShowProfilePicModal={setShowProfilePicModal} pic={imageForModal}/>
       )} 
     {showLoader && (<Loader/>)}
     {!showLoader && (
@@ -282,11 +301,12 @@ function UserAccount() {
                         <div className='profile-pic-inner' >
                         {!previewImageURL && existingProfilePic.map((item)=>{   
                             return ( 
-                            <img key={item.id} onClick={handleOpenImage} className='previewImg' src={require(`../../../public/assets/images/${item.image}`)} alt={item.name}/>
+                              // require(`../../../public/assets/images/${item.image}`)
+                            <img key={item.id} onClick={handleOpenImage} className='previewImg' src={item.image} alt={item.name}/>
                             )
                         })}
                             {previewImageURL ? 
-                                <img className='previewImg' src={previewImageURL}  alt="Preview"/>:
+                                <img className='previewImg' onClick={handleOpenPreviewImage} src={previewImageURL}  alt="Preview"/>:
                                 (<div >
                                   {existingProfilePic.length===0 &&  <FaUserCircle className='dummy-pic'/>}
                                 </div>)
@@ -302,7 +322,7 @@ function UserAccount() {
                             onChange={handleProfilePic}
                         />
                     <div className="picture-btns" >
-                        <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>Choose Profile Picture</button>
+                        <button className='choose-image-btn' type="button" onClick={()=>document.getElementById('getFile').click()}>{existingProfilePic.length===0?"Choose Profile Picture":"Change Profile Picture"}</button>
                         <input type="file" id="getFile" accept='image/*' style={{display:'none'}} name="photo" onChange={handleImageUpload}/>
                         <button disabled={!imageChoosen}   className={!imageChoosen?"disable-upload-btn":"upload-btn"}  type="submit" title="Upload">
                             <FaUpload/>
@@ -446,23 +466,23 @@ const AccountInner = styled.div`
         opacity:0.6;
     }
     form{
-      width: 90%;
+      width: 70%;
       margin:auto;
-      padding: 10px;
+      padding: 5px;
       border: 1px solid #b5b3b3;
       border-radius: 3px;
-      margin-top: 5px;
+      /* margin-top: 5px; */
       box-shadow: 2px 2px 2px grey;
       margin-bottom: 5px;
+      @media (max-width:650px){
+        width: 80%;
+      }
     }
     .picture-btns{
         display: flex;
         justify-content: space-between;
-        margin-top: 15px;
-        width: 70%;
+        width: 75%;
         margin: auto;
-        margin-top: 15px;
-        padding: 5px;
         @media (max-width:650px){
             width:95%;
         }
@@ -487,7 +507,7 @@ const AccountInner = styled.div`
         height: 100%;
         width: 100%;
         padding: 5px;
-        border-radius: 9px;
+        border-radius: 10px;
         &:hover{
           cursor: zoom-in;
         }
@@ -518,7 +538,7 @@ const AccountInner = styled.div`
     }
     .upload-btn{
         display:inline-block;
-        width:15%;
+        width:20%;
         background-color: blue;
         color:white;
         font-size: 15px;
@@ -531,7 +551,7 @@ const AccountInner = styled.div`
         opacity: 0.5;
         cursor: auto;
         display:inline-block;
-        width:15%;
+        width:20%;
         background-color: blue;
         color:white;
         font-size: 15px;
@@ -545,16 +565,16 @@ const AccountInner = styled.div`
         background-color: rgb(12 12 194 / 90%);
     }
     .profile-pic-outer{
-      width: 80%;
+      width: 60%;
       @media (max-width:650px){
         width: 100%;
       }
     }
     .profile-pic-inner{
-        width: 150px;
-        height: 150px;
+        width: 250px;
+        height: 170px;
         display: block;
-        border-radius: 75px;
+        /* border-radius: 75px; */
         padding: 5px;
         margin: auto auto;
         text-align: center;

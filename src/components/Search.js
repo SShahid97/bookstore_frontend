@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React, {useState,useEffect,useCallback} from 'react';
+import React, {useState,useEffect,useMemo} from 'react';
 import {FaSearch,FaTimes,FaArrowLeft} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
 import SearchSuggestions from "./SearchSuggestions";
@@ -58,7 +58,11 @@ function Search({setShowMobSearch}) {
         There is a caveat in function components. Local variables inside a function expires after every call.
          Every time the component is re-evaluated, the local variables gets initialized again.
     */
-    const handleDecoratedSuggestions = useCallback(debounce(handleSuggestions,300),[]);
+    // const handleDecoratedSuggestions = debounce(handleSuggestions,300);
+    const handleDecoratedSuggestions = useMemo(()=>debounce(handleSuggestions,300),[]);
+    const handleOnFocus = ()=>{
+        setKeyWord(input);
+    }
   return (
       <>
     <FormStyle onSubmit={submitHandler}>
@@ -74,6 +78,7 @@ function Search({setShowMobSearch}) {
             className='search-bar'
             onInput={handleDecoratedSuggestions}
             onChange = {handleSearch}
+            onFocus = {handleOnFocus}
             type="text" value={input}/>
             <input className='searchKeyWord' hidden={true} type="submit" value="search"/>
             {showClose && (
@@ -109,7 +114,7 @@ const FormStyle = styled.form`
  
     .search-icon{
         position:absolute;
-        top:51%;
+        top:48%;
         transform: translate(42%,-50%);
         color: grey;
         font-size: 15px;

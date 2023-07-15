@@ -78,7 +78,7 @@ function Books() {
        const response = await Item_Service.getBooksByCategory(category);
        if(response.status === 200){ 
             const fetchedBooks = await response.json();
-            console.log("fetchedBooks: ",fetchedBooks);
+            // console.log("fetchedBooks: ",fetchedBooks);
             fetchedBooks.forEach((book)=>{
                 if(book.discount>0){
                     book.discountPercent = Math.floor(book.discount*100) + "%";
@@ -151,7 +151,7 @@ function Books() {
             <SliderrIcon onClick={handleOpenSideNav}>
                 <BsSliders  />  {/*icon*/}
                 <div className={openSideNav? 'dropdown-sidenav show_sidenav':'dropdown-sidenav'}>
-                    <Filters books={books} setTempBooks={setTempBooks} />  
+                    <Filters books={books} setTempBooks={setTempBooks} tempBooks={tempBooks}/>  
                     <hr/>
                     <div>
                         {/* <h4>Language</h4> */}

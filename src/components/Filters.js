@@ -11,16 +11,11 @@ function Filters({books, setTempBooks,tempBooks }) {
     useEffect(()=>{
         setPriceRange(priceRange);
         setDiscountRange(discountRange);
-        console.log("hello");
+        // console.log("hello");
     },[]);
     const handlePriceRange = (e)=>{
         // console.log(e.target.value);
         setPriceRange(e.target.value);
-    }
-    const handleDiscountRange = (e)=>{
-        setDiscountRange(e.target.value)
-    }
-    const onPriceRange = (e)=>{
         setFilters(true);
         const tempPriceRange = [];
         setOnPriceRange(true);
@@ -31,7 +26,8 @@ function Filters({books, setTempBooks,tempBooks }) {
         })
         setTempBooks(tempPriceRange);
     }
-    const onDiscountRange = (e)=>{
+    const handleDiscountRange = (e)=>{
+        setDiscountRange(e.target.value);
         setFilters(true);
         const tempDiscountRange = [];
         setOnDiscount(true);
@@ -44,7 +40,9 @@ function Filters({books, setTempBooks,tempBooks }) {
         })
         tempDiscountRange.sort((a,b) => b.discount - a.discount);
         setTempBooks(tempDiscountRange);
+
     }
+   
     ////Filtering Ends//////
     const handleClearFilter = ()=>{
         setPriceRange(100);
@@ -81,7 +79,7 @@ function Filters({books, setTempBooks,tempBooks }) {
        <h3>Refine your search</h3>
         <div className='refine-search'>
             <p style={{fontWeight: '500'}}>Price Under:&nbsp; <span> &#8377;{priceRange}</span> </p>
-            <input className='price-range' type="range" value={priceRange} min={100} max={2000} onChange={handlePriceRange} onMouseUp={onPriceRange}/>
+            <input className='price-range' type="range" value={priceRange} min={100} max={2000} onChange={handlePriceRange} />
             <div style={{display:'flex', justifyContent:'space-between', width:'95%'}}>
                 <div>
                 &#8377;100
@@ -93,7 +91,7 @@ function Filters({books, setTempBooks,tempBooks }) {
         </div>
         <div className='refine-search'>
             <p style={{fontWeight: '500'}}>Discount upto: &nbsp;<span>{Math.round(discountRange*100)}%</span> </p>
-            <input className='discount-range' type="range" min={0.01} value={discountRange} step={0.01} max={1} onChange={handleDiscountRange} onMouseUp={onDiscountRange}/>
+            <input className='discount-range' type="range" min={0.01} value={discountRange} step={0.01} max={1} onChange={handleDiscountRange} />
             <div style={{display:'flex', justifyContent:'space-between', width:'95%'}}>
                 <div>
                 &#8377;1%

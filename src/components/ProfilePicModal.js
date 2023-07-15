@@ -9,7 +9,7 @@ function ProfilePicModal({setShowProfilePicModal, pic}) {
         let profilePicture = [{id:1 ,image: pic, name:"Profile Picture"}];
         // console.log(profilePicture);
         setUserProfilePic(profilePicture);
-    },[])
+    },[pic])
     const handleCloseModal = ()=>{
         setShowProfilePicModal(false);
     }
@@ -19,16 +19,17 @@ function ProfilePicModal({setShowProfilePicModal, pic}) {
         whileInView={{ scale: 1 }}
         viewport={{ once: true }}
 
-        transition= {{ease: "easeOut",type:"tween",  duration:0.6}}
+        transition= {{ease: "easeOut",type:"tween",  duration:0.4}}
     >
+     
+      
+      <div className='modal-inner'>  
       <div className='btn-close-div'>
         <button onClick={handleCloseModal} ><FaTimes/></button>
       </div>
-      
-      <div className='modal-inner'>  
         {userProfilePic.map((item)=>{   
             return ( 
-                <img key={item.id}   src={require(`../../public/assets/images/${item.image}`)} alt={item.name}/>
+                <img key={item.id}   src={item.image} alt={item.name}/>
             )
         })}
       </div>
@@ -38,28 +39,34 @@ function ProfilePicModal({setShowProfilePicModal, pic}) {
 
 const ProfilePicModalOuter = styled(motion.div)`
     
-    position:absolute;
+    /* position:absolute;
     z-index: 1;
-    left: 330px;
+    left: 330px; */
+
+    top: 52px;
+    left: 0px;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    padding-top:1rem;
+    background-color: #0000009e;
     @media (max-width:650px){
-        top: 55px;
-        left: 3px;
+        top: 48px;
         z-index: 1000;
     }
     .btn-close-div{
         position: absolute;
-        right: 0px;
+        display: flex;
+        width: inherit;
+        justify-content: flex-end;
         button{
-            background: none;
-            cursor:pointer;
-            padding:8px;
+            cursor: pointer;
+            padding: 6px;
             border-radius: 5px;
-            border:none;
-            &:hover{
-                border:1px solid grey;
-                background:black;
-                color:white;
-            }
+            background: black;
+            color: white;
+            margin-right: 10px;
             svg{
                 transform: scale(1.5);
             }
@@ -67,21 +74,22 @@ const ProfilePicModalOuter = styled(motion.div)`
 
     }
     .modal-inner{
-        width: 700px;
-        height: 600px;
+        width: 720px;
+        height: 550px;
         padding: 5px;
-        background-color: azure;
-        border: 1px solid grey;
+        /* background-color: azure;
+        border: 1px solid grey; */
         border-radius:5px;
+        margin:auto;
         @media (max-width:650px){
-            width:330px;
+            width: 98vw;
             height:560px;
         }
     }
     .modal-inner img{
         width: 100%;
         height: 100%;
-        border-radius: 10px;
+        border-radius: 5px;
     }
     /* transition: all ease-out 2s; */
 `;

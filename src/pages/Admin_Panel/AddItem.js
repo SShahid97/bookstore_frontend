@@ -21,7 +21,14 @@ import "./styles.css";
 let Admin = {};
 function AddItem() {
     // let generalCategory = [Compter_Science,Business_Management,Science,Mathematics];
-
+    const categories = ['web development javascript','web development html','web development css','web development react',
+        'web development angular','web development backend','programming c','programming c++','programming java',
+        'programming csharp','programming php','programming python','networking computer networks',
+        'communication wireless mobile','database rdbms','database mysql','database mining','os unix','os microsoft windows',
+        'os macintosh','web development','marketing','sales customer services','finance','accounting','business management',
+        'applied physics','physics','optical physics','classical mechanics','zoology','general biology','human biology',
+        'organic chemistry','inorganic chemistry','physical chemistry','algebra','mathematics','discrete mathematics','number theory',
+        'mathematics calculus','applied mathematics','literature','social science','history','religion','miscellaneous'];
     const [formInput, setformInput] = useState({ });
     const [discount, setDiscount] = useState(0);
     // const [general, setGeneral] = useState("");
@@ -296,30 +303,30 @@ function AddItem() {
                         })}
                       </select><br/>
                     </div>
-                 </div>    
-                 <div  style={{width:'50%'}}>
+                    </div> */} 
+                 <div  style={{width:'85%'}}>
                     <div className='discount-div'>
                         <select style={{ padding: '7px 5px'}}
                             className="form-control"
                             name="category"
-                            value={category || ""} 
-                            onChange={handleCategory}
+                            value={formInput.category || ""} 
+                            onChange={handleformInput}
                         >
                         <option value="" disabled={true} >Select Category</option>
-                        { generalCategory[categoryIndex] && generalCategory[categoryIndex].categories.map((category,index)=>{          
-                            return <option key={index} disabled={index===0}  value={category.name+"/"+index}>{category.name}</option>
-                        })}
+                        { categories.map((category,index)=>{          
+                            return <option key={index}   value={category}>{category}</option>
+                        }) }
                       </select><br/>
                     </div>
-                 </div>              */}
-                <input
+                 </div>               
+                {/* <input
                     placeholder='Category'
                     type="text"
                     name="category"
                     value={formInput.category || ""}
                     required
                     onChange={handleformInput}
-                />
+                /> */}
                 <textarea
                     name="book_description"
                     placeholder='Description'

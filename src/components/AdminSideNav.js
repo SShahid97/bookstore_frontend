@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from 'react'
 import { NavLink,useNavigate } from 'react-router-dom';
 import styled from "styled-components";
-import {userService} from "../services/LocalService";
+// import {userService} from "../services/LocalService";
 import {
   FaUserFriends,
   FaFileImport,
@@ -11,7 +11,7 @@ import {
   FaChartLine,
   FaUserCircle
   } from "react-icons/fa";
-import {MdOutlineVpnKey} from "react-icons/md"
+// import {MdOutlineVpnKey} from "react-icons/md"
 
 function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
   let navigate = useNavigate();
@@ -26,18 +26,22 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
     let profilePicture; 
     if(curr_user.profile_pic){
       profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
-      console.log("Before Observable: ",profilePicture)
+      // console.log("Before Observable: ",profilePicture)
+      //  profileImageName;
+      try{
+        let profileImageName  = require(`../../public/assets/images/${profilePicture[0].image}`);
+        profilePicture[0].image = profileImageName;
+        console.log("profileImageName: ",profileImageName);
+      }catch(err){
+        profilePicture[0].image = "dummyProfilePic.png";
+        profilePicture[0].image =  require(`../../public/assets/images/${ profilePicture[0].image}`);
+        // setProfilePic(profilePicture);
+        console.log(err);
+      }
       setProfilePic(profilePicture);
     }
 
-    let profileImageName;
-    try{
-      profileImageName  = require(`../../public/assets/images/${profilePicture[0].image}`);
-      // console.log("profileImageName: ",profileImageName);
-    }catch(err){
-      setProfilePic([]);
-      console.log(err);
-    }
+    
    
   },[]);
   
@@ -54,7 +58,8 @@ function AdminSideNav({toggleArrowMenu,setToggleArrowMenu }) {
             {profilePic.length>0?   
                profilePic.map((item)=>{   
                 return ( 
-                  <img key={item.id}  className='previewImg' src={require(`../../public/assets/images/${item.image}`)} alt={item.name}/>
+                  // require(`../../public/assets/images/${item.image}`)
+                  <img key={item.id}  className='previewImg' src={item.image} alt={item.name}/>
                 )
                }): ("")
             }
@@ -148,10 +153,10 @@ const List = styled.div`
      .previewImg{
         height: 100%;
         width: 100%;
-        border-radius: 35px;
+        border-radius: 50%;
     }
     .AdminProfileDiv{
-      width: 90px;
+      width: 100px;
       height: 90px;
       margin: auto;
     }

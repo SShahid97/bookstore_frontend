@@ -36,10 +36,12 @@ import VerifyEmail from './UserAccount/VerifyEmail';
 import ResetPassword from './UserAccount/ResetPassword';
 import Statistics from './Admin_Panel/Statistics';
 import AdminProfile from './Admin_Panel/AdminProfile';
+import Loader from '../components/Loader';
 
 function Pages() {
   return (
-      <Routes>
+    <React.Suspense fallback={<Loader/>}>
+      <Routes>    
         <Route path="/" element={<Home/>} />
         <Route path="/search/:search" element={<Searched/>} />
         <Route path="/books/:cat" element={<Books/>} />
@@ -83,6 +85,7 @@ function Pages() {
 
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+      </React.Suspense>
   )
 }
 

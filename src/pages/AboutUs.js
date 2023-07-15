@@ -37,7 +37,7 @@ function AboutUs(){
                 <div className='address about'>
                     <h4 className='aboutinnerHeadings'>Address</h4>
                     <p>
-                        Lapataganj
+                        South Campus, KU
                     </p>
                 </div>
             </div>

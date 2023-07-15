@@ -315,12 +315,14 @@ const FormStyle = styled.form`
     
     .error-msg{
       color:#b91111c4;
-      width: 65%;
       margin-top:5px;
       font-size: 15px;
       padding: 5px 10px;
       border: 1px solid #b91111c4;
       border-radius: 3px;
+      position: absolute;
+      top: 65px;
+      width: auto;
     }
 
     .form-div{

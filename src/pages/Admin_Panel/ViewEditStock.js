@@ -150,6 +150,7 @@ function ViewEditStock() {
 const EditStockOuter = styled.div`
     width:70%;
     margin:0 auto;
+    height: 90vh;
     @media (max-width:650px){
         width: 95%;
     }

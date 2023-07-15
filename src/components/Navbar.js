@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import {userService, cartService, logOutService} from "../services/LocalService";
 import {motion} from "framer-motion";
 import Tooltip from './Tooltip';
+// import Loader from './Loader';
 import {SiElasticsearch} from 'react-icons/si';
 import { GiHamburgerMenu } from "react-icons/gi";
 import { 
@@ -30,13 +31,14 @@ function Navbar() {
     const [toggleDropdown, setToggleDropDown] = useState(false);
     const [isUser, setIsUser] = useState(false);
     const [user, setUser] = useState({});
-    const [userName, setUserName]=useState("");
+    // const [userName, setUserName]=useState("");
     const [isAdmin, setIsAdmin] = useState(false);
     const [isLoggedOut, setisLoggedOut] = useState(true);
     const [cartItemsLength, setCartItemsLength]= useState(0);
     const [showMobSearch, setShowMobSearch] = useState(false);
     const [showToopTip, setShowToopTip] = useState(false);
     const [showCartToopTip, setShowCartToopTip] = useState(false);
+    // const [showLoader, setShowLoader] = useState(false);
 
     const [profilePic, setProfilePic] = useState([]);
 
@@ -54,75 +56,25 @@ function Navbar() {
     // const [isMenu, setIsMenu] = useState(false);
 
     useEffect(()=>{
+      let isMounted = true;
+      // setShowLoader(true);
       // window.addEventListener('scroll', handleScroll, { passive: true });
-
       // setHideOneStart(true);
       // getCartItems();
       // runs for first time
-      let user = JSON.parse(localStorage.getItem('user'));
-      if(user){
-        console.log("yes yes")
-        setUser(user);
-        let name = user.name.split(" ")[0];
-        name = name.substring(0,5);
-        setUserName(name);
-        checkUser(user);
-
-        let profilePicture; 
-        if(user.hasOwnProperty("profile_pic")){
-          profilePicture = [{id:1 ,image: user.profile_pic, name:user.name}];
-          // console.log("Before Observable: ",profilePicture)
-          console.log("changed")
-          setProfilePic(profilePicture);
-        }else{
-          setProfilePic([]);
-        }
+      if(isMounted){
+        let user = JSON.parse(localStorage.getItem('user'));
+        if(user){
+          // console.log("yes yes")
+          setUser(user);
+          // let name = user.name.split(" ")[0];
+          // name = name.substring(0,5);
+          // setUserName(name);
+          checkUser(user);
+          handleSetProfilPicture(user);
   
-        
-        // try{
-        //   let profileImageName;
-        //   profileImageName  = require(`../../public/assets/images/${profilePicture[0].image}`);
-        //   // console.log("profileImageName: ",profileImageName);
-        //   console.log("in Try")
-        // }catch(err){
-        //   setProfilePic([]);
-        //   console.log(err);
-        // }
+        }        
       }
-
-     
-      
-      userService.onUser().subscribe(curr_user => {
-        if (curr_user) {
-          setUser(curr_user);
-          if(curr_user.name!== undefined){
-            let name = curr_user.name.split(" ")[0];
-            // console.log(name.substring(0,4));
-            name = name.substring(0,5);
-            setUserName(name);
-
-            let profilePicture; 
-            if(curr_user.hasOwnProperty("profile_pic")){
-              profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
-              // console.log("Before Observable: ",profilePicture)
-              console.log("changed")
-              setProfilePic(profilePicture);
-            }else {
-              setProfilePic([]);
-            }
-          }
-          checkUser(curr_user)
-        } else {
-          // setIsUser(false);
-        }
-      });
-
-      // if(!isLoggedOut){              //if logged in
-      //   setTimeout(()=>{
-      //       console.log("sucessfully logged out");
-      //       logout();
-      //   },300000);    //timer for 24 hours 86400000
-      //  } 
 
       // on refresh
       // let cartLen = JSON.parse(localStorage.getItem('noOfCartItems'));
@@ -134,8 +86,51 @@ function Navbar() {
       // return subscription.unsubscribe;   
       return () => {
         // window.removeEventListener('scroll', handleScroll);
+        isMounted = false;
       };
-    },[userName]);
+    },[]);
+
+    // useEffect(()=>{
+       userService.onUser().subscribe(curr_user => {
+        if (curr_user) {
+          setUser(curr_user);
+          
+          checkUser(curr_user);
+
+          handleSetProfilPicture(curr_user);
+          // if(curr_user.name!== undefined){
+          //   let name = curr_user.name.split(" ")[0];
+          //   // console.log(name.substring(0,4));
+          //   name = name.substring(0,5);
+          //   setUserName(name);
+          // }
+          
+        }
+      });
+
+      // return subscription.unsubscribe;   
+
+    // },[])
+
+    const handleSetProfilPicture = (user)=>{
+      let profilePicture; 
+      if(user.hasOwnProperty("profile_pic")){
+        profilePicture = [{id:1 ,image: user.profile_pic, name:user.name}];
+        try{
+          let profileImageName  = require(`../../public/assets/images/${profilePicture[0].image}`);
+          profilePicture[0].image = profileImageName;
+          // console.log("profileImageName: ",profileImageName);
+        }catch(err){
+          profilePicture[0].image = "dummyProfilePic.png";
+          profilePicture[0].image =  require(`../../public/assets/images/${ profilePicture[0].image}`);
+          // setProfilePic(profilePicture);
+          console.log(err);
+        }
+        setProfilePic(profilePicture);
+        // setShowLoader(false);
+      }
+    } 
+
 
     cartService.onUpdateCartItems().subscribe(cartItemsLen => {
       // debugger;
@@ -189,12 +184,11 @@ function Navbar() {
     // isUser,isAdmin
 
     function logout(){
-
       setIsUser(false);
       setIsAdmin(false);
       setisLoggedOut(true);
       setCartItemsLength(0);
-      setUserName("");
+      // setUserName("");
       setUser("");
       // userService.sendUser({});
       logOutService.setLogOut(null);  
@@ -308,11 +302,16 @@ function Navbar() {
               {!isLoggedOut && ( 
                 // <FaUserCircle/>
                 <>
-                  {profilePic.length === 0 && <FaUserCircle />}
+                  
+                  {/* <div className='previewImg'>
+      
+                    <FaUserCog  />
+                  </div> */}
+                  { profilePic.length === 0 && <FaUserCircle />}
                   {profilePic.length>0?   
                     profilePic.map((item)=>{   
                       return ( 
-                        <img key={item.id}  className='previewImg' src={require(`../../public/assets/images/${item.image}`)} alt={item.name}/>
+                        <img key={item.id}  className='previewImg' src={item.image} alt={item.name}/>
                       )
                     }): ("")
                   }
@@ -433,7 +432,9 @@ const WhatsAppOuter = styled.div`
   
   @media (max-width:650px){
       transform: scale(1.3);
-      right: 20px;
+      bottom: 15px;
+      left: 20px;
+      right: unset;
       z-index: 900;
       .whatsapp-for-desktop{
           display: none;
@@ -534,6 +535,15 @@ const Nav = styled.div`
   /* background:linear-gradient(35deg, hsl(0deg 0% 0% / 32%), #313131d9); */
   background: grey;
   margin-bottom: 0.5rem;
+
+  .lds-spinner{
+    transform: translate(220px,140px);
+    position: absolute;
+    @media (max-width:650px){
+        transform: translate(150px,140px); 
+    }
+  }
+
   .cart-icon .tooltip{
     right: 60px;
     min-width:fit-content !important ;

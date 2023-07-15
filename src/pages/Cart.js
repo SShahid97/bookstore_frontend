@@ -9,7 +9,7 @@ import {BiRefresh} from "react-icons/bi";
 import {FaPlus,FaMinus} from "react-icons/fa";
 
 function Cart() {
-    let i=1;
+    // let i=1;
     let params = useParams();
     let navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
@@ -18,13 +18,15 @@ function Cart() {
     const [quantity, setQuantity] = useState([]);
     const [stockArray, setStockArray] = useState([]);
     const [showLoader, setShowLoader] = useState(false); 
-    const [deliveryCharges, setDeliveryCharges] = useState(50); 
+    const [deliveryCharges, setDeliveryCharges] = useState(0); 
     const [messageSuccess, setMessageSuccess] = useState("");
     const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
     useEffect(()=>{
         setShowLoader(true);
         mobileMenuService.setMobileMenuIndicies(null);
         getCartItems();
+        setDeliveryCharges(50);
+        setBookDummyImage(['dummy_book_img.png']);
         // let area_code_details = JSON.parse(localStorage.getItem("area_code_details"));
         // if(area_code_details){
         //     console.log(area_code_details);
@@ -174,7 +176,7 @@ function Cart() {
     
     
     const handleBack =()=>{
-        navigate(-2);
+        navigate("/");
     }
     return (
     <>   
@@ -278,7 +280,7 @@ function Cart() {
                 {/* Buttons */}
                 <div className='checkout-btns'>
                     <button className='btns' onClick={handleBack}>Continue Shopping</button>
-                    <button className='btns' onClick={()=> hanldeCheckout(cartItems[0].user_id)}>Checkout</button>
+                    <button className='btns' onClick={()=> hanldeCheckout(cartItems[0].user_id)}>Proceed to Checkout</button>
                 </div>
             </div>
             </>

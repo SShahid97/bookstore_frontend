@@ -13,6 +13,7 @@ function Loader() {
 const Spin = styled.div`
    width:100%;
 .lds-spinner {
+  z-index: 1;
   color: black;
   display: block;
   position: relative;
