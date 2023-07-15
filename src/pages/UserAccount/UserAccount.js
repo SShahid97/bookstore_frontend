@@ -39,16 +39,6 @@ function UserAccount() {
         let curr_user = JSON.parse(localStorage.getItem('user'));
         if(curr_user){
           setUser(curr_user);
-<<<<<<< HEAD
-=======
-          if (curr_user.hasOwnProperty("profile_pic")){
-            let profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
-            // console.log(profilePicture);
-            setExistingProfilePic(profilePicture);
-          }else{
-            setExistingProfilePic([]);
-          }
->>>>>>> db9643b146dd35a874e950ed24a639020b418c03
           setUserName(curr_user.name);
           getUserAddress(curr_user.token, curr_user._id);
 

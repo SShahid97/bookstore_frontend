@@ -163,14 +163,11 @@
    text-decoration: underline;
 }
 
-<<<<<<< HEAD
 .lds-spinner{
     transform: translate(640px,180px) !important;
     position: absolute !important;
 }
 
-=======
->>>>>>> db9643b146dd35a874e950ed24a639020b418c03
 /* making responsive for form width */
 @media (max-width: 850px){
     .loginForm, .RegisterForm{
@@ -204,12 +201,9 @@
     .inputBox input:valid ~ span{
         padding:0 5px;
     }
-<<<<<<< HEAD
     .lds-spinner{
         transform: translate(130px,130px) !important; 
     }
-=======
->>>>>>> db9643b146dd35a874e950ed24a639020b418c03
 } 
 @media (max-wdith:360px){
     .loginForm, .RegisterForm{
