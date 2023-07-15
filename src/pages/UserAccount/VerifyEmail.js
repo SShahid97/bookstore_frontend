@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import styled from "styled-components";
 import { Auth_Service } from '../../services/Service';
 import emailjs from "@emailjs/browser";
@@ -12,8 +12,8 @@ function VerifyEmail() {
     // const [errorInMail, setErrorInMail] = useState(false);
     const [emailIsNotRegistered, setEmailIsNotRegistered] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
-    const [existingUser, setExistingUser] = useState({});
-    let navigate = useNavigate();
+    // const [existingUser, setExistingUser] = useState({});
+    // let navigate = useNavigate();
     
     useEffect(()=>{
 
@@ -58,11 +58,11 @@ function VerifyEmail() {
             email:email
         }
         const response = await Auth_Service.verifyEmail(emailObj);
-        console.log(response);
+        // console.log(response);
         if(response.status === 200){
             const returnedUser = await response.json();
-            console.log(returnedUser);
-            setExistingUser(returnedUser);
+            // console.log(returnedUser);
+            // setExistingUser(returnedUser);
             setEmailIsNotRegistered(false);
             
             let resetPasswordObj = {
@@ -86,15 +86,15 @@ function VerifyEmail() {
             // navigate("/user/reset-password/"+returnedUser._id);
         }else if (response.status===204){
             setEmailSent(false);
-            console.log("not registered");
-            setExistingUser(null);
+            // console.log("not registered");
+            // setExistingUser(null);
             setEmailIsNotRegistered(true);
-            console.log("Email not registered");
+            // console.log("Email not registered");
         }else if (response.status === 400){
-            setExistingUser(null);
+            // setExistingUser(null);
             alert("There was some error");
         }
-        console.log(emailObj);
+        // console.log(emailObj);
     }
   return (
     <VerifyEmailOuter>

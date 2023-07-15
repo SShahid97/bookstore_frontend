@@ -242,7 +242,7 @@ function Statistics() {
             // setAllorders(returnedOrders);
             filterByDate(returnedOrders);
         }else if (response.status === 204){
-            console.log("No orders found");
+            // console.log("No orders found");
         }else {
             console.log("There was some error while fetching orders");
         }

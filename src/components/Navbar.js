@@ -57,7 +57,10 @@ function Navbar() {
 
     useEffect(()=>{
       let isMounted = true;
+<<<<<<< HEAD
       // setShowLoader(true);
+=======
+>>>>>>> db9643b146dd35a874e950ed24a639020b418c03
       // window.addEventListener('scroll', handleScroll, { passive: true });
       // setHideOneStart(true);
       // getCartItems();
@@ -67,6 +70,7 @@ function Navbar() {
         if(user){
           // console.log("yes yes")
           setUser(user);
+<<<<<<< HEAD
           // let name = user.name.split(" ")[0];
           // name = name.substring(0,5);
           // setUserName(name);
@@ -75,6 +79,63 @@ function Navbar() {
   
         }        
       }
+=======
+          let name = user.name.split(" ")[0];
+          name = name.substring(0,5);
+          setUserName(name);
+          checkUser(user);
+  
+          let profilePicture; 
+          if(user.hasOwnProperty("profile_pic")){
+            profilePicture = [{id:1 ,image: user.profile_pic, name:user.name}];
+            // console.log("Before Observable: ",profilePicture)
+            // console.log("changed")
+            setProfilePic(profilePicture);
+          }else{
+            setProfilePic([]);
+          }
+  
+        }
+
+        userService.onUser().subscribe(curr_user => {
+          if (curr_user) {
+            setUser(curr_user);
+            checkUser(curr_user)
+            let profilePicture; 
+            if(curr_user.hasOwnProperty("profile_pic")){
+              profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
+              // console.log("Before Observable: ",profilePicture)
+              setProfilePic(profilePicture);
+            }else {
+                setProfilePic([]);
+            }
+            if(curr_user.name!== undefined){
+              let name = curr_user.name.split(" ")[0];
+              // console.log(name.substring(0,4));
+              name = name.substring(0,5);
+              setUserName(name);
+            }
+            
+          } else {
+            // setIsUser(false);
+          }
+        });
+
+        
+      }
+     
+
+     
+      
+      
+
+      // if(!isLoggedOut){              //if logged in
+      //   setTimeout(()=>{
+      //       console.log("sucessfully logged out");
+      //       logout();
+      //   },300000);    //timer for 24 hours 86400000
+      //  } 
+>>>>>>> db9643b146dd35a874e950ed24a639020b418c03
 
       // on refresh
       // let cartLen = JSON.parse(localStorage.getItem('noOfCartItems'));
@@ -89,6 +150,7 @@ function Navbar() {
         isMounted = false;
       };
     },[]);
+<<<<<<< HEAD
 
     // useEffect(()=>{
        userService.onUser().subscribe(curr_user => {
@@ -131,7 +193,10 @@ function Navbar() {
       }
     } 
 
+=======
+>>>>>>> db9643b146dd35a874e950ed24a639020b418c03
 
+    
     cartService.onUpdateCartItems().subscribe(cartItemsLen => {
       // debugger;
       if(cartItemsLen >= 0){
@@ -159,11 +224,11 @@ function Navbar() {
           // setIsUser(true);
           setIsAdmin(true);
           setisLoggedOut(false);
-          console.log("i am admin well")
+          // console.log("i am admin well")
         }else{
           setIsUser(true);
           setisLoggedOut(false);
-          console.log("i am user")
+          // console.log("i am user")
         }
       // }
     }

@@ -36,14 +36,14 @@ function MobileCategory({setmobileView}) {
         e.stopPropagation();
         setIndecies3(index)
         let ind = indecies3;
-        console.log("indecies3: ", ind)
-        console.log("index: ", index)
+        // console.log("indecies3: ", ind)
+        // console.log("index: ", index)
         setmobileView(false);
     }
     const handleMainLink =(e,index)=>{
         e.stopPropagation();
         // console.log(e)
-        console.log("Main: ",index)
+        // console.log("Main: ",index)
         setIndecies2("");
         // setActivateLink(false);
         setToggleSubMenuOne(!toggleSubMenuOne);
@@ -51,11 +51,11 @@ function MobileCategory({setmobileView}) {
     }
     const handleSubMenu = (e,index)=>{
         e.stopPropagation();
-        console.log("Sub:",index)
+        // console.log("Sub:",index)
         setIndecies2(index)
         setIndecies3(null);
         let ind = indecies3;
-        console.log("indecies3: ", ind)
+        // console.log("indecies3: ", ind)
         setToggleSubMenuTwo(!toggleSubMenuTwo);
     }
     const handleHomeLink =(e)=>{

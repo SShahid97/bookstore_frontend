@@ -10,7 +10,7 @@ import PopUp from "../../components/PopUp";
 let curr_user = {};
 function UserWishlist() {
   const [userWishlistItems, setUserWishlistItems ] = useState([]);
-  const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
+  const [bookDummyImage, setBookDummyImage]= useState([]);
   const [showLoader, setShowLoader] = useState(false);
   const [messageSuccess, setMessageSuccess] = useState("");
   let navigate = useNavigate();
@@ -18,6 +18,7 @@ function UserWishlist() {
 
   useEffect(()=>{
     setShowLoader(true);
+    setBookDummyImage(['dummy_book_img.png']);
     mobileMenuService.setMobileMenuIndicies(null);
     if(curr_user){
       getUserWishlist(curr_user.token, curr_user._id);
@@ -54,7 +55,7 @@ function UserWishlist() {
       const response = await Wishlist_Service.deleteWishlistItem(token,itemId);
       if(response.status === 200){
         const deleteItem = await response.json();
-        console.log(deleteItem.message);
+        // console.log(deleteItem.message);
         setMessageSuccess(deleteItem.message);
         setTimeout(()=>{
             setMessageSuccess("");

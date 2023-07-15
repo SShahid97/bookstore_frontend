@@ -7,7 +7,7 @@ function PaymentMode() {
     const navigate = useNavigate();
     const [currentRadioValue, setCurrentRadioValue] = useState();
     const [submitOrderDetails, setSubmitOrderDetails] = useState(false);
-    const [confirmed, setConfirmed] = useState(false);
+    // const [confirmed, setConfirmed] = useState(false);
     const [paymentStatus, setPaymentStatus] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("");
     const [messageFailure, setMessageFailure] = useState("");
@@ -27,7 +27,7 @@ function PaymentMode() {
     }
 
     const handleConfirm=()=>{
-        console.log(currentRadioValue);
+        // console.log(currentRadioValue);
         if(currentRadioValue === undefined){
             // alert("Please select any payment method");
             setMessageFailure("Please select any payment method");
@@ -51,7 +51,7 @@ function PaymentMode() {
     }
     
     const handleRadioChange = (e) => {
-        console.log(e.target.value)
+        // console.log(e.target.value)
         setCurrentRadioValue(e.target.value);
         if( e.target.value === "payonline"){
             setMessageFailure("Online Payment temporarily suspended!! try other options");
@@ -103,7 +103,7 @@ function PaymentMode() {
       )}
       
       {submitOrderDetails && (
-          <Confirmation paymentStatus={paymentStatus} paymentMethod={paymentMethod} setConfirmed={setConfirmed}/>
+          <Confirmation paymentStatus={paymentStatus} paymentMethod={paymentMethod} />
       )}
       </PaymentScreenOuter>
     

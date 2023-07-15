@@ -1,6 +1,7 @@
 
 // All database calls are made from this service file
-const localdomain = "http://localhost:5001"; 
+// const localdomain = "http://localhost:5001"; 
+const localdomain = "https://ebookstore-backend.herokuapp.com"; 
 // for ngrok
 // const localdomain = "https://37b4-2409-4054-8e-b3d4-80f5-479a-6430-f80f.in.ngrok.io"; 
 

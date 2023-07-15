@@ -110,7 +110,7 @@ function AddItem() {
         // adds discount field
         formInput.discount = discount;  
         formInput.book_image = imageName;
-        console.log(formInput)
+        // console.log(formInput)
         const response = await Item_Service.addBookItem(Admin.token, formInput);
          if(response.status === 201){
             const data = await response.json();
@@ -124,7 +124,7 @@ function AddItem() {
             setPreviewImageURL(null);
             setImagePrevFile(null);
             setDiscount(0);
-            console.log(data);
+            // console.log(data);
             setDuplicateEntryError("");
             navigate("add-stock/"+data.book_code);
         }else if(response.status === 422){  //if duplicate unique field entered
@@ -140,7 +140,7 @@ function AddItem() {
         
     }
     const handleDiscount = (e)=>{
-        console.log(Number(e.target.value));
+        // console.log(Number(e.target.value));
         setDiscount(Number(e.target.value));
     }
 
@@ -157,7 +157,7 @@ function AddItem() {
         setImageFile(file);
         setImagePrevFile(file);
         setImageChoosen(true);
-        console.log(file);
+        // console.log(file);
     }
 
     const sumbitImageUpload = async ()=>{
@@ -167,8 +167,8 @@ function AddItem() {
         const response = await Upload_Service.uploadImage(Admin.token,formData);
         if (response.status === 200){
             const data = await response.json();
-            console.log(data);
-            console.log("Image Uploaded");
+            // console.log(data);
+            // console.log("Image Uploaded");
             setImageNotUploaded(false);
             // alert("Image Uploaded Successfully");
         }else{

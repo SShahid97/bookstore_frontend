@@ -43,7 +43,7 @@ function Invoice() {
           }
           else if (response.status === 200) {
             const returnedOrder = await response.json();
-            console.log(returnedOrder);
+            // console.log(returnedOrder);
             getUserAddress(admin.token,returnedOrder.user_id);
             getUserInfo(admin.token,returnedOrder.user_id);
             setCustomerOrder(returnedOrder);
@@ -58,7 +58,7 @@ function Invoice() {
         if(response.status === 200){
             const returnedAddress = await response.json();
             setUserAddress(returnedAddress);
-            console.log(returnedAddress);
+            // console.log(returnedAddress);
             setShowLoader(false);
         }else if (response.status === 204){
             setUserAddress(null);
@@ -73,7 +73,7 @@ function Invoice() {
         if(response.status === 200){
             const returnedUserInfo = await response.json();
             setUserInfo(returnedUserInfo)
-            console.log(returnedUserInfo);
+            // console.log(returnedUserInfo);
         }else if (response.status === 204){
             setUserInfo(null);
             setShowLoader(false);

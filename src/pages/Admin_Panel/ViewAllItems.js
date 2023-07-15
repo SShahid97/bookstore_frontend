@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
-import {Link, useNavigate, useParams} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Item_Service} from "../../services/Service";
 import Loader from '../../components/Loader';
 import PopUp from '../../components/PopUp';
@@ -25,7 +25,7 @@ function ViewAllItems() {
     // const categoryNameMapping = {link:'js_book', name:'JavaScript Books'}
     const General_Categories = [{name:"Select"},{name:"All Books"},Compter_Science, Business_Management,Science, Mathematics,Social_Sciences,Literature,History,General];
     // const Second_GCategories = [];   
-    const [allBooks, setAllBooks] = useState([]);
+    // const [allBooks, setAllBooks] = useState([]);
     const [tempBooks, setTempBooks] = useState([]);
     const [books, setBooks] = useState([]);
     const [general, setGeneral] = useState(0);
@@ -53,7 +53,7 @@ function ViewAllItems() {
           } else {
             Admin = {};
           }
-          console.log("holo")
+        //   console.log("holo")
           let general_cat = JSON.parse(localStorage.getItem('general'));
           if(general_cat){
               setGeneral(general_cat);
@@ -86,7 +86,7 @@ function ViewAllItems() {
         if(response.status === 200){
             setShowLoader(false);
             const books = await response.json();
-            setAllBooks(books);
+            // setAllBooks(books);
             setTempBooks(books);
             setBooks(books);
         }else if(response.status === 400){
@@ -100,7 +100,7 @@ function ViewAllItems() {
         const confirmation = window.confirm("Do you really want to delete this item?");
         if(confirmation){
             const response = await Item_Service.deleteBookItem(Admin.token,id);
-            console.log(response);
+            // console.log(response);
             if(response.status === 200){
                 const data = await response.json();
                 setMessageSuccess(data.message);
@@ -109,7 +109,7 @@ function ViewAllItems() {
                 },5000)
                 getAllBooks();
             }else if(response.status === 204){  
-                console.log("No content");   
+                // console.log("No content");   
             }else {
                 alert("There was some error while deleting the book");
             }
@@ -237,7 +237,7 @@ function ViewAllItems() {
       }
       const handleCloseIcon = () => {
         let originalBooks = [books];
-        console.log(originalBooks);
+        // console.log(originalBooks);
         // setTempBooks(originalBooks);
         setSearchedValue("");
         setBookFound(false);

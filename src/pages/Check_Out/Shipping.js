@@ -33,7 +33,7 @@ function Billing() {
         if(response.status === 200){
            const  addressReturned = await response.json();
         //    setRegisteredUserAddress(addressReturned);
-            console.log(addressReturned);
+            // console.log(addressReturned);
             //set form input values to the returned address values
             setContact(addressReturned.contact);
             setPostalCode(addressReturned.pincode);
@@ -47,7 +47,7 @@ function Billing() {
         }else if (response.status === 204){
             // setAddressExits(false);
             setShowLoader(false);
-            console.log("No address saved");
+            // console.log("No address saved");
         }
     }
     const handleFullName=(e) => {
@@ -88,7 +88,7 @@ function Billing() {
             address:address
         }
         localStorage.setItem("customerInfo", JSON.stringify(formObject));
-        console.log("local: ",formObject);
+        // console.log("local: ",formObject);
         navigate("/checkout/revieworder");
         // setIsBilling(false);
         // setIsOrderPlaced(true);

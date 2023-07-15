@@ -14,13 +14,9 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Navbar/>
-        
-        {/* <div className='container'> */}
-          {/* <SideNavbar/> */}
           <div className='main-container'>
             <Pages/>
-          {/* </div> */}
-        </div> 
+          </div> 
         <Footer/>
      </BrowserRouter>
     </div>

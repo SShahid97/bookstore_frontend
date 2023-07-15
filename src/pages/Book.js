@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {useParams, useNavigate, Link} from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 import Latest from "../components/Latest";
 import {Item_Service, 
     Cart_Service, 
@@ -34,11 +34,11 @@ function Book() {
     const [invalidPincode, setInvalidPincode] = useState(false);
     const [shippingCharges, setShippingCharges] = useState(0);
     const [stockDetails, setStockDetails] = useState({});
-    const [itemAddedToCartMsg, setItemAddedToCartMsg] = useState("");
+    // const [itemAddedToCartMsg, setItemAddedToCartMsg] = useState("");
     const [messageSuccess, setMessageSuccess] = useState("");
-    const [itemAddedToWishlistMsg, setItemAddedToWishlistMsg] = useState("");
+    // const [itemAddedToWishlistMsg, setItemAddedToWishlistMsg] = useState("");
     const [returnedPincode,setReturnedPincode] = useState("");
-    const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
+    // const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
 
     let params = useParams();
     let navigate = useNavigate();
@@ -55,7 +55,7 @@ function Book() {
 
     // const [showCart, setShowCart] = useState([]);
     useEffect(()=>{
-        console.log("helo")
+        // console.log("helo")
         window.scrollTo(0, 0);
         let isMounted = true;
         if (isMounted){
@@ -68,7 +68,7 @@ function Book() {
                 setUser(curr_user);
                 checkIfSubmitted(curr_user.token,curr_user._id, params.id);
             }
-            console.log(params.id)
+            // console.log(params.id)
             getBookDetails(params.id);
             getReviews(params.id);
         } 
@@ -84,8 +84,8 @@ function Book() {
         // console.log(Ids);
         const response = await Review_Service.checkIfSubmitted(token,Ids);
         if(response.status === 200){
-            const submittedReview = await response.json();
-            console.log(submittedReview);
+            // const submittedReview = await response.json();
+            // console.log(submittedReview);
             setReviewAlreadySubmitted(true);
         }else if(response.status === 204){
             setReviewAlreadySubmitted(false);
@@ -107,7 +107,7 @@ function Book() {
             }
             setStockDetails(stock);
         }else if(response.status === 204){
-            console.log("No stock details found");
+            // console.log("No stock details found");
         }else {
             console.log("There was some error");
         }
@@ -124,7 +124,7 @@ function Book() {
             }
             setDetails(bookDetails);
             let itmImageName = [{id:bookDetails._id ,image: bookDetails.book_image, name:bookDetails.book_name}];
-            console.log(itmImageName);
+            // console.log(itmImageName);
             setBookImage(itmImageName);
             setNotFound("");
             getStockDetails(bookDetails.book_code);
@@ -176,7 +176,7 @@ function Book() {
                 setTotalRating( finalRating);
             }else if(response.status === 204){
                 setReviews(null);
-                console.log("No Reviews");
+                // console.log("No Reviews");
             }else if(response.status === 400){
                 console.log("Bad Request");
             }
@@ -211,8 +211,8 @@ function Book() {
             if(response.status === 204){  //item is not in list
                 const res = await Wishlist_Service.addWishlistItem(user.token,wishlistItemObj);
                 if(res.status === 201){
-                    const addedItem = await res.json();
-                    console.log(addedItem);
+                    // const addedItem = await res.json();
+                    // console.log(addedItem);
                     setMessageSuccess("Item Added to Wishlist");
                     setTimeout(()=>{
                         setMessageSuccess("");
@@ -261,7 +261,7 @@ function Book() {
             cartArray.forEach(element => {
                 // console.log("Book Id:", element.book_id);
                 if(element.book._id === id || element.book_id === id ){
-                    console.log("helo")
+                    // console.log("helo")
                     flag=true;
                     // navigate("/cart/"+user._id);
                     setMessageSuccess("Item is Already Added to Cart");
@@ -274,7 +274,7 @@ function Book() {
             });
             // when item is not already added
             if(flag === false){
-                console.log("hulo")
+                // console.log("hulo")
                 cartArray.push(cartItemObj);
                 localStorage.setItem("cart",JSON.stringify(cartArray));
                 updateCartItems(cartArray.length);
@@ -286,7 +286,7 @@ function Book() {
     const addItemToCart = async(token,cartObj)=>{
             const response = await Cart_Service.addToCart(token,cartObj);
             if(response.status === 201){
-                const data = await response.json();
+                // const data = await response.json();
                 // setMove(true);
                 // alert("Item Added to Cart Successfully");
                 // setItemAddedToCartMsg("Item Added to cart!");
@@ -302,7 +302,7 @@ function Book() {
                 let cart = JSON.parse(localStorage.getItem("cart"));
                 updateCartItems(cart.length)
                 setQuantity(1);
-                console.log(data);
+                // console.log(data);
             }else if (response.status === 400 ){
                 alert("There was some error");
                 console.log("There was some error", response);
@@ -344,11 +344,11 @@ function Book() {
                 rating:urating,
                 review:ureview
             }
-            console.log(reviewObj);
+            // console.log(reviewObj);
             const response = await Review_Service.addReview(uuser.token, reviewObj);
             if(response.status === 201){
-                const reviewAddResponse = await response.json();
-                console.log(reviewAddResponse);
+                // const reviewAddResponse = await response.json();
+                // console.log(reviewAddResponse);
                 // setReviewAlreadySubmitted(true);
                 setReviewSubmitted(true);
                 setReviewAlreadySubmitted(true);

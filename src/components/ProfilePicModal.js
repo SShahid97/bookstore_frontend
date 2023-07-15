@@ -68,7 +68,7 @@ const ProfilePicModalOuter = styled(motion.div)`
             color: white;
             margin-right: 10px;
             svg{
-                transform: scale(1.5);
+                transform: scale(2);
             }
         }
 

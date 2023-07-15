@@ -51,15 +51,19 @@ function Search({setShowMobSearch}) {
     }
     
     function  handleSuggestions (e){
-        console.log("Suggestion for ",e.target.value);
+        // console.log("Suggestion for ",e.target.value);
         setKeyWord(e.target.value);
     }
     /*
         There is a caveat in function components. Local variables inside a function expires after every call.
          Every time the component is re-evaluated, the local variables gets initialized again.
     */
+<<<<<<< HEAD
     // const handleDecoratedSuggestions = debounce(handleSuggestions,300);
     const handleDecoratedSuggestions = useMemo(()=>debounce(handleSuggestions,300),[]);
+=======
+    const handleDecoratedSuggestions = useCallback(debounce(handleSuggestions,300),[]);
+>>>>>>> db9643b146dd35a874e950ed24a639020b418c03
     const handleOnFocus = ()=>{
         setKeyWord(input);
     }

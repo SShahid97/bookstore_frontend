@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { useNavigate,useParams,Link } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styled from "styled-components";
 // import { mobileMenuService} from "../../services/LocalService";
@@ -21,7 +21,7 @@ function ResetPassword() {
     const [messageSuccess, setMessageSuccess] = useState("");
     let params = useParams();
     useEffect(()=>{
-      console.log(params.id);
+      // console.log(params.id);
       setMessageSuccess("Email verification successful!");
       setTimeout(()=>{
         setMessageSuccess("");
@@ -35,7 +35,7 @@ function ResetPassword() {
       }
       const handlePasswordError = (e)=>{
         const value= e.target.value;
-        console.log(value.length);
+        // console.log(value.length);
         if(value.length < 6){
             setIsInvalid(true);
             setPasswordError("Password must be at least 6 characters");
@@ -80,13 +80,13 @@ function ResetPassword() {
         let passwordObj = {
           password:newPassword
         }
-        console.log("New password: ",newPassword);
-        console.log("Id: ", params.id);
+        // console.log("New password: ",newPassword);
+        // console.log("Id: ", params.id);
         const response = await Auth_Service.changePassword(params.id, passwordObj);
-        console.log(response);
+        // console.log(response);
         if(response.status === 200){
-            const updatedPassword = await response.json();
-            console.log(updatedPassword);
+            // const updatedPassword = await response.json();
+            // console.log(updatedPassword);
             setRegisteredSuccess(true);
             setConfirmNewPassword("");
             setNewPassword(""); 
@@ -94,7 +94,7 @@ function ResetPassword() {
             setShowLoader(false);
    
         }else{ 
-          console.log("error!");
+          // console.log("error!");
             setRegisteredSuccess(false);
             setResponseNotReturned(false);
             setShowLoader(false); 

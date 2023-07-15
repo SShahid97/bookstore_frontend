@@ -28,7 +28,7 @@ function AddEditAddress() {
     let navigate = useNavigate();
     let curr_user = JSON.parse(localStorage.getItem("user"));
     useEffect(()=>{
-        console.log(params.type);
+        // console.log(params.type);
         if(curr_user){
             getUserAddressIfAny(curr_user.token,curr_user._id);
             
@@ -47,7 +47,7 @@ function AddEditAddress() {
         if(response.status === 200){
            const  addressReturned = await response.json();
         //    setRegisteredUserAddress(addressReturned);
-            console.log(addressReturned);
+            // console.log(addressReturned);
             setAlreadySavedAddress(addressReturned);
             //set form input values to the returned address values
             setContact(addressReturned.contact);
@@ -59,7 +59,7 @@ function AddEditAddress() {
             setAddressExits(true);
         }else if (response.status === 204){
             setAddressExits(false);
-            console.log("No address saved");
+            // console.log("No address saved");
         }
     }
     const handleContact = (e) => {
@@ -101,21 +101,21 @@ function AddEditAddress() {
         }
         if(!addressExits){
             // Add new address
-            console.log(addressObj);
+            // console.log(addressObj);
             const response = await Address_Service.addAddress(curr_user.token,addressObj);
             if(response.status === 201){
-                const savedAddress = await response.json();
+                // const savedAddress = await response.json();
                 setMessageSuccess("Address Saved!");
                 setTimeout(()=>{
                     setMessageSuccess("");
                 },4000);
-                console.log(savedAddress);
+                // console.log(savedAddress);
                 setShowLoader(false);
                 setResponseNotReturned(false);
             }else if(response.status === 204){
                 setResponseNotReturned(false);
                 setShowLoader(false);
-                console.log("Address not saved");
+                // console.log("Address not saved");
             }else if(response.status===400){
                 setResponseNotReturned(false);
                 setShowLoader(false);
@@ -134,7 +134,7 @@ function AddEditAddress() {
             const response =await Address_Service.updateAddress(curr_user.token,alreadySavedAddress._id,addressUpdatedObj);
             if(response.status===200){
                 const updatedAddress = await response.json();
-                console.log(updatedAddress);
+                // console.log(updatedAddress);
                 setMessageSuccess(updatedAddress.message);
                 setTimeout(()=>{
                     setMessageSuccess("");
@@ -145,7 +145,7 @@ function AddEditAddress() {
             }else if(response.status===204){
                 setResponseNotReturned(false);
                 setShowLoader(false); 
-                console.log("Address not updated");
+                // console.log("Address not updated");
             }else if(response.status===400){
                     setShowLoader(false); 
                 setResponseNotReturned(false);

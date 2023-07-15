@@ -20,9 +20,11 @@ function Cart() {
     const [showLoader, setShowLoader] = useState(false); 
     const [deliveryCharges, setDeliveryCharges] = useState(0); 
     const [messageSuccess, setMessageSuccess] = useState("");
-    const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
+    const [bookDummyImage, setBookDummyImage]= useState([]);
     useEffect(()=>{
         setShowLoader(true);
+        setDeliveryCharges(50);
+        setBookDummyImage(['dummy_book_img.png']);
         mobileMenuService.setMobileMenuIndicies(null);
         getCartItems();
         setDeliveryCharges(50);
@@ -49,7 +51,7 @@ function Cart() {
         if(quantity[index]>1){
             const newQtyArr = [...quantity];
             newQtyArr[index] = newQtyArr[index]-1;
-            console.log(newQtyArr[index])
+            // console.log(newQtyArr[index])
 			setQuantity(newQtyArr);
         }
     }
@@ -57,7 +59,7 @@ function Cart() {
         if(quantity[index]<stockArray[index]){
 			const newQtyArr = [...quantity];
             newQtyArr[index] = newQtyArr[index]+1;
-            console.log(newQtyArr[index])
+            // console.log(newQtyArr[index])
 			setQuantity(newQtyArr);
 
         }
@@ -117,7 +119,7 @@ function Cart() {
             }else if(response.status === 204){
                 setShowLoader(false);
                 setEmptyCart(true);
-                console.log(response.statusText)
+                // console.log(response.statusText)
             }else if(response.status === 404 ){
                 setShowLoader(false);
                 console.log("Bad Request");
@@ -144,7 +146,7 @@ function Cart() {
     const handleRemoveItem = async(id,index)=>{
             const newQtyArr = [...quantity];
             newQtyArr.splice(index, 1);
-            console.log(newQtyArr);
+            // console.log(newQtyArr);
             setQuantity(newQtyArr);
 
             //removes item from localStorage

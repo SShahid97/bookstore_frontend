@@ -21,7 +21,7 @@ function ContactUs() {
             subject: subject,
             message: message
         }
-        console.log(formObj);
+        // console.log(formObj);
         setName("");
         setEmail("");
         setSubject("");

@@ -125,7 +125,7 @@ function AdminProfile() {
         const response = await Upload_Service.uploadImage(user.token,formData);
         if (response.status === 200){
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             // console.log("Image Uploaded");
            
             setResponseNotReturned(false);
@@ -174,7 +174,7 @@ function AdminProfile() {
          setShowChangePasswordComponent(true);
         }else if(response.status === 401) {
          const failureReply = await response.json(); 
-         console.log(failureReply.message);
+        //  console.log(failureReply.message);
          // setPasswordCorrect(false);
          setPasswordNotCorrect(failureReply.message);
         }else if(response.status === 400){
@@ -208,7 +208,7 @@ function AdminProfile() {
        }
     const onNameChange = async(e)=>{
         e.preventDefault();
-        console.log(userName);
+        // console.log(userName);
         let userObj = {
           name:userName
         }
@@ -229,12 +229,12 @@ function AdminProfile() {
           localStorage.setItem("user", JSON.stringify(updatedUser));
         }else{
           setResponseNotReturned(false);
-          console.log("Name not changed");
+          // console.log("Name not changed");
         }
     
       }
     const handleProfilePic = (e)=>{
-        console.log(e.target.value);
+        // console.log(e.target.value);
     }
     const handleOpenImage = ()=>{
       setShowProfilePicModal(true);
@@ -372,10 +372,17 @@ const AdminProfileOuter = styled.div`
         }
     }
     .modal-outer{
+<<<<<<< HEAD
       /* left:200px; */
       @media (max-width:650px){
         /* left: 3px;
         top: -10px; */
+=======
+      left:200px;
+      @media (max-width:650px){
+        left: 3px;
+        top: -10px;
+>>>>>>> db9643b146dd35a874e950ed24a639020b418c03
         z-index: 1000;
       }
     }

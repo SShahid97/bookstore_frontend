@@ -20,11 +20,12 @@ function SearchOrder() {
   const [paymentStatus, setPaymentStatus] = useState("");
   const [editOrderDetails, setEditOrderDetails] = useState(false);
   const [messageSuccess, setMessageSuccess] = useState("");
-  const [bookDummyImage, setBookDummyImage]= useState(['dummy_book_img.png']);
+  const [bookDummyImage, setBookDummyImage]= useState([]);
   let navigate = useNavigate();
   let curr_user = JSON.parse(localStorage.getItem('user'));
   useEffect(() => {
     let order_id = JSON.parse(localStorage.getItem("OrderId"));
+    setBookDummyImage(['dummy_book_img.png']);
     if(order_id){
       getOrder(curr_user,order_id);
     }
@@ -65,7 +66,7 @@ function SearchOrder() {
       }
       else if (response.status === 200) {
         const returnedOrder = await response.json();
-        console.log(returnedOrder);
+        // console.log(returnedOrder);
         setOrderPlaced(returnedOrder);
         setShowLoader(false);
         setNotFoundMsg(false);
@@ -104,13 +105,13 @@ function SearchOrder() {
   const handleDeliveryStatus =(e)=>{
     const value = e.target.value;
     setDeliveryStatus(value);
-    console.log(value);
+    // console.log(value);
   }
 
   const handlePaymentStatus = (e)=>{
     const value = e.target.value;
     setPaymentStatus(value);
-    console.log(value);
+    // console.log(value);
   }
   const onEditDetailsSubmit = async(e)=>{
     e.preventDefault();

@@ -39,6 +39,16 @@ function UserAccount() {
         let curr_user = JSON.parse(localStorage.getItem('user'));
         if(curr_user){
           setUser(curr_user);
+<<<<<<< HEAD
+=======
+          if (curr_user.hasOwnProperty("profile_pic")){
+            let profilePicture = [{id:1 ,image: curr_user.profile_pic, name:curr_user.name}];
+            // console.log(profilePicture);
+            setExistingProfilePic(profilePicture);
+          }else{
+            setExistingProfilePic([]);
+          }
+>>>>>>> db9643b146dd35a874e950ed24a639020b418c03
           setUserName(curr_user.name);
           getUserAddress(curr_user.token, curr_user._id);
 
@@ -106,8 +116,8 @@ function UserAccount() {
 
       const response = await Auth_Service.uploadProfilePic(user.token, user._id,profileObj);
       if(response.status === 200){
-        const updatedProfilePic = await response.json();
-        console.log(updatedProfilePic.message);
+        // const updatedProfilePic = await response.json();
+        // // console.log(updatedProfilePic.message);
         await sumbitImageUpload();
         //   setMessageSuccess(updatedProfilePic.message);
         //   setTimeout(()=>{
@@ -115,7 +125,7 @@ function UserAccount() {
           //   },5000)
           let updatedUser = {...user};
           updatedUser.profile_pic = profilePic;
-          console.log(updatedUser);
+          // console.log(updatedUser);
 
           setUser(updatedUser);
           // userService.sendUser(updatedUser); 
@@ -131,8 +141,8 @@ function UserAccount() {
       formData.append('photo', imageFile);
       const response = await Upload_Service.uploadImage(user.token,formData);
       if (response.status === 200){
-          const data = await response.json();
-          console.log(data);
+          // const data = await response.json();
+          // console.log(data);
           // console.log("Image Uploaded");
          
           setResponseNotReturned(false);
@@ -158,7 +168,7 @@ function UserAccount() {
       }
     }
     const handleProfilePic = (e)=>{
-      console.log(e.target.value);
+      // console.log(e.target.value);
     }
     const getUserAddress = async(token,userId)=>{
       const response = await Address_Service.getUserAddress(token,userId);
@@ -194,8 +204,8 @@ function UserAccount() {
     //  console.log(userInfoObj);
      const response = await Auth_Service.verifycurrentPassword(userInfoObj);
      if(response.status === 200){
-      const successReply = await response.json(); 
-      console.log(successReply.message);
+      // const successReply = await response.json(); 
+      // console.log(successReply.message);
       // setPasswordCorrect(true);
       navigate("/user/change-password");
      }else if(response.status === 401) {
@@ -242,14 +252,14 @@ function UserAccount() {
   }
   const onNameChange = async(e)=>{
     e.preventDefault();
-    console.log(userName);
+    // console.log(userName);
     let userObj = {
       name:userName
     }
     const response = await Auth_Service.updateUserName(user.token, user._id,userObj);
     if(response.status === 200){
       const updatedName = await response.json();
-      console.log(updatedName);
+      // console.log(updatedName);
       setMessageSuccess(updatedName.message);
       setTimeout(()=>{
         setMessageSuccess("");
@@ -259,11 +269,11 @@ function UserAccount() {
       let updatedUser = {...user};
       updatedUser.name = userName;
       setUser(updatedUser);
-      console.log(updatedUser);
+      // console.log(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
     }else{
       setResponseNotReturned(false);
-      console.log("Name not changed");
+      // console.log("Name not changed");
     }
 
   }
